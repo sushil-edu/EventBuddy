@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.pkmmte.view.CircularImageView
+                android:id="@+id/profileIv"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_user"
+                android:layout_marginLeft="@dimen/dimen_10dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/nameTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sushil Kumar"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/designationTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Android Developer"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/organizationTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Kestone IMS"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>

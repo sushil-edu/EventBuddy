@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.Priority">
+
+    <in.kestone.eventbuddy.widgets.CustomTextView
+        android:id="@+id/tv_welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:textAlignment="center"
+        android:textSize="@dimen/dimen_22sp"
+        android:layout_centerInParent="true" />
+
+
+    <LinearLayout
+        android:id="@+id/layout_continue"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:background="@drawable/btn_design_solid"
+        android:elevation="4dp"
+        android:layout_marginBottom="@dimen/dimen_5dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Continue"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

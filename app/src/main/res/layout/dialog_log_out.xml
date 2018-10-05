@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dimen_20dp"
+    android:gravity="center"
+    android:id="@+id/layout_root"
+    android:animateLayoutChanges="true"
+    android:focusableInTouchMode="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_50dp">
+
+        <ImageView
+            android:layout_width="@dimen/dimen_45dp"
+            android:layout_height="@dimen/dimen_45dp"
+            android:layout_gravity="center"
+            android:src="@drawable/warning"
+            />
+    </FrameLayout>
+    <in.kestone.eventbuddy.widgets.CustomTextView
+        fontPath="fonts/medium.ttf"
+        tools:ignore="MissingPrefix"
+        android:id="@+id/tv_title"
+        android:layout_marginTop="@dimen/dimen_25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        android:gravity="center"
+        android:textSize="@dimen/dimen_16sp"
+        android:textColor="@color/textColorRed"
+        />
+
+    <in.kestone.eventbuddy.widgets.CustomTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_70dp"
+        android:gravity="center"
+        android:id="@+id/tv_message"
+        android:textSize="@dimen/dimen_16sp"
+        android:text="Are you sure you want to\n Log Out ?" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        >
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:gravity="center"
+            android:layout_width="@dimen/Dialog_Button_Width"
+            android:layout_height="@dimen/Dialog_Button_Height"
+            android:text="No"
+            android:layout_margin="5dp"
+            android:id="@+id/no"
+            android:textColor="@color/textColorRed"
+            android:background="@drawable/btn_design_stroke" />
+
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:layout_width="@dimen/Dialog_Button_Width"
+            android:layout_height="@dimen/Dialog_Button_Height"
+            android:background="@drawable/btn_design_solid"
+            android:text="Yes"
+            android:id="@+id/yes"
+            android:textColor="@color/textColorWhite"
+            />
+
+    </LinearLayout>
+</LinearLayout>

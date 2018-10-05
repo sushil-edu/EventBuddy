@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/tv_event_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/card_padding"
+                android:text="@string/app_name"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+
+            <!--<android.support.v7.widget.CardView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/tv_event_title"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_marginLeft="@dimen/card_margin_left"-->
+            <!--android:layout_marginRight="@dimen/card_margin_right"-->
+            <!--app:cardBackgroundColor="@color/transparent"-->
+            <!--app:cardCornerRadius="4dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--app:contentPadding="@dimen/card_padding">-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/card_margin_left"
+                android:layout_marginRight="@dimen/card_margin_right"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/layout_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <in.kestone.eventbuddy.widgets.CustomEditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@null"
+                    android:hint="Email"
+                    android:textAlignment="center"
+                    android:singleLine="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1sp"
+                    android:layout_marginTop="-4dp"
+                    android:background="@color/grey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <in.kestone.eventbuddy.widgets.CustomEditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="40sp"
+                        android:layout_marginTop="10dp"
+                        android:background="@null"
+                        android:hint="Password"
+                        android:textAlignment="center"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1sp"
+                        android:layout_marginTop="-4dp"
+                        android:background="@color/grey" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/layout_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height"
+                    android:layout_marginTop="@dimen/dimen_20dp"
+                    android:background="@drawable/btn_design_solid"
+                    android:elevation="4dp"
+                    android:gravity="center">
+
+                    <in.kestone.eventbuddy.widgets.CustomTextView
+                        android:id="@+id/tv_LogIn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Log In"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!--</android.support.v7.widget.CardView>-->
+
+</LinearLayout>

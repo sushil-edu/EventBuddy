@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_margin_right">30dp</dimen>
+    <dimen name="card_margin_left">30dp</dimen>
+    <dimen name="card_padding">10dp</dimen>
+    <dimen name="padding_5">5dp</dimen>
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="dimen_4dp">4dp</dimen>
+    <dimen name="dimen_5dp">5dp</dimen>
+    <dimen name="dimen_10dp">10dp</dimen>
+    <dimen name="dimen_20dp">20dp</dimen>
+    <dimen name="dimen_25dp">25dp</dimen>
+    <dimen name="dimen_30dp">30dp</dimen>
+    <dimen name="dimen_35dp">35dp</dimen>
+    <dimen name="dimen_40dp">40dp</dimen>
+    <dimen name="dimen_45dp">45dp</dimen>
+    <dimen name="dimen_50dp">50dp</dimen>
+    <dimen name="dimen_70dp">70dp</dimen>
+
+    //for font size
+    <dimen name="dimen_18sp">18sp</dimen>
+    <dimen name="dimen_24sp">24sp</dimen>
+    <dimen name="dimen_100dp">100dp</dimen>
+    <dimen name="Dialog_Button_Width">78dp</dimen>
+    <dimen name="Dialog_Button_Height">35dp</dimen>
+    <dimen name="dimen_16sp">16sp</dimen>
+    <dimen name="dimen_32dp">32dp</dimen>
+    <dimen name="dimen_8dp">8dp</dimen>
+    <dimen name="dimen_22sp">22sp</dimen>
+
+
+</resources>
