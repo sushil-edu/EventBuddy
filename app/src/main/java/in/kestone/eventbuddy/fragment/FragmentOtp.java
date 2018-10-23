@@ -20,6 +20,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomEditText;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
@@ -46,10 +47,7 @@ public class FragmentOtp extends Fragment {
     CustomEditText otp6;
 
     @BindView(R.id.tv_verify)
-    CustomTextView tv_verify;
-
-    @BindView(R.id.layout_verify)
-    LinearLayout layout_verify;
+    CustomButton tv_verify;
 
     String err_msg = "";
 
@@ -93,7 +91,7 @@ public class FragmentOtp extends Fragment {
         hs = new HashSet();
 
 
-        layout_verify.setOnClickListener( new View.OnClickListener() {
+        tv_verify.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!otp1.getText().toString().isEmpty() && !otp2.getText().toString().isEmpty() &&
@@ -133,7 +131,7 @@ public class FragmentOtp extends Fragment {
     private class GenericTextWatcher implements TextWatcher {
         View view;
 
-        public GenericTextWatcher(CustomEditText otp) {
+         GenericTextWatcher(CustomEditText otp) {
             this.view = otp;
         }
 

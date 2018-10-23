@@ -3,7 +3,6 @@ package in.kestone.eventbuddy.model.app_config;
 
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("unused")
 public class AppConf {
 
     @SerializedName("AppVersion")

@@ -42,8 +42,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 
 
     public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent( context, ActivitySplash.class );
-        return intent;
+        return new Intent( context, ActivitySplash.class );
     }
 
     @Override
@@ -63,12 +62,12 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         ButterKnife.bind( this );
         //set configuration
 
-        Progress.showProgress( this );
+//        Progress.showProgress( this );
         new Handler().postDelayed( new Runnable() {
             @Override
             public void run() {
                 setAppConf();
-                Progress.closeProgress();
+//                Progress.closeProgress();
             }
         }, 2000 );
 
@@ -93,6 +92,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     @Override
     public void openMainActivity() {
         Intent intent = MainActivity.getStartIntent( this );
+//        Intent intent = ActivityLogin.getStartIntent( this );
         startActivity( intent );
         finish();
     }

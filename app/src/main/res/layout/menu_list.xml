@@ -4,10 +4,11 @@
     xmlns:foo="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_detail"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="55dp"
     android:clickable="true"
-    android:background="@drawable/on_touch_effect">
+    android:background="@drawable/on_touch_effect"
+    android:paddingLeft="@dimen/dimen_10dp"
+    android:paddingRight="@dimen/dimen_10dp">
 
 
     <ImageView
@@ -16,6 +17,7 @@
         android:layout_height="@dimen/dimen_32dp"
         android:src="@mipmap/ic_launcher_round"
         android:padding="@dimen/dimen_8dp"
+        android:layout_centerVertical="true"
         android:layout_margin="@dimen/padding_5"/>
 
     <ImageView
@@ -39,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:textAppearanceLarge"
-            android:textSize="16sp"
+            android:textSize="15sp"
             tools:text="TextView"
             foo:customFont="my_font.otf"
             />
@@ -49,6 +51,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/imageView"
-        android:background="#f1f0f0" />
+        android:layout_alignParentBottom="true"
+        android:background="#DADADC"/>
 </RelativeLayout>

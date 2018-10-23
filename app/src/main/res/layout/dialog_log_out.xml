@@ -19,6 +19,7 @@
             android:layout_height="@dimen/dimen_45dp"
             android:layout_gravity="center"
             android:src="@drawable/warning"
+            android:tint="@color/colorPrimary"
             />
     </FrameLayout>
     <in.kestone.eventbuddy.widgets.CustomTextView
@@ -31,7 +32,7 @@
         android:text="Log Out"
         android:gravity="center"
         android:textSize="@dimen/dimen_16sp"
-        android:textColor="@color/textColorRed"
+        android:textColor="@color/colorPrimary"
         />
 
     <in.kestone.eventbuddy.widgets.CustomTextView
@@ -57,7 +58,7 @@
             android:text="No"
             android:layout_margin="5dp"
             android:id="@+id/no"
-            android:textColor="@color/textColorRed"
+            android:textColor="@color/colorPrimary"
             android:background="@drawable/btn_design_stroke" />
 
         <in.kestone.eventbuddy.widgets.CustomTextView

@@ -17,8 +17,26 @@
         <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/helvetica_neue</item>
 
     </style>
-    <style name="Toolbar.Agenda" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle">
+
+    <style name="Toolbar.Agenda" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">@dimen/dimen_16sp</item>
         <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/helvetica_neue</item>
+        <item name="textAllCaps">false</item>
+        <!--<item name="tabGravity">center</item>-->
+        <!--<item name="tabMode">fixed</item>-->
     </style>
+
+    <style name="customRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:minHeight">20dip</item>
+        <item name="android:maxHeight">20dip</item>
+    </style>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorControlNormal">@color/colorPrimaryDark
+        </item>   <!-- normal border color change as you wish -->
+        <item name="colorControlActivated">@color/colorPrimary
+        </item> <!-- activated color change as you wish -->
+        <item name="android:textColor">#FFFF3F3C</item> <!-- checkbox text color -->
+    </style>
+
 </resources>

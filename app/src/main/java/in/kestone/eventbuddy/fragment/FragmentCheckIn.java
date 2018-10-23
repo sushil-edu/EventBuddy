@@ -9,10 +9,12 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -57,6 +59,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
 /**
@@ -80,10 +83,8 @@ public class FragmentCheckIn extends Fragment {
     View view;
     @BindView(R.id.tv_checkin_title)
     CustomTextView checkIn_title;
-    @BindView(R.id.layout_check_in)
-    LinearLayout layout_checkIn;
     @BindView(R.id.tv_checkin)
-    CustomTextView tv_checkIn;
+    CustomButton tv_checkIn;
     @BindView(R.id.tv_skip)
     CustomTextView tv_skip;
     CustomDialog dialog;
@@ -139,16 +140,16 @@ public class FragmentCheckIn extends Fragment {
         }
 
         try {
-            Log.e("Compare ", ""+dtDate.after( dateFormat.parse( activationDateFrom )  ) +" to "+dtDate.before( dateFormat.parse( activationDateTo ) ));
+            Log.e( "Compare ", "" + dtDate.after( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.before( dateFormat.parse( activationDateTo ) ) );
             if (dtDate.after( dateFormat.parse( activationDateFrom ) ) && dtDate.before( dateFormat.parse( activationDateTo ) )) {
 //                Log.e( "Date and time ", "Date " + strDate + " Time " + strTime + " act date " + activationDateTo + " act time " + activationTimeTo );
                 if (dtTime.after( timeFormat.parse( activationTimeFrom ) ) && dtDate.before( timeFormat.parse( activationTimeTo ) )) {
-                    layout_checkIn.setEnabled( true );
+                    tv_checkIn.setEnabled( true );
                 }
 
             } else {
-                layout_checkIn.setEnabled( false );
-                layout_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
+                tv_checkIn.setEnabled( false );
+                tv_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -157,7 +158,7 @@ public class FragmentCheckIn extends Fragment {
         checkIn_title.setText( ListEvent.getAppConf().getEvent().getGeoTag().getWelcomeText() );
         tv_checkIn.setText( ListEvent.getAppConf().getEvent().getGeoTag().getLabel() );
         err_msg = ListEvent.getAppConf().getEvent().getGeoTag().getErrorMessage();
-        layout_checkIn.setOnClickListener( new View.OnClickListener() {
+        tv_checkIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //fetch location
@@ -267,6 +268,7 @@ public class FragmentCheckIn extends Fragment {
                     }
                 } )
                 .addOnFailureListener( getActivity(), new OnFailureListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.DONUT)
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();

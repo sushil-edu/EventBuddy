@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dimen_20dp"
+    android:gravity="center"
+    android:id="@+id/layout_root"
+    android:animateLayoutChanges="true"
+    android:focusableInTouchMode="true">
+
+    <in.kestone.eventbuddy.widgets.CustomTextView
+        tools:ignore="MissingPrefix"
+        android:id="@+id/tv_title"
+        android:layout_marginTop="@dimen/dimen_25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:gravity="center"
+        android:textSize="@dimen/dimen_16sp"
+        android:textColor="@color/colorPrimary"
+        />
+
+    <in.kestone.eventbuddy.widgets.CustomEditText
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_70dp"
+        android:gravity="center"
+        android:id="@+id/tv_comment"
+        android:textSize="@dimen/dimen_16sp"
+        android:hint="Comment" />
+
+    <RatingBar
+        android:id="@+id/avgRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stepSize="0.5"
+        android:progressTint="@color/colorPrimary"
+        android:rating="5"
+        />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        >
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:gravity="center"
+            android:layout_width="@dimen/Dialog_Button_Width"
+            android:layout_height="@dimen/Dialog_Button_Height"
+            android:text="Cancel"
+            android:layout_margin="5dp"
+            android:id="@+id/cancel"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/btn_design_stroke" />
+
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:layout_width="@dimen/Dialog_Button_Width"
+            android:layout_height="@dimen/Dialog_Button_Height"
+            android:background="@drawable/btn_design_solid"
+            android:text="Save"
+            android:id="@+id/save"
+            android:textColor="@color/textColorWhite"
+            />
+
+    </LinearLayout>
+</LinearLayout>

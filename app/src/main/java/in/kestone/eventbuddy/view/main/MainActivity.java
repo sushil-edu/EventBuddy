@@ -2,11 +2,12 @@ package in.kestone.eventbuddy.view.main;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,41 +18,46 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import in.kestone.eventbuddy.Eventlistener.ViewClickListener;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.adapter.NavMenuAdapter;
 import in.kestone.eventbuddy.data.DataManager;
+import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.model.app_config.ListEvent;
 import in.kestone.eventbuddy.model.app_config.Menu;
 import in.kestone.eventbuddy.view.agenda.AgendaFragment;
-import in.kestone.eventbuddy.view.login.ActivityLogin;
+import in.kestone.eventbuddy.view.networking.Networking;
+import in.kestone.eventbuddy.view.profile.Profile;
 import in.kestone.eventbuddy.view.speaker.FragmentSpeaker;
 import in.kestone.eventbuddy.view.splash.ActivitySplash;
 import in.kestone.eventbuddy.view.stream.ActivityStream;
 import in.kestone.eventbuddy.view.venue.FragmentVenue;
 import in.kestone.eventbuddy.widgets.CustomTextView;
+import in.kestone.eventbuddy.widgets.ToolbarTextView;
 
 public class
 MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView {
@@ -62,7 +68,7 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
 
     @BindView(R.id.navigation_view)
     NavigationView navigationView;
-
+    @BindView(R.id.menu_list)
     ListView listView;
 
     @BindView(R.id.drawer_layout)
@@ -70,18 +76,34 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
     @BindView(R.id.container)
     FrameLayout container;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.mTitleTv)
+    ToolbarTextView mTitleTv;
+
+    //nav header
+    @BindView(R.id.imageEdit)
+    ImageView imageEdit;
+    @BindView(R.id.tv_version_code)
     CustomTextView tv_version_code;
+    @BindView(R.id.tvName)
+    TextView tvName;
+    @BindView(R.id.tvEmail)
+    TextView tvEmail;
+    @BindView(R.id.tvDesignation)
+    TextView tvDesignation;
+    @BindView(R.id.profile_imageview)
+    CircleImageView profileImage;
 
     ActionBarDrawerToggle drawerLayoutToggle;
-    View parentView;
-    Toolbar toolbar;
 
     boolean doubleBackToExitPressedOnce = false;
     MainPresenter mainPresenter;
+    DataManager dataManager;
 
     public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent( context, MainActivity.class );
-        return intent;
+        return new Intent( context, MainActivity.class );
     }
 
     @RequiresApi(api = 28)
@@ -96,11 +118,13 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
     @RequiresApi(api = 28)
     private void initialiseView() {
         ButterKnife.bind( this );
+        ButterKnife.bind( this, drawerLayout );
+        ButterKnife.bind( drawerLayout, navigationView );
 
-        toolbar = drawerLayout.findViewById( R.id.toolbar );
+//        toolbar = drawerLayout.findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
 
-        DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
+        dataManager = ((MvpApp) getApplication()).getDataManager();
         mainPresenter = new MainPresenter( dataManager );
         mainPresenter.onAttach( this );
 
@@ -137,21 +161,20 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
                 list.add( ListEvent.getAppConf().getEvent().getMenu().get( i ) );
             }
         }
-        listView = navigationView.findViewById( R.id.menu_list );
+//        //set user details in nave header
+//        tvName.setText( dataManager.getName() );
+//        tvEmail.setText( dataManager.getEmailId() );
+//        tvDesignation.setText( dataManager.getDesignation() );
+//        Picasso.with( this ).load( dataManager.getImagePath() )
+//                .resize( 80, 80 )
+//                .placeholder( R.mipmap.ic_launcher_round )
+//                .into( profileImage );
+
+        // menu list adapter
         adapter = new NavMenuAdapter( this, list );
         listView.setAdapter( adapter );
 
-        //default fragment
-        {
-            toolbar.setTitle( "Activity Stream" );
-            getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.container, new ActivityStream() )
-                    .commit();
-
-        }
-
-
-        tv_version_code = navigationView.findViewById( R.id.tv_version_code );
+        //get version code
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo( getPackageName(), 0 );
             tv_version_code.setText( "App Version V" + pInfo.versionName );
@@ -178,15 +201,14 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
     @Override
     public void onClick(Long mId, String title) {
         Log.e( "Menu ID ", String.valueOf( mId ) );
-
-        if (!title.equals( "Log Out" )) {
-            toolbar.setTitle( title );
-        }
         openFragment( title );
         drawerLayout.closeDrawers();
     }
 
     private void openFragment(String title) {
+        if (!title.equals( "Log Out" )) {
+            mTitleTv.setText( title );
+        }
         switch (title) {
             case "Log Out":
                 showPopUpLogOut();
@@ -208,12 +230,12 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
                 break;
             case "Delegates":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new FragmentSpeaker() )
                         .commit();
                 break;
             case "Networking":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new Networking() )
                         .commit();
                 break;
             case "Polls":
@@ -254,25 +276,87 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         }
     }
 
+    //edit profile
+    @OnClick(R.id.imageEdit)
+    public void editProfile() {
+        Intent intent = new Intent( MainActivity.this, Profile.class );
+        startActivity( intent );
+        drawerLayout.closeDrawers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //meeting schedule and reschedule
+        if (getIntent().getExtras() == null) {
+            //default fragment
+            mTitleTv.setText( "Activity Stream" );
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.container, new ActivityStream() )
+                    .commit();
+
+        } else if (getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Schedule" ) ||
+                getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Reschedule" )) {
+            mTitleTv.setText( "Networking" );
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.container, new Networking() )
+                    .commit();
+
+        } else if ((getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Speaker" ))) {
+            mTitleTv.setText( "Speaker" );
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.container, new FragmentSpeaker() )
+                    .commit();
+
+        } else if ((getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Agenda" ))) {
+            mTitleTv.setText( "Agenda" );
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.container, new AgendaFragment() )
+                    .commit();
+        }
+        //set user details in nave header
+        tvName.setText( dataManager.getName() );
+        tvEmail.setText( dataManager.getEmailId() );
+        tvDesignation.setText( dataManager.getDesignation() );
+
+        byte[] decodedString = Base64.decode(dataManager.getImagePath(), Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//        Picasso.with( this ).load( decodedByte )
+//                .resize( 80, 80 )
+//                .placeholder( R.mipmap.ic_launcher_round )
+//                .into( profileImage );
+        profileImage.setImageBitmap( decodedByte );
+    }
+
     @Override
     public void onBackPressed() {
-
         if (drawerLayout.isDrawerOpen( GravityCompat.START )) {
             drawerLayout.closeDrawer( GravityCompat.START );
         } else {
-            showPopUpExitFromApp();
-        }
-
-        new Handler().postDelayed( new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
+            if (doubleBackToExitPressedOnce) {
+                showPopUpExitFromApp();
             }
-        }, 2000 );
+            //call default fragment
+            this.doubleBackToExitPressedOnce = true;
+            mTitleTv.setText( "Activity Stream" );
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.container, new ActivityStream() )
+                    .commit();
+            new Handler().postDelayed( new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 3000 );
+
+        }
     }
 
-
+    //logout from the app
     public void showPopUpLogOut() {
         final Dialog clearAll = new Dialog( this );
         clearAll.requestWindowFeature( Window.FEATURE_NO_TITLE );
@@ -292,17 +376,16 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
             @Override
             public void onClick(View view) {
                 clearAll.dismiss();
-//
             }
         } );
 
         clearAll.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         clearAll.show();
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator v = (Vibrator) getSystemService( Context.VIBRATOR_SERVICE );
         // Vibrate for 500 milliseconds
-        v.vibrate(150);
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        root.setAnimation(shake);
+        v.vibrate( 150 );
+        Animation shake = AnimationUtils.loadAnimation( this, R.anim.shake );
+        root.setAnimation( shake );
 
     }
 
@@ -313,6 +396,7 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         finish();
     }
 
+    //exit from the app
     public void showPopUpExitFromApp() {
         final Dialog clearAll = new Dialog( this );
         clearAll.requestWindowFeature( Window.FEATURE_NO_TITLE );
@@ -321,7 +405,7 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         LinearLayout root = clearAll.findViewById( R.id.layout_root );
         clearAll.findViewById( R.id.tv_title ).setVisibility( View.GONE );
         TextView message = clearAll.findViewById( R.id.tv_message );
-        message.setText( "Are you sure you want to exit?" );
+        message.setText( "Are you sure. You want to exit?" );
         TextView no = clearAll.findViewById( R.id.no );
         TextView yes = clearAll.findViewById( R.id.yes );
         yes.setOnClickListener( new View.OnClickListener() {
@@ -341,10 +425,10 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         clearAll.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         clearAll.show();
 
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        Vibrator v = (Vibrator) getSystemService( Context.VIBRATOR_SERVICE );
         // Vibrate for 500 milliseconds
-        v.vibrate(150);
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-        root.setAnimation(shake);
+        v.vibrate( 150 );
+        Animation shake = AnimationUtils.loadAnimation( this, R.anim.shake );
+        root.setAnimation( shake );
     }
 }

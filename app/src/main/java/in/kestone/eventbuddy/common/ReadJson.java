@@ -1,28 +1,13 @@
 package in.kestone.eventbuddy.common;
 
 import android.app.Activity;
-import android.graphics.ColorSpace;
-import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
 
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import in.kestone.eventbuddy.model.agenda.AgendaList;
-import in.kestone.eventbuddy.model.agenda.ModelAgenda;
-import in.kestone.eventbuddy.model.app_config.AppConf;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
 
 public class ReadJson {
     public String loadJSONFromAsset(Activity activity, String fileName) {
-        String json = null;
+        String json=null;
         try {
             InputStream is = activity.getAssets().open( fileName);
             int size = is.available();

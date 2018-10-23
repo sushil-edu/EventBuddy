@@ -22,6 +22,7 @@ import in.kestone.eventbuddy.model.app_config.Password;
 import in.kestone.eventbuddy.model.app_config.UserName;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.view.verify.ActivityVerify;
+import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomEditText;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
@@ -35,9 +36,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     @BindView(R.id.et_password)
     CustomEditText et_password;
     @BindView(R.id.tv_LogIn)
-    CustomTextView tv_LogIn;
-    @BindView(R.id.layout_login)
-    LinearLayout layout_login;
+    CustomButton tv_LogIn;
     @BindView(R.id.layout_email)
     LinearLayout layout_email;
     @BindView(R.id.layout_password)
@@ -48,8 +47,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     LoginPresenter loginPresenter;
 
     public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent( context, ActivityLogin.class );
-        return intent;
+
+        return new Intent( context, ActivityLogin.class );
     }
 
     @Override
@@ -82,7 +81,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 
     private void setButtonConf(Button button) {
         tv_LogIn.setText( button.getLabel() );
-        layout_login.setOnClickListener( this );
+        tv_LogIn.setOnClickListener( this );
     }
 
     private void setPasswordConf(Password password) {
@@ -105,14 +104,14 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         if (userName.getType().equalsIgnoreCase( "email" )) {
             et_mail.setInputType( InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_CLASS_TEXT );
         } else {
-            et_mail.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT );
+            et_mail.setInputType( InputType.TYPE_CLASS_TEXT );
         }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.layout_login:
+            case R.id.tv_LogIn:
                 onLoginButtonClick();
                 break;
         }
@@ -124,10 +123,10 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         if (ListEvent.getAppConf().getEvent().getOTP().getVisibility().equalsIgnoreCase( "yes" )) {
             intent = ActivityVerify.getStartIntent( this );
             intent.putExtra( "type", "otp" );
-        }else if (ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase( "yes" )) {
+        } else if (ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase( "yes" )) {
             intent = ActivityVerify.getStartIntent( this );
             intent.putExtra( "type", "checkIn" );
-        }   else {
+        } else {
             intent = MainActivity.getStartIntent( this );
         }
         startActivity( intent );
@@ -150,7 +149,14 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                 customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credentials", er_password );
                 et_password.requestFocus();
             } else {
-                loginPresenter.startLogin( email );
+                int id = 1001;
+                String name = "Sushil Kumar";
+//                        String email="sushil.k@kestone.in";
+                String path = "/image/image.png";
+                String designation = "Software Engineer";
+                String organization = "Kestone Pvt. Ltd.";
+                String mobile = "7210094970";
+                loginPresenter.startLogin( email, id, name, designation, path, organization, mobile );
             }
         }
 

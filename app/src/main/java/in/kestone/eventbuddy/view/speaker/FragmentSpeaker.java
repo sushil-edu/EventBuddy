@@ -14,37 +14,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.adapter.SpeakersAdapter;
-import in.kestone.eventbuddy.model.agenda.AgendaList;
-import in.kestone.eventbuddy.model.agenda.ModelAgenda;
-import in.kestone.eventbuddy.model.agenda.Speaker;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.common.ReadJson;
+import in.kestone.eventbuddy.model.agenda_holder.AgendaList;
+import in.kestone.eventbuddy.model.agenda_holder.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_holder.Speaker;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FragmentSpeaker extends Fragment {
+    JSONArray jsonArray;
+    ModelAgenda modelAgenda;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<Speaker> speakerList;
     private SpeakersAdapter speakerAdapter;
     private EditText searchEt;
     private String myReponse;
-    JSONArray jsonArray;
-    ModelAgenda modelAgenda;
 
     public FragmentSpeaker() {
         // Required empty public constructor
@@ -55,17 +48,17 @@ public class FragmentSpeaker extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_speaker, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        searchEt =  view.findViewById(R.id.searchEt);
-        searchEt.setTextSize(12f);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
+        View view = inflater.inflate( R.layout.fragment_speaker, container, false );
+        RecyclerView recyclerView = view.findViewById( R.id.recyclerView );
+        searchEt = view.findViewById( R.id.searchEt );
+        searchEt.setTextSize( 12f );
+        recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
+        recyclerView.setHasFixedSize( true );
         speakerList = new ArrayList<>();
         setAgenda( getActivity() );
-        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getDetails().get( 0 ).getSpeaker());
-        speakerAdapter = new SpeakersAdapter(getContext(), speakerList);
-        recyclerView.setAdapter(speakerAdapter);
+        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getDetails().get( 0 ).getSpeaker() );
+        speakerAdapter = new SpeakersAdapter( getContext(), speakerList );
+        recyclerView.setAdapter( speakerAdapter );
 //        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
 //        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 //            @Override
@@ -91,7 +84,7 @@ public class FragmentSpeaker extends Fragment {
 //            }
 //        });
 
-        searchEt.addTextChangedListener(new TextWatcher() {
+        searchEt.addTextChangedListener( new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -104,38 +97,21 @@ public class FragmentSpeaker extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                    filter(s.toString());
+                filter( s.toString() );
             }
-        });
+        } );
 
         return view;
     }
 
     public void setAgenda(Activity activity) {
-        modelAgenda = new Gson().fromJson( loadJSONFromAsset( activity ), ModelAgenda.class );
+        modelAgenda = new Gson().fromJson( new ReadJson().loadJSONFromAsset( activity, "agenda.json" ), ModelAgenda.class );
         if (modelAgenda.getStatusCode().equalsIgnoreCase( "200" )) {
             AgendaList.setAgenda( modelAgenda );
 
         } else {
             Log.e( "Status", String.valueOf( modelAgenda.getStatusCode() ) );
         }
-    }
-
-    public String loadJSONFromAsset(Activity activity) {
-        String json = null;
-        try {
-            InputStream is = activity.getAssets().open( "agenda.json" );
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read( buffer );
-            is.close();
-            json = new String( buffer, "UTF-8" );
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
-        return json;
     }
 
     private void filter(String text) {
@@ -145,14 +121,14 @@ public class FragmentSpeaker extends Fragment {
         //looping through existing elements
         for (Speaker s : speakerList) {
             //if the existing elements contains the search input
-            if (s.getSpeakerName().toLowerCase().contains(text.toLowerCase())) {
+            if (s.getSpeakerName().toLowerCase().contains( text.toLowerCase() )) {
                 //adding the element to filtered list
-                filterdNames.add(s);
+                filterdNames.add( s );
             }
         }
 
         //calling a method of the adapter class and passing the filtered list
-        speakerAdapter.filterList(filterdNames);
+        speakerAdapter.filterList( filterdNames );
     }
 
 }

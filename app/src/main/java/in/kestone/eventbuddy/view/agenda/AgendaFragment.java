@@ -19,15 +19,13 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.agenda.AgendaList;
-import in.kestone.eventbuddy.model.agenda.AgendaListFragment;
-import in.kestone.eventbuddy.model.agenda.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_holder.AgendaList;
+import in.kestone.eventbuddy.model.agenda_holder.AgendaListFragment;
+import in.kestone.eventbuddy.model.agenda_holder.ModelAgenda;
 
 
 /**
@@ -85,6 +83,11 @@ public class AgendaFragment extends Fragment {
         tabLayout = view.findViewById( R.id.tabs );
         viewPager = view.findViewById( R.id.viewpager );
         setupViewPager( viewPager );
+        if (list.size() <= 4)
+            tabLayout.setTabMode( TabLayout.MODE_FIXED );
+        else
+            tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
+
         tabLayout.setupWithViewPager( viewPager );
 
         // Register to receive messages.

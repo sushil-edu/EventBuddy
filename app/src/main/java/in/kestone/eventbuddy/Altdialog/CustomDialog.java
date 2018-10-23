@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Vibrator;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -19,7 +20,8 @@ import in.kestone.eventbuddy.view.login.ActivityLogin;
 
 public class CustomDialog {
     static int flag =0;
-    static Context contxt;
+    private Context contxt;
+    static boolean result=false;
     public void showInvalidPopUp(Context context, String title, String body) {
         contxt=context;
         final Dialog dialog = new Dialog( contxt );
@@ -75,7 +77,5 @@ public class CustomDialog {
                 WindowManager.LayoutParams.WRAP_CONTENT );
         dialog.show();
     }
-
-
 
 }

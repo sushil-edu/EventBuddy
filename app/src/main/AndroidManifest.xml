@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="your.package.name.permission.MAPS_RECEIVE"
@@ -15,6 +15,15 @@
 
     <uses-permission android:name="your.package.name.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".MvpApp"
@@ -46,7 +55,8 @@
         <activity
             android:name=".view.venue.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".view.speaker.AddSpeaker"></activity>
+        <activity android:name=".view.agenda.AddSpeaker" />
+        <activity android:name=".view.profile.Profile"></activity>
     </application>
 
 </manifest>

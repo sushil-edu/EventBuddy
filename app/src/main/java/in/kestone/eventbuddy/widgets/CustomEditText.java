@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-public class CustomEditText extends EditText {
+public class CustomEditText extends android.support.v7.widget.AppCompatEditText {
 
 
     private Context context;
@@ -34,18 +34,15 @@ public class CustomEditText extends EditText {
     }
 
     private void init() {
-        Typeface font=Typeface.createFromAsset(getContext().getAssets(), "font/helvetica_neue.ttf");
-        this.setTypeface(font);
+        this.setTypeface(SetTypeface.getFont(getContext()));
     }
     @Override
     public void setTypeface(Typeface tf, int style) {
-        tf=Typeface.createFromAsset(getContext().getAssets(), "font/helvetica_neue.ttf");
-        super.setTypeface(tf, style);
+        super.setTypeface(SetTypeface.getFont(getContext()), style);
     }
 
     @Override
     public void setTypeface(Typeface tf) {
-        tf= Typeface.createFromAsset(getContext().getAssets(), "font/helvetica_neue.ttf");
-        super.setTypeface(tf);
+        super.setTypeface(SetTypeface.getFont( getContext() ));
     }
 }

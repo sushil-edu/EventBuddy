@@ -7,60 +7,77 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/dimen_10dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_imageview"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="2dp" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_user" />
 
         <LinearLayout
+            android:id="@+id/layout_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dimen_10dp"
             android:layout_toRightOf="@id/profile_imageview"
             android:orientation="vertical"
             android:padding="10dp">
 
             <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Sushil Kumar"
+                android:text="Sushil Kumar"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey"
                 android:textSize="16sp" />
 
             <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/tvEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="sushil.k@kestone.in"
+                android:text="sushil.k@kestone.in"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey"
                 android:textSize="14sp" />
 
             <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/tvDesignation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Android Developer"
+                android:text="Android Developer"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey"
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <in.kestone.eventbuddy.widgets.CustomTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imageEdit"
+            android:layout_width="@dimen/dimen_15dp"
+            android:layout_height="@dimen/dimen_15dp"
             android:layout_alignParentRight="true"
-            android:text="Edit" />
+            android:layout_below="@id/layout_profile"
+            android:src="@drawable/ic_edit" />
 
     </RelativeLayout>
+
     <in.kestone.eventbuddy.widgets.CustomTextView
         android:id="@+id/tv_version_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
         android:layout_below="@+id/profile_imageview"
-        android:textSize="10sp"
-        android:text="Version "
+        android:layout_gravity="end"
+        android:paddingBottom="1dp"
         android:paddingRight="@dimen/dimen_4dp"
-        android:paddingBottom="1dp"/>
+        android:text="Version "
+        android:textSize="10sp"
+        android:visibility="gone" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -70,7 +87,7 @@
         android:id="@+id/menu_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true">
+        android:focusable="true">
 
     </ListView>
 

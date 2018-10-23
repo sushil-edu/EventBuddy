@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#E11323</color>
-    <color name="colorPrimaryDark">#c4111f</color>
+    <color name="colorPrimary">#007cb8</color>
+    <color name="colorPrimaryDark">#01608e</color>
     <color name="colorAccent">#878686</color>
-    <color name="error">@color/colorPrimary</color>
-    <color name="textColorRed">@color/colorPrimary</color>
+
+    <color name="error">#E11323</color>
+    <color name="textColorRed">@color/error</color>
     <color name="textColorWhite">@color/white</color>
 
 
@@ -12,5 +13,6 @@
     <color name="black">#000000</color>
     <color name="grey">#C0C0C0</color>
     <color name="light_grey">#e9e5e5</color>
+    <color name="blue_grey">#90A4AE</color>
 
 </resources>

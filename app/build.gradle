@@ -46,6 +46,8 @@ dependencies {
     implementation 'com.pkmmte.view:circularimageview:1.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.github.badoualy:datepicker-timeline:c6dcd05737'
+    compile 'com.master.android:permissionhelper:1.1'
 
 // dexter runtime permissions
     implementation 'com.karumi:dexter:4.2.0'
