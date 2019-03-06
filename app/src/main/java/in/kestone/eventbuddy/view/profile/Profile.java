@@ -4,16 +4,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -32,10 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.master.permissionhelper.PermissionHelper;
-import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,17 +45,10 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.data.DataManager;
-import in.kestone.eventbuddy.model.app_config.UserName;
 import in.kestone.eventbuddy.view.base.MvpView;
-import in.kestone.eventbuddy.view.login.LoginPresenter;
 import in.kestone.eventbuddy.widgets.ToolbarTextView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class Profile extends AppCompatActivity implements MvpView {
     private static final int SELECT_PHOTO = 0x01;
@@ -95,12 +84,11 @@ public class Profile extends AppCompatActivity implements MvpView {
         setContentView( R.layout.activity_profile );
         ButterKnife.bind( this );
 
-        Toolbar toolbar =  findViewById( R.id.toolbar );
+        Toolbar toolbar = findViewById( R.id.toolbar );
         ToolbarTextView toolbarTitle = toolbar.findViewById( R.id.mTitleTv );
         setSupportActionBar( toolbar );
         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-        toolbarTitle.setText( "" );
-
+        toolbarTitle.setText( "Update Profile" );
         mPassIv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,13 +126,13 @@ public class Profile extends AppCompatActivity implements MvpView {
         mobileTv.setText( dataManager.getMobile() );
         organizationTv.setText( dataManager.getOrganization() );
         designationTv.setText( dataManager.getDesignation() );
-        byte[] decodedString = Base64.decode(dataManager.getImagePath(), Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        Picasso.with( this ).load( decodedByte )
-//                .resize( 80, 80 )
-//                .placeholder( R.mipmap.ic_launcher_round )
-//                .into( profileImage );
-        profileIv.setImageBitmap( decodedByte );
+        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
+        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+        Picasso.with( this ).load( dataManager.getImagePath() )
+                .resize( 80, 80 )
+                .placeholder( R.drawable.user )
+                .into( profileIv );
+//        profileIv.setImageBitmap( decodedByte );
 
         profileIv.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -201,33 +189,33 @@ public class Profile extends AppCompatActivity implements MvpView {
             public void onClick(View v) {
 //                if(ConnectionCheck.connectionStatus(EditProfile.this)){
 //                    Progress.showProgress(Profile.this);
-                    JSONObject jsonObject = new JSONObject();
+                JSONObject jsonObject = new JSONObject();
 
-                    try {
-                        jsonObject.put("Name",nameTv.getText().toString());
-                        jsonObject.put("Designation",designationTv.getText().toString());
-                        jsonObject.put("Organization",organizationTv.getText().toString());
-                        jsonObject.put("EmailID", dataManager.getEmailId());
-                        jsonObject.put("Mobile",mobileTv.getText().toString());
-                        if(str.length()>0){
-                            jsonObject.put("ProfilePic",str);
-                        }else {
-                            jsonObject.put("ProfilePic","");
-                        }
+                try {
+                    jsonObject.put( "Name", nameTv.getText().toString() );
+                    jsonObject.put( "Designation", designationTv.getText().toString() );
+                    jsonObject.put( "Organization", organizationTv.getText().toString() );
+                    jsonObject.put( "EmailID", dataManager.getEmailId() );
+                    jsonObject.put( "Mobile", mobileTv.getText().toString() );
+                    if (str.length() > 0) {
+                        jsonObject.put( "ProfilePic", str );
+                    } else {
+                        jsonObject.put( "ProfilePic", "" );
+                    }
 
 //                        Log.d("UpdateProParams", jsonObject.toString());
-                        dataManager.saveDetail( dataManager.getUserId(), nameTv.getText().toString(),
-                                dataManager.getEmailId(), designationTv.getText().toString(), str,
-                                organizationTv.getText().toString(), mobileTv.getText().toString() );
+                    dataManager.saveDetail( dataManager.getUserId(), nameTv.getText().toString(),
+                            dataManager.getEmailId(), designationTv.getText().toString(), str,
+                            organizationTv.getText().toString(), mobileTv.getText().toString() );
 
-                        Toast.makeText( context, "Profile Updated", Toast.LENGTH_SHORT ).show();
-                        finish();
+                    Toast.makeText( context, "Profile Updated", Toast.LENGTH_SHORT ).show();
+                    finish();
 //                        new UpdateProfile(ApiUrl.UpdateProfile,jsonObject.toString());
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Progress.closeProgress();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Progress.closeProgress();
+                }
 
 
 //                }else{
@@ -235,6 +223,25 @@ public class Profile extends AppCompatActivity implements MvpView {
 //                }
             }
         } );
+
+        //
+        // sequence example
+        ShowcaseConfig conf = new ShowcaseConfig();
+        conf.setDelay( 500 ); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence( this, "123" );
+
+        sequence.setConfig( conf );
+
+        sequence.addSequenceItem( updateBtn, "Update your profile", "GOT IT" );
+
+//	sequence.addSequenceItem(mButtonTwo,
+//            "This is button two", "GOT IT");
+//
+//	sequence.addSequenceItem(mButtonThree,
+//            "This is button three", "GOT IT");
+
+        sequence.start();
 
     }
 
@@ -419,4 +426,5 @@ public class Profile extends AppCompatActivity implements MvpView {
 //        }
 //
 //    }
+
 }

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ReadJson {
-    public String loadJSONFromAsset(Activity activity, String fileName) {
+    public static String loadJSONFromAsset(Activity activity, String fileName) {
         String json=null;
         try {
             InputStream is = activity.getAssets().open( fileName);

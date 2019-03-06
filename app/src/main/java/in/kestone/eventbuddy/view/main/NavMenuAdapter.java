@@ -17,8 +17,7 @@ import java.util.List;
 
 import in.kestone.eventbuddy.Eventlistener.ViewClickListener;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.app_config.Menu;
-import in.kestone.eventbuddy.view.main.MainActivity;
+import in.kestone.eventbuddy.model.app_config_model.Menu;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
 public class NavMenuAdapter<T> implements ListAdapter {
@@ -87,33 +86,33 @@ public class NavMenuAdapter<T> implements ListAdapter {
         }
 
         final Menu item = getItem( i );
-            vh.textViewName.setText( item.getMenutitle() );
+            vh.textViewName.setText( item.getDisplayTitle() );
             if(item.getMenutitle().equalsIgnoreCase( "Log Out" )){
-                Picasso.with( context ).load( R.drawable.log_out ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.log_out).error( R.drawable.log_out).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Activity Stream" )){
-                Picasso.with( context ).load( R.drawable.ic_activity_stream ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_activity_stream ).error( R.drawable.ic_activity_stream ).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Agenda" )){
-                Picasso.with( context ).load( R.drawable.ic_agenda ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_agenda ).error( R.drawable.ic_agenda ).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Speakers" )){
-                Picasso.with( context ).load( R.drawable.ic_speaker ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder(R.drawable.ic_speaker ).error( R.drawable.ic_speaker).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Delegates" )){
-                Picasso.with( context ).load( R.drawable.delegates ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.delegates ).error( R.drawable.delegates).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Networking" )){
-                Picasso.with( context ).load( R.drawable.ic_menu_slideshow ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_menu_slideshow ).error( R.drawable.ic_menu_slideshow).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Polls" )){
-                Picasso.with( context ).load( R.drawable.ic_polls ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_polls ).error( R.drawable.ic_polls).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Ask a Question" )){
-                Picasso.with( context ).load( R.drawable.ask_question ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Social" )){
-                Picasso.with( context ).load( R.drawable.ic_menu_share ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_menu_share ).error( R.drawable.ic_menu_share).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Gallery" )){
-                Picasso.with( context ).load( R.drawable.ic_gallery_logo ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_gallery_logo ).error( R.drawable.ic_gallery_logo ).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Venue" )){
-                Picasso.with( context ).load( R.drawable.ic_location ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_location ).error( R.drawable.ic_location ).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Feedback" )){
-                Picasso.with( context ).load( R.drawable.ic_feedback ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ic_feedback ).error( R.drawable.ic_feedback ).into( vh.imageView );
             }else if(item.getMenutitle().equalsIgnoreCase( "Help Desk" )){
-                Picasso.with( context ).load( R.drawable.ic_help ).placeholder( R.mipmap.ic_launcher_round ).error( R.mipmap.ic_launcher ).into( vh.imageView );
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ic_help ).error( R.drawable.ic_help  ).into( vh.imageView );
             }
 
 
@@ -128,7 +127,7 @@ public class NavMenuAdapter<T> implements ListAdapter {
                 animation1.setDuration( 100 );
                 v.startAnimation( animation1 );
 
-                 vcl.onClick(item.getMenuid(), item.getMenutitle());
+                 vcl.onClick(item.getMenuid(), item.getDisplayTitle(), item.getMenutitle());
             }
         } );
 

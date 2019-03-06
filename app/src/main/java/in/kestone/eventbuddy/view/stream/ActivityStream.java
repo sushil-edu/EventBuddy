@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 import in.kestone.eventbuddy.R;
 
 
@@ -21,6 +19,7 @@ import in.kestone.eventbuddy.R;
  * A simple {@link Fragment} subclass.
  */
 public class ActivityStream extends Fragment {
+    FloatingActionButton fab;
     //    ArrayList<StreamData> streamDataList;
 //    ActivityStreamAdapter activityStreamAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -44,12 +43,13 @@ public class ActivityStream extends Fragment {
 //        recyclerView.setHasFixedSize( true );
 //        recyclerView.setAdapter( activityStreamAdapter );
 
-        FloatingActionButton fab = view.findViewById( R.id.fab );
+        fab = view.findViewById( R.id.fab );
         fab.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent( getContext(), AddActivity.class );
-//                startActivityForResult( intent, 100 );
+                Intent intent = new Intent( getContext(), AddActivity.class );
+                intent.putExtra( "title", getArguments().getString( "title") );
+                startActivityForResult( intent, 100 );
 
             }
         } );

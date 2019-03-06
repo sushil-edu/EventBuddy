@@ -59,7 +59,7 @@ public class FragmentVenue extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         LatLng sydney = new LatLng( 43.7409642, 7.4290689 );
-        mMap.addMarker( new MarkerOptions().position( sydney ).title( "Hotel Radissson" ).snippet( "Marker Description" ) );
+        mMap.addMarker( new MarkerOptions().position( sydney ).title( "Hotel Radisson" ).snippet( "Marker Description" ) );
         mMap.moveCamera( CameraUpdateFactory.newLatLng( sydney ) );
         // For zooming automatically to the location of the marker
 

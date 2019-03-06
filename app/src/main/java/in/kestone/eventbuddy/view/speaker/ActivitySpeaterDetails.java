@@ -65,7 +65,7 @@ public class ActivitySpeaterDetails extends AppCompatActivity implements View.On
         if (getIntent().getStringExtra( "Image" ).length() > 0) {
             Picasso.with( ActivitySpeaterDetails.this ).load( getIntent().getStringExtra( "Image" ) )
                     .resize( 100, 100 )
-                    .placeholder( R.drawable.ic_user ).into( profileIv );
+                    .placeholder( R.drawable.user ).into( profileIv );
         }
 
         mScheduleBtn.setOnClickListener( this );

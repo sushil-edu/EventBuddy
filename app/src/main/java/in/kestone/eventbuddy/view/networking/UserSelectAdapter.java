@@ -1,8 +1,6 @@
 package in.kestone.eventbuddy.view.networking;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 
 public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.MyHolder> {
 
@@ -41,7 +39,7 @@ public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.My
         holder.nameTv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selected.onSelect( speaker.getSpeakerName(), speaker.getSID() );
+                selected.onSelect( speaker.getSpeakerName(), speaker.getSId() );
                 dialog.dismiss();
             }
         } );

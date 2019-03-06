@@ -1,5 +1,6 @@
 package in.kestone.eventbuddy.view.main;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -42,15 +45,25 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import in.kestone.eventbuddy.Eventlistener.FragmentErrorListener;
 import in.kestone.eventbuddy.Eventlistener.ViewClickListener;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.data.DataManager;
-import in.kestone.eventbuddy.data.SharedPrefsHelper;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
-import in.kestone.eventbuddy.model.app_config.Menu;
+import in.kestone.eventbuddy.fragment.AskQuestionFragment;
+import in.kestone.eventbuddy.fragment.FAQFragment;
+import in.kestone.eventbuddy.fragment.FeedbackFragment;
+import in.kestone.eventbuddy.fragment.GalleryFragment;
+import in.kestone.eventbuddy.fragment.HelpDeskFragment;
+import in.kestone.eventbuddy.fragment.PollFragment;
+import in.kestone.eventbuddy.view.social.SocialFragment;
+import in.kestone.eventbuddy.fragment.WebViewFragment;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.Menu;
 import in.kestone.eventbuddy.view.agenda.AgendaFragment;
 import in.kestone.eventbuddy.view.networking.Networking;
+import in.kestone.eventbuddy.view.partners.PartnerFragment;
 import in.kestone.eventbuddy.view.profile.Profile;
 import in.kestone.eventbuddy.view.speaker.FragmentSpeaker;
 import in.kestone.eventbuddy.view.splash.ActivitySplash;
@@ -59,8 +72,7 @@ import in.kestone.eventbuddy.view.venue.FragmentVenue;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 import in.kestone.eventbuddy.widgets.ToolbarTextView;
 
-public class
-MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView {
+public class MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView, FragmentErrorListener {
 
     List<Menu> list = new ArrayList<>();
     NavMenuAdapter adapter;
@@ -101,6 +113,8 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
     boolean doubleBackToExitPressedOnce = false;
     MainPresenter mainPresenter;
     DataManager dataManager;
+    String appTitle;
+    Bundle bundle = new Bundle(  );
 
     public static Intent getStartIntent(Context context) {
         return new Intent( context, MainActivity.class );
@@ -170,6 +184,10 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
 //                .placeholder( R.mipmap.ic_launcher_round )
 //                .into( profileImage );
 
+        //default activity
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+
+
         // menu list adapter
         adapter = new NavMenuAdapter( this, list );
         listView.setAdapter( adapter );
@@ -181,6 +199,7 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -199,34 +218,55 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
     }
 
     @Override
-    public void onClick(Long mId, String title) {
-        Log.e( "Menu ID ", String.valueOf( mId ) );
-        openFragment( title );
+    public void onClick(int mId, final String dTitle, String mTitle) {
+        Log.e( "Menu ID ", String.valueOf( mId ) +" title "+mTitle);
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run() {
+        openFragment( dTitle, mTitle );
+//            }
+//        }, 50);
         drawerLayout.closeDrawers();
     }
 
-    private void openFragment(String title) {
-        if (!title.equals( "Log Out" )) {
-            mTitleTv.setText( title );
+    private void openFragment(String dTitle, String mTitle) {
+        appTitle = dTitle;
+        if (!dTitle.equals( "Log Out" )) {
+            mTitleTv.setText( appTitle );
         }
-        switch (title) {
+        switch (mTitle) {
             case "Log Out":
                 showPopUpLogOut();
                 break;
             case "Activity Stream":
+                bundle.putString( "title", dTitle );
+                ActivityStream activityStream = new ActivityStream();
+                activityStream.setArguments( bundle );
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, activityStream )
                         .commit();
                 break;
             case "Agenda":
-                getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new AgendaFragment() )
-                        .commit();
+                new Handler().postDelayed( new Runnable() {
+                    @Override
+                    public void run() {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace( R.id.container, new AgendaFragment() )
+                                .commit();
+                    }
+                }, 50 );
+
                 break;
             case "Speakers":
-                getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new FragmentSpeaker() )
-                        .commit();
+                new Handler().postDelayed( new Runnable() {
+                    @Override
+                    public void run() {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace( R.id.container, new FragmentSpeaker() )
+                                .commit();
+                    }
+                }, 50 );
+
                 break;
             case "Delegates":
                 getSupportFragmentManager().beginTransaction()
@@ -240,39 +280,75 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
                 break;
             case "Polls":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new PollFragment() )
                         .commit();
                 break;
             case "Ask a Question":
+            case "Knowledge Base":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new AskQuestionFragment() )
                         .commit();
                 break;
             case "Social":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new SocialFragment() )
                         .commit();
+                break;
             case "Gallery":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new GalleryFragment() )
                         .commit();
                 break;
             case "Venue":
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new FragmentVenue() )
                         .commit();
-//                startActivity( new Intent( this, MapsActivity.class ) );
                 break;
             case "Feedback":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new PollFragment() )
                         .commit();
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace( R.id.container, new FeedbackFragment() )
+//                        .commit();
                 break;
             case "Help Desk":
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new ActivityStream() )
+                        .replace( R.id.container, new HelpDeskFragment() )
                         .commit();
                 break;
+            case "Terms And Conditions":
+                String module = "Terms And Conditions";
+                bundle.putString( "module", module );
+                WebViewFragment fragment = new WebViewFragment();
+                fragment.setArguments( bundle );
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace( R.id.container, fragment )
+                        .commit();
+                break;
+
+            case "Faq":
+                getSupportFragmentManager().beginTransaction()
+                        .replace( R.id.container, new FAQFragment() )
+//                .addToBackStack( null )
+                        .commit();
+                break;
+
+            case "Partners":
+            case "Sponsors":
+
+                PartnerFragment pfragment = new PartnerFragment();
+
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction ft = manager.beginTransaction();
+//        ft.setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right );
+//        ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+                ft.replace( R.id.container, pfragment, CONSTANTS.PARTNERSDETAILS );
+                ft.addToBackStack( null );
+                ft.commit();
+                break;
+
         }
     }
 
@@ -290,11 +366,10 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         //meeting schedule and reschedule
         if (getIntent().getExtras() == null) {
             //default fragment
-            mTitleTv.setText( "Activity Stream" );
-            getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.container, new ActivityStream() )
-                    .commit();
-
+//            mTitleTv.setText( "Activity Stream" );
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace( R.id.container, new ActivityStream() )
+//                    .commit();
         } else if (getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Schedule" ) ||
                 getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Reschedule" )) {
             mTitleTv.setText( "Networking" );
@@ -322,37 +397,41 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
 
-        byte[] decodedString = Base64.decode(dataManager.getImagePath(), Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        Picasso.with( this ).load( decodedByte )
-//                .resize( 80, 80 )
-//                .placeholder( R.mipmap.ic_launcher_round )
-//                .into( profileImage );
-        profileImage.setImageBitmap( decodedByte );
+        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
+        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+        Picasso.with( this ).load( "ksdlfksdmsdmfsldkfsd" )
+                .resize( 80, 80 )
+                .placeholder( R.drawable.user )
+                .into( profileImage );
+//        profileImage.setImageBitmap( decodedByte );
     }
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen( GravityCompat.START )) {
-            drawerLayout.closeDrawer( GravityCompat.START );
-        } else {
-            if (doubleBackToExitPressedOnce) {
-                showPopUpExitFromApp();
-            }
-            //call default fragment
-            this.doubleBackToExitPressedOnce = true;
-            mTitleTv.setText( "Activity Stream" );
-            getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.container, new ActivityStream() )
-                    .commit();
-            new Handler().postDelayed( new Runnable() {
+        Log.e( "Count ", "" + getFragmentManager().getBackStackEntryCount() );
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else {
+            if (drawerLayout.isDrawerOpen( GravityCompat.START )) {
+                drawerLayout.closeDrawer( GravityCompat.START );
 
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
+            } else {
+                if (doubleBackToExitPressedOnce) {
+                    showPopUpExitFromApp();
                 }
-            }, 3000 );
+                //call default fragment
+                this.doubleBackToExitPressedOnce = true;
+                //default activity
+                openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+                new Handler().postDelayed( new Runnable() {
 
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                }, 3000 );
+
+            }
         }
     }
 
@@ -369,6 +448,8 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
             @Override
             public void onClick(View v) {
                 clearAll.dismiss();
+//                SharedPreferences.Editor sp = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
+//                sp.clear();
                 mainPresenter.setUserLoggedOut();
             }
         } );
@@ -430,5 +511,10 @@ MainActivity extends AppCompatActivity implements ViewClickListener, MainMvpView
         v.vibrate( 150 );
         Animation shake = AnimationUtils.loadAnimation( this, R.anim.shake );
         root.setAnimation( shake );
+    }
+
+    @Override
+    public void onError(boolean status) {
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
     }
 }

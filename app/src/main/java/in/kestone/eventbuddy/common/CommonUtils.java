@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 public class CommonUtils {
 
+    public static String AppConfigurationPrev = "AppConfigurationPref";
     public static boolean isEmailValid(String email) {
         Pattern pattern;
         Matcher matcher;

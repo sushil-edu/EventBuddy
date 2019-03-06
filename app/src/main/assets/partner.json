@@ -1,0 +1,75 @@
+{
+  "statusCode":"200",
+  "Details":[
+    {
+      "ModuleLabel":"Sponsors",
+      "Header":"Our Partners for\nAdobe Symposium India 2018",
+      "SubHeader":"Sub Title",
+      "CategoryDetails":[
+        {
+          "Id":1,
+          "Name":"Gold",
+          "List":[
+            {
+              "Id":1,
+              "Name":"Partner Name",
+              "Logo":"./eventbuddy/logo",
+              "LogoUrl":"./company/logo.jpg",
+              "Biography":"",
+              "Email":"name@email.com",
+              "Phone":"9876543210",
+              "WebsiteLink":"http:/www.partner.com/about",
+              "IsDisplayContactNo":"yes/no"
+            }
+          ]
+      },
+        {
+            "Id":2,
+            "Name":"Platinum",
+          "List":[
+            {
+              "Id":1,
+              "Name":"Partner Name",
+              "Logo":"./eventbuddy/logo",
+              "LogoUrl":"./company/logo.jpg",
+              "Biography":"",
+              "Email":"name@email.com",
+              "Phone":"9876543210",
+              "WebsiteLink":"http:/www.partner.com/about",
+              "IsDisplayContactNo":"yes/no"
+            }
+          ]
+        },
+        {
+          "Id":3,
+          "Name":"Showcase",
+          "List":[
+            {
+              "Id":1,
+              "Name":"Partner Name",
+              "Logo":"./eventbuddy/logo",
+              "LogoUrl":"./company/logo.jpg",
+              "Biography":"",
+              "Email":"name@email.com",
+              "Phone":"9876543210",
+              "WebsiteLink":"http:/www.partner.com/about",
+              "IsDisplayContactNo":"yes/no"
+            },
+            {
+              "Id":2,
+              "Name":"Partner Name 2",
+              "Logo":"./eventbuddy/logo2",
+              "LogoUrl":"./company/logo2.jpg",
+              "Biography":"",
+              "Email":"name@email.com",
+              "Phone":"9876543210",
+              "WebsiteLink":"http:/www.partner.com/about",
+              "IsDisplayContactNo":"yes/no"
+            }
+          ]
+        }
+        ]
+    }
+  ],
+  "message":"success or ErrorMessage"
+}

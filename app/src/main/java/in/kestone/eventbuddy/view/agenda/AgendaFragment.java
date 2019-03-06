@@ -23,9 +23,9 @@ import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.agenda_holder.AgendaList;
-import in.kestone.eventbuddy.model.agenda_holder.AgendaListFragment;
-import in.kestone.eventbuddy.model.agenda_holder.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_model.Track;
 
 
 /**
@@ -38,10 +38,11 @@ public class AgendaFragment extends Fragment {
     ViewPager viewPager;
     int tab_pos = 0;
     ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> listTrack = new ArrayList<>();
+    ArrayList<Track> listTrackDetails = new ArrayList<>(  );
     int tabCount;
     ModelAgenda modelAgenda;
-    // Our handler for received Intents. This will be called whenever an Intent
-// with an action named "custom-event-name" is broadcasted.
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -52,7 +53,11 @@ public class AgendaFragment extends Fragment {
                     new Runnable() {
                         @Override
                         public void run() {
-                            tabLayout.getTabAt( list.size() - 1 ).select();
+                            if(list.size()>0) {
+                                tabLayout.getTabAt( list.size() - 1 ).select();
+                            }else {
+                                tabLayout.getTabAt( listTrack.size() - 1 ).select();
+                            }
                         }
                     }, 50 );
 
@@ -74,16 +79,20 @@ public class AgendaFragment extends Fragment {
         if (AgendaList.getAgenda().getStatusCode().equalsIgnoreCase( "200" )) {
             tabCount = AgendaList.getAgenda().getAgenda().size();
             list.clear();
+            listTrack.clear();
             for (int i = 0; i < tabCount; i++) {
-                list.add( AgendaList.getAgenda().getAgenda().get( i ).getDate() );
+                if(AgendaList.getAgenda().getAgenda().get( 0 ).getTrack().get( 0 ).getTrackName().equalsIgnoreCase( "" )){
+                    list.add( AgendaList.getAgenda().getAgenda().get( i ).getDisplayLabel() );
+                }else {
+                    listTrack.add( AgendaList.getAgenda().getAgenda().get( i ).getDisplayLabel() );
+                }
             }
-            list.add( "My Agenda" );
 
         }
         tabLayout = view.findViewById( R.id.tabs );
         viewPager = view.findViewById( R.id.viewpager );
         setupViewPager( viewPager );
-        if (list.size() <= 4)
+        if (list.size() <= 4 || listTrack.size()<= 4)
             tabLayout.setTabMode( TabLayout.MODE_FIXED );
         else
             tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
@@ -101,21 +110,28 @@ public class AgendaFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
-        for (int i = 0; i < list.size(); i++) {
-            AgendaListFragment fView = new AgendaListFragment( i, list.size() );
-            adapter.addFrag( fView, list.get( i ) );
-        }
+//        if(list.size()>0){
+//            for (int i = 0; i < list.size(); i++) {
+//                AgendaListFragment fView = new AgendaListFragment( i, list.size() );
+//                adapter.addFrag( fView, list.get( i ) );
+//           }
+//        }else {
+            for (int i = 0; i < listTrack.size(); i++) {
+//                AgendaTrackFragmentNew fView = new AgendaTrackFragmentNew( i, listTrack.size() );
+                AgendaTrackFragment fView = new AgendaTrackFragment( i, AgendaList.getAgenda().getAgenda().get( i ).getTrack().size() );
+                adapter.addFrag( fView, listTrack.get( i ) );
+            }
+//        }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
 
     }
 
     public void setAgenda(Activity activity) {
-        modelAgenda = new Gson().fromJson( new ReadJson().loadJSONFromAsset( activity, "agenda.json" ),
+        modelAgenda = new Gson().fromJson(  ReadJson.loadJSONFromAsset( activity, "agenda.json" ),
                 ModelAgenda.class );
         if (modelAgenda.getStatusCode().equalsIgnoreCase( "200" )) {
             AgendaList.setAgenda( modelAgenda );
-
         } else {
             Log.e( "Status", String.valueOf( modelAgenda.getStatusCode() ) );
         }

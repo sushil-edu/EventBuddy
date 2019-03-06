@@ -1,0 +1,23 @@
+{
+  "statusCode":"200",
+  "FAQ":[
+    {
+      "ModuleLabel":"FAQ",
+      "Header":"FAQ title",
+      "SubHeader":"Sub Title",
+      "FAQList":[
+          {
+            "Id":1,
+            "Question":"FAQ Question",
+            "Answer":"FQA Answer"
+          },
+          {
+            "Id":2,
+            "Question":"FAQ Question 2",
+            "Answer":"FQA Answer 2"
+          }
+        ]
+    }
+  ],
+  "message":"success or ErrorMessage"
+}

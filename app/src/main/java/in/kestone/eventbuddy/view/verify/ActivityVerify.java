@@ -6,14 +6,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
+import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.fragment.FragmentCheckIn;
-import in.kestone.eventbuddy.fragment.FragmentOtp;
+import in.kestone.eventbuddy.fragment.OtpFragment;
 import in.kestone.eventbuddy.fragment.Priority;
 import in.kestone.eventbuddy.view.login.ActivityLogin;
+import in.kestone.eventbuddy.view.main.MainMvpView;
+import in.kestone.eventbuddy.view.main.MainPresenter;
+import in.kestone.eventbuddy.view.splash.ActivitySplash;
 
-public class ActivityVerify extends AppCompatActivity implements OnVerifiedListener {
-   String type="";
+public class ActivityVerify extends AppCompatActivity implements OnVerifiedListener, MainMvpView {
+    String type = "";
+    MainPresenter mainPresenter;
+    DataManager dataManager;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent( context, ActivityVerify.class );
@@ -26,14 +33,18 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_verify );
 
+        dataManager = ((MvpApp) getApplication()).getDataManager();
+        mainPresenter = new MainPresenter( dataManager );
+        mainPresenter.onAttach( this );
+
         type = getIntent().getStringExtra( "type" );
-        if(type.equalsIgnoreCase( "checkIn" )){
+        if (type.equalsIgnoreCase( "checkIn" )) {
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.container, new FragmentCheckIn() )
                     .commit();
-        }else if(type.equalsIgnoreCase( "otp" )){
+        } else if (type.equalsIgnoreCase( "otp" )) {
             getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.container, new FragmentOtp() )
+                    .replace( R.id.container, new OtpFragment() )
                     .commit();
         }
     }
@@ -44,10 +55,28 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.container, new FragmentCheckIn() )
                     .commit();
-        }else if (status.equalsIgnoreCase( "check-in" )) {
+        } else if (status.equalsIgnoreCase( "check-in" )) {
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.container, new Priority() )
                     .commit();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mainPresenter.setUserLoggedOut();
+        startActivity( new Intent( ActivityVerify.this, ActivityLogin.class ) );
+        finish();
+
+    }
+
+    @Override
+    public void openSplashActivity() {
+        Intent intent = ActivitySplash.getStartIntent( this );
+        startActivity( intent );
+        finish();
+    }
+
+
 }

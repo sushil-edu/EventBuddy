@@ -23,9 +23,9 @@ import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.agenda_holder.AgendaList;
-import in.kestone.eventbuddy.model.agenda_holder.ModelAgenda;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +56,7 @@ public class FragmentSpeaker extends Fragment {
         recyclerView.setHasFixedSize( true );
         speakerList = new ArrayList<>();
         setAgenda( getActivity() );
-        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getDetails().get( 0 ).getSpeaker() );
+        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getTrack().get( 0 ).getDetails().get( 0 ).getSpeaker() );
         speakerAdapter = new SpeakersAdapter( getContext(), speakerList );
         recyclerView.setAdapter( speakerAdapter );
 //        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -105,7 +105,7 @@ public class FragmentSpeaker extends Fragment {
     }
 
     public void setAgenda(Activity activity) {
-        modelAgenda = new Gson().fromJson( new ReadJson().loadJSONFromAsset( activity, "agenda.json" ), ModelAgenda.class );
+        modelAgenda = new Gson().fromJson( ReadJson.loadJSONFromAsset( activity, "agenda.json" ), ModelAgenda.class );
         if (modelAgenda.getStatusCode().equalsIgnoreCase( "200" )) {
             AgendaList.setAgenda( modelAgenda );
 
@@ -117,13 +117,14 @@ public class FragmentSpeaker extends Fragment {
     private void filter(String text) {
         //new array list that will hold the filtered data
         ArrayList<Speaker> filterdNames = new ArrayList<>();
-
+        filterdNames.clear();
         //looping through existing elements
         for (Speaker s : speakerList) {
             //if the existing elements contains the search input
             if (s.getSpeakerName().toLowerCase().contains( text.toLowerCase() )) {
                 //adding the element to filtered list
                 filterdNames.add( s );
+                Log.e("Name ", s.getSpeakerName());
             }
         }
 

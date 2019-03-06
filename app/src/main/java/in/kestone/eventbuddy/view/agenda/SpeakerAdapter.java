@@ -10,12 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 import in.kestone.eventbuddy.view.speaker.ActivitySpeaterDetails;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
@@ -73,7 +74,7 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
 
         Picasso.with( context ).load( speakerData.getSpeakerImage() )
                 .resize( 80, 80 )
-                .placeholder( R.drawable.ic_user )
+                .placeholder( R.drawable.user )
                 .into( holder.profileIv );
 
     }

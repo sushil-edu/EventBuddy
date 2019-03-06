@@ -14,13 +14,13 @@
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">@dimen/dimen_18sp</item>
-        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/helvetica_neue</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/arial</item>
 
     </style>
 
     <style name="Toolbar.Agenda" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">@dimen/dimen_16sp</item>
-        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/helvetica_neue</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/arial</item>
         <item name="textAllCaps">false</item>
         <!--<item name="tabGravity">center</item>-->
         <!--<item name="tabMode">fixed</item>-->
@@ -37,6 +37,21 @@
         <item name="colorControlActivated">@color/colorPrimary
         </item> <!-- activated color change as you wish -->
         <item name="android:textColor">#FFFF3F3C</item> <!-- checkbox text color -->
+    </style>
+
+    <style name="AppTabLayout2" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/YourTextAppareance</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="YourTextAppareance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily" tools:ignore="NewApi">@font/arial</item>
+    </style>
+
+    <style name="MyCustomTextAppearance2" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">@dimen/dimen_16sp</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/arial</item>
     </style>
 
 </resources>

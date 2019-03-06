@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 
 public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHolder> {
 
@@ -60,7 +60,7 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
         } );
         Picasso.with( context ).load( speakerData.getSpeakerImage() )
                 .resize( 80, 80 )
-                .placeholder( R.drawable.ic_user )
+                .placeholder( R.drawable.user )
                 .into( holder.profileIv );
     }
 

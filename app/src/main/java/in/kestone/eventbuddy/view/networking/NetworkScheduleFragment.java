@@ -17,7 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.badoualy.datepicker.DatePickerTimeline;
-import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,8 +28,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
-import in.kestone.eventbuddy.model.agenda_holder.AgendaList;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 
 public class NetworkScheduleFragment extends Fragment implements View.OnClickListener, SelectedSpeaker {
 
@@ -55,7 +54,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     @BindView( R.id.meetingRequestBtn )
     Button meetingRequestBtn;
     String dayStr = "", monthStr = "", hoursStr = "", minutesStr = "";
-    int speakerId=999;
+    long speakerId=999;
     private ArrayList<Speaker> speakerList = new ArrayList<>();
     public NetworkScheduleFragment() {
     }
@@ -192,7 +191,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 //            e.printStackTrace();
 //        }
         speakerList.clear();
-        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getDetails().get( 0 ).getSpeaker() );
+        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getTrack().get( 0 ).getDetails().get( 0 ).getSpeaker() );
         RecyclerView recyclerView =  dialog.findViewById( R.id.recyclerView );
         recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
         recyclerView.setAdapter( new UserSelectAdapter( this, speakerList, dialog ) );
@@ -269,7 +268,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     }
 
     @Override
-    public void onSelect(String speakerName, int sid) {
+    public void onSelect(String speakerName, long sid) {
         speakerId = sid;
         nameTv.setText( speakerName );
     }

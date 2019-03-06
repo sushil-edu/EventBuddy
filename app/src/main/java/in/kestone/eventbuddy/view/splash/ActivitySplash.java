@@ -1,16 +1,15 @@
 package in.kestone.eventbuddy.view.splash;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
@@ -20,10 +19,11 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.common.ReadJson;
 import in.kestone.eventbuddy.data.DataManager;
-import in.kestone.eventbuddy.model.app_config.AppConf;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.AppConf;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.view.login.ActivityLogin;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -35,10 +35,13 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     CustomTextView tv_eventName;
     @BindView(R.id.tv_error)
     CustomTextView tv_error;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    SharedPreferences.Editor editor;
+    SharedPreferences preferences;
     AppConf ac;
     SplashPresenter mSplashPresenter;
-    @BindView( R.id.progressBar )
-    ProgressBar progressBar;
+    String appConfiguration = "";
 
 
     public static Intent getStartIntent(Context context) {
@@ -61,32 +64,42 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     private void initialiseView() {
         ButterKnife.bind( this );
         //set configuration
-
-//        Progress.showProgress( this );
+        Progress.showProgress( this );
         new Handler().postDelayed( new Runnable() {
             @Override
             public void run() {
-                setAppConf();
-//                Progress.closeProgress();
+                appConfiguration = ReadJson.loadJSONFromAsset( ActivitySplash.this, "app_conf.json" );
+
+                Log.d( "Conf ", appConfiguration );
+                if (preferences == null ) {
+                    editor = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
+                    editor.putString( "AppConfiguration", appConfiguration );
+                    editor.apply();
+                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
+                    ac = new Gson().fromJson( preferences.getString( "AppConfiguration", "" ), AppConf.class );
+                } else {
+                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
+                    ac = new Gson().fromJson( preferences.getString( "AppConfiguration", "" ), AppConf.class );
+
+                }
+                setAppConf( ac );
             }
         }, 2000 );
 
     }
 
-    private void setAppConf() {
-        ac = new Gson().fromJson( new ReadJson().loadJSONFromAsset( ActivitySplash.this,
-                 "app_conf.json" ), AppConf.class );
-        if (ac.getStatusCode() == 200) {
-            ListEvent.setAppConf( ac );
-            //start activity
+    private void setAppConf(AppConf acf ) {
+        if (acf.getStatusCode() == 200) {
+            ListEvent.setAppConf( acf );
             DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
             mSplashPresenter = new SplashPresenter( dataManager );
             mSplashPresenter.onAttach( this );
             mSplashPresenter.decideNextActivity();
         } else {
-            Log.e( "Status", String.valueOf( ac.getStatusCode() ) );
+            Log.e( "Status", String.valueOf( acf.getStatusCode() ) );
             tv_error.setVisibility( View.VISIBLE );
         }
+        Progress.closeProgress();
     }
 
     @Override

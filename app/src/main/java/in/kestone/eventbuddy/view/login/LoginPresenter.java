@@ -22,7 +22,7 @@ import in.kestone.eventbuddy.view.base.BasePresenter;
 
 public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> implements LoginMvpPresenter<V> {
 
-    LoginPresenter(DataManager dataManager) {
+    public LoginPresenter(DataManager dataManager) {
         super(dataManager);
     }
 
@@ -32,7 +32,7 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
         getDataManager().saveDetail(id, name, emailId, designation, imagePath, organization, mobile);
         getDataManager().setLoggedIn();
         getMvpView().openMainActivity();
-//        getMvpView().openCheckInActivity();
+//      getMvpView().openCheckInActivity();
     }
 
 }

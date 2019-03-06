@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 

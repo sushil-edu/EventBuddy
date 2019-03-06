@@ -4,6 +4,11 @@
     android:layout_height="match_parent"
     android:background="@drawable/loginimage">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B0000000">
+
     <in.kestone.eventbuddy.widgets.CustomTextView
         android:id="@+id/tv_welcome_text"
         android:layout_width="wrap_content"
@@ -32,5 +37,5 @@
             android:textAllCaps="false"
             android:textColor="@color/white" />
     </LinearLayout>
-
+    </RelativeLayout>
 </RelativeLayout>

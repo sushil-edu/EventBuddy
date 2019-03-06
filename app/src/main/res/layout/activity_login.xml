@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/loginimage"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/splash"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
@@ -17,7 +18,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="@dimen/dimen_50dp">
+            android:background="#B0000000"
+            android:paddingTop="@dimen/dimen_50dp">
 
             <in.kestone.eventbuddy.widgets.CustomTextView
                 android:id="@+id/tv_event_title"
@@ -66,13 +68,15 @@
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textColorHint="@color/grey"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="-4dp"
-                        android:background="@color/grey" />
+                        android:background="@color/grey"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -81,19 +85,35 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <in.kestone.eventbuddy.widgets.CustomEditText
-                        android:id="@+id/et_password"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40sp"
-                        android:layout_marginTop="10dp"
-                        android:background="@null"
-                        android:hint="Password"
-                        android:inputType="textPassword"
-                        android:singleLine="true"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/grey"
-                        android:textSize="15sp" />
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+
+                        <in.kestone.eventbuddy.widgets.CustomEditText
+                            android:id="@+id/et_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="40sp"
+                            android:layout_marginTop="10dp"
+                            android:background="@null"
+                            android:hint="Password"
+                            android:inputType="textWebPassword"
+                            android:singleLine="true"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/grey"
+                            app:passwordToggleEnabled="true"
+                            android:textSize="15sp"
+                            />
+                        <!--<ImageView-->
+                            <!--android:id="@+id/image_show_password"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:src="@drawable/ic_eye"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:layout_centerVertical="true"/>-->
+                    </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -117,8 +137,4 @@
             </LinearLayout>
         </LinearLayout>
     <!--</ScrollView>-->
-
-
-    <!--</android.support.v7.widget.CardView>-->
-
 </LinearLayout>

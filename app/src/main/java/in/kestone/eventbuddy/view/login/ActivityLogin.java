@@ -15,11 +15,10 @@ import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.data.DataManager;
-import in.kestone.eventbuddy.model.app_config.Button;
-import in.kestone.eventbuddy.model.app_config.ForgotButton;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
-import in.kestone.eventbuddy.model.app_config.Password;
-import in.kestone.eventbuddy.model.app_config.UserName;
+import in.kestone.eventbuddy.model.app_config_model.Button;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.Password;
+import in.kestone.eventbuddy.model.app_config_model.UserName;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.view.verify.ActivityVerify;
 import in.kestone.eventbuddy.widgets.CustomButton;
@@ -41,7 +40,11 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     LinearLayout layout_email;
     @BindView(R.id.layout_password)
     LinearLayout layout_password;
-    String er_email, er_password;
+//    @BindView( R.id.image_show_password )
+//    ImageView image_show_password;
+
+    String er_email_message, er_password_message,er_email_header, er_password_header ;
+    boolean flag=false;
 
     CustomDialog customDialog;
     LoginPresenter loginPresenter;
@@ -77,6 +80,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         setPasswordConf( ListEvent.getAppConf().getEvent().getLogin().getPassword() );
         setButtonConf( ListEvent.getAppConf().getEvent().getLogin().getButton() );
 
+//        image_show_password.setOnClickListener( this );
     }
 
     private void setButtonConf(Button button) {
@@ -87,7 +91,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     private void setPasswordConf(Password password) {
         if (password.getVisibility().equalsIgnoreCase( "yes" )) {
             et_password.setHint( password.getHint() );
-            er_password = password.getErrorMessage();
+            er_password_message = password.getErrorMessage();
+            er_password_header=password.getErrorHeader();
             if (password.getType().equalsIgnoreCase( "password" )) {
                 et_password.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT );
             } else {
@@ -100,7 +105,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 
     private void setEmailConf(UserName userName) {
         et_mail.setHint( userName.getHint() );
-        er_email = userName.getErrorMessage();
+        er_email_message = userName.getErrorMessage();
+        er_email_header=userName.getErrorHeader();
         if (userName.getType().equalsIgnoreCase( "email" )) {
             et_mail.setInputType( InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_CLASS_TEXT );
         } else {
@@ -114,6 +120,15 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
             case R.id.tv_LogIn:
                 onLoginButtonClick();
                 break;
+//            case R.id.image_show_password:
+//                if (flag==false) {
+//                    et_password.setTransformationMethod( HideReturnsTransformationMethod.getInstance() );
+//                    flag=true;
+//                }else {
+//                    et_password.setTransformationMethod( PasswordTransformationMethod.getInstance() );
+//                    flag=false;
+//                }
+//                break;
         }
     }
 
@@ -139,14 +154,14 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         String password = et_password.getText().toString();
 
         if (email.isEmpty() && password.isEmpty()) {
-            customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credentials", "Please enter valid credentials" );
+            customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credential", "Please enter valid credential" );
             et_mail.requestFocus();
         } else if (!CommonUtils.isEmailValid( email ) || email.isEmpty()) {
-            customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credentials", er_email );
+            customDialog.showInvalidPopUp( ActivityLogin.this, er_email_header, er_email_message );
             et_mail.requestFocus();
         } else if (layout_password.getVisibility() == View.VISIBLE) {
             if (password.isEmpty() || password == null) {
-                customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credentials", er_password );
+                customDialog.showInvalidPopUp( ActivityLogin.this, er_password_header, er_password_message );
                 et_password.requestFocus();
             } else {
                 int id = 1001;
@@ -155,7 +170,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                 String path = "/image/image.png";
                 String designation = "Software Engineer";
                 String organization = "Kestone Pvt. Ltd.";
-                String mobile = "7210094970";
+                String mobile = "9876543210";
                 loginPresenter.startLogin( email, id, name, designation, path, organization, mobile );
             }
         }

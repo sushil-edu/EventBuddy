@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -58,7 +57,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.app_config.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
@@ -79,7 +78,8 @@ public class FragmentCheckIn extends Fragment {
     double logA = 77.2933742;
     double latB = 0.0;
     double logB = 0.0;
-    String err_msg = null;
+    double radius=0.0;
+    String err_msg = "", err_header="";
     View view;
     @BindView(R.id.tv_checkin_title)
     CustomTextView checkIn_title;
@@ -110,6 +110,8 @@ public class FragmentCheckIn extends Fragment {
     private Boolean mRequestingLocationUpdates = false;
 
 
+
+
     public FragmentCheckIn() {
         // Required empty public constructor
     }
@@ -122,6 +124,9 @@ public class FragmentCheckIn extends Fragment {
         view = inflater.inflate( R.layout.fragment_check_in, container, false );
         ButterKnife.bind( this, view );
 
+        latA = ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
+        logA = ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
+        radius = ListEvent.getAppConf().getEvent().getGeoTag().getRadius();
 
         dialog = new CustomDialog();
         onVerifiedListener = (OnVerifiedListener) getActivity();
@@ -140,11 +145,14 @@ public class FragmentCheckIn extends Fragment {
         }
 
         try {
-            Log.e( "Compare ", "" + dtDate.after( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.before( dateFormat.parse( activationDateTo ) ) );
-            if (dtDate.after( dateFormat.parse( activationDateFrom ) ) && dtDate.before( dateFormat.parse( activationDateTo ) )) {
-//                Log.e( "Date and time ", "Date " + strDate + " Time " + strTime + " act date " + activationDateTo + " act time " + activationTimeTo );
-                if (dtTime.after( timeFormat.parse( activationTimeFrom ) ) && dtDate.before( timeFormat.parse( activationTimeTo ) )) {
+//            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.compareTo( dateFormat.parse( activationDateTo ) ) );
+            Log.e( "Compare time", "" + dtTime.compareTo( timeFormat.parse( activationTimeFrom ) ) + " to " + dtTime.compareTo( timeFormat.parse( activationTimeTo ) ) );
+            if (dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
+                if (dtTime.compareTo( timeFormat.parse( activationTimeFrom ) )>=0 && dtTime.compareTo( timeFormat.parse( activationTimeTo ) )<=0) {
                     tv_checkIn.setEnabled( true );
+                }else {
+                    tv_checkIn.setEnabled( false );
+                    tv_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
                 }
 
             } else {
@@ -158,6 +166,7 @@ public class FragmentCheckIn extends Fragment {
         checkIn_title.setText( ListEvent.getAppConf().getEvent().getGeoTag().getWelcomeText() );
         tv_checkIn.setText( ListEvent.getAppConf().getEvent().getGeoTag().getLabel() );
         err_msg = ListEvent.getAppConf().getEvent().getGeoTag().getErrorMessage();
+        err_header= ListEvent.getAppConf().getEvent().getGeoTag().getErrorHeader();
         tv_checkIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,11 +180,11 @@ public class FragmentCheckIn extends Fragment {
                     logB = mCurrentLocation.getLongitude();
 
                     Log.e( "Diff ", "" + getDifference( latB, logB ) + " error " + err_msg );
-                    if (getDifference( latB, logB ) < 5000) {
+                    if (getDifference( latB, logB ) < radius) {
 
                         onVerifiedListener.onVerified( "check-in" );
                     } else {
-                        dialog.showInvalidPopUp( getActivity(), "Error", err_msg );
+                        dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                     }
                 } else {
                     dialog.showInvalidPopUp( getActivity(), "Error", "Please try again." );
@@ -196,7 +205,7 @@ public class FragmentCheckIn extends Fragment {
     //location
 
     private void init() {
-        Progress.showProgress( getActivity() );
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient( getActivity() );
         mSettingsClient = LocationServices.getSettingsClient( getActivity() );
 
@@ -264,7 +273,7 @@ public class FragmentCheckIn extends Fragment {
                                 mLocationCallback, Looper.myLooper() );
 
                         updateLocationUI();
-                        Progress.closeProgress();
+
                     }
                 } )
                 .addOnFailureListener( getActivity(), new OnFailureListener() {
@@ -402,7 +411,10 @@ public class FragmentCheckIn extends Fragment {
         locationB.setLatitude( latB );
         locationB.setLongitude( logB );
 
+        Log.e("LatLong ", ""+locationA+" B "+locationB);
+
         return locationA.distanceTo( locationB );
     }
+
 
 }

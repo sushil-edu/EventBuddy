@@ -26,12 +26,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
-import in.kestone.eventbuddy.model.agenda_holder.Detail;
-import in.kestone.eventbuddy.model.agenda_holder.Speaker;
+import in.kestone.eventbuddy.model.agenda_model.Detail;
+import in.kestone.eventbuddy.model.agenda_model.Speaker;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
 public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder> {
@@ -40,10 +40,10 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
     private float rat;
     private Context context;
     private Activity activity;
-    private ArrayList<Detail> agendaList;
+    private List<Detail> agendaList;
     private ArrayList<Speaker> speakerList;
 
-    public AgendaAdapter(Activity activity, ArrayList<Detail> detailArrayList) {
+    public AgendaAdapter(Activity activity, List<Detail> detailArrayList) {
         this.context = activity;
         this.agendaList = detailArrayList;
         this.activity = (Activity) context;
@@ -100,7 +100,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             holder.layout_rating.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    rate = dialogRating( context, agendaData.getRatingLabel(), agendaData.getId() );
+                    rate = dialogRating( context, agendaData.getRatingLabel(), agendaData.getId(), agendaData.getRatingPlaceholder() );
                     holder.avgRatingBar.setRating( rate );
                 }
             } );
@@ -109,6 +109,13 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             holder.addIv.setVisibility( View.GONE );
         }
         //+MyMeeting
+        if(agendaData.getMyAgendaVisibility()==1){
+            holder.addIv.setVisibility( View.VISIBLE );
+            holder.addIv.setText( agendaData.getMyAgendaTitle() );
+        }else{
+            holder.addIv.setVisibility( View.GONE );
+        }
+
         holder.addIv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,6 +127,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
+        Log.d( "sender", "Broadcasting message"+agendaList.size() );
         return agendaList.size();
     }
 
@@ -133,7 +141,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
         LocalBroadcastManager.getInstance( context ).sendBroadcast( intent );
     }
 
-    private float dialogRating(final Context context, String title, final int agendaID) {
+    private float dialogRating(final Context context, String title, final long agendaID, String placeHolder) {
         final Dialog rate = new Dialog( context );
         rate.requestWindowFeature( Window.FEATURE_NO_TITLE );
         rate.setCancelable( true );
@@ -141,6 +149,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
         LinearLayout root = rate.findViewById( R.id.layout_root );
         TextView tv_title = rate.findViewById( R.id.tv_title );
         EditText comment = rate.findViewById( R.id.tv_comment );
+        comment.setHint( placeHolder );
         tv_title.setText( title );
         rat = 0;
         final RatingBar ratingBar = rate.findViewById( R.id.avgRatingBar );

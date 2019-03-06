@@ -1,0 +1,29 @@
+{
+  "statusCode":"200",
+  "social":[
+    {
+      "ModuleLabel":"Social",
+      "Pages":[
+        {
+          "Id":1,
+          "Title":"Facebook",
+          "Required":"yes",
+          "Url":"https://kestone.in/"
+        },
+        {
+          "Id":2,
+          "Title":"LinkedIn",
+          "Required":"no",
+          "Url":"https://kestone.in/service-category.aspx"
+        },
+        {
+          "Id":3,
+          "Title":"Twitter",
+          "Required":"yes",
+          "Url":"https://kestone.in/blog.aspx"
+        }
+      ]
+    }
+  ],
+  "Message":"success or error message"
+}

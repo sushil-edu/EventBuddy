@@ -31,7 +31,7 @@
                     android:layout_height="96dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="@dimen/dimen_20dp"
-                    android:src="@drawable/ic_user" />
+                    android:src="@drawable/user" />
 
 
             <in.kestone.eventbuddy.widgets.CustomTextView
