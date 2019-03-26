@@ -13,13 +13,13 @@
         android:background="@color/light_grey"
         android:gravity="center"
         android:text="Information about\nAdobe Symposium India 2018 "
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title"
-        android:background="@color/bg_grey"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -28,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="10dp"
-            android:layout_weight="7"
-            android:background="@color/white">
+            android:layout_weight="7">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewFAQ"

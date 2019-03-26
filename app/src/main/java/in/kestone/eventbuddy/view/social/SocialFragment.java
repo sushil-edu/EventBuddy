@@ -10,16 +10,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.social_model.Social;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.model.social_model.MDatum;
+import in.kestone.eventbuddy.model.social_model.MSocial;
 import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +37,8 @@ public class SocialFragment extends Fragment {
     TabLayout tabs;
     @BindView(R.id.viewpager)
     ViewPager pager;
-    Social socialDetailsList;
-    ArrayList<String> pageList = new ArrayList<>();
+    MSocial socialDetailsList;
+    ArrayList<String> tabList = new ArrayList<>();
     int tabCount = 0;
 
 
@@ -41,41 +48,65 @@ public class SocialFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_social, container, false );
         ButterKnife.bind( this, view );
-        getSocials();
+
+        if (CommonUtils.isNetworkConnected( getContext() )) {
+            social();
+            Progress.showProgress( getContext() );
+        }
         return view;
     }
 
-    private void getSocials() {
-        socialDetailsList = new Gson().fromJson( ReadJson.loadJSONFromAsset( getActivity(), "social.json" ),
-                Social.class );
-        if (socialDetailsList.getStatusCode().equalsIgnoreCase( "200" )) {
-            tabCount = socialDetailsList.getSocial().get( 0 ).getPages().size();
-            for (int i = 0; i < tabCount; i++) {
-                if(socialDetailsList.getSocial().get( 0 ).getPages().get( i ).getRequired().equalsIgnoreCase( "yes" )) {
-                    pageList.add( socialDetailsList.getSocial().get( 0 ).getPages().get( i ).getTitle() );
-                }
-            }
-        } else {
-            Log.e( "Status", String.valueOf( socialDetailsList.getStatusCode() ) );
+    private void getSocials(MSocial mSocial) {
+        socialDetailsList = mSocial;
+        tabCount = socialDetailsList.getMData().size();
+        for (int i = 0; i < tabCount; i++) {
+            tabList.add( socialDetailsList.getMData().get( i ).getTitle() );
         }
+
         setupViewPager( pager );
-        if (pageList.size() <= 4)
-            tabs.setTabMode( TabLayout.MODE_FIXED );
-        else
-            tabs.setTabMode( TabLayout.MODE_SCROLLABLE );
+//        if (pageList.size() <= 4)
+//            tabs.setTabMode( TabLayout.MODE_FIXED );
+//        else
+//            tabs.setTabMode( TabLayout.MODE_SCROLLABLE );
 
         tabs.setupWithViewPager( pager );
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
-        for (int i = 0; i < pageList.size(); i++) {
-            SocialListFragment partner = new SocialListFragment( socialDetailsList.getSocial().get( 0 ).getPages().get( i ).getUrl() );
-            adapter.addFrag( partner, pageList.get( i ) );
+        for (int i = 0; i < tabList.size(); i++) {
+            SocialListFragment partner = new SocialListFragment( socialDetailsList.getMData().get( i ).getURL() );
+            adapter.addFrag( partner, tabList.get( i ));
         }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
 
     }
+
+    public void social() {
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<MSocial> call = apiInterface.social( CONSTANTS.EVENTID );
+        call.enqueue( new Callback<MSocial>() {
+            @Override
+            public void onResponse(Call<MSocial> call, Response<MSocial> response) {
+                if (response.body().getStatusCode() == 200 && !response.body().getMData().isEmpty() && response.code()==200) {
+
+                    getSocials( response.body() );
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                }
+
+                Progress.closeProgress();
+
+            }
+
+            @Override
+            public void onFailure(Call<MSocial> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+    }
+
 
 }

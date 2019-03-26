@@ -1,7 +1,6 @@
 package in.kestone.eventbuddy.view.agenda;
 
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,15 +16,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
 import in.kestone.eventbuddy.model.agenda_model.Track;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -39,9 +43,10 @@ public class AgendaFragment extends Fragment {
     int tab_pos = 0;
     ArrayList<String> list = new ArrayList<>();
     ArrayList<String> listTrack = new ArrayList<>();
-    ArrayList<Track> listTrackDetails = new ArrayList<>(  );
+    ArrayList<Track> listTrackDetails = new ArrayList<>();
     int tabCount;
     ModelAgenda modelAgenda;
+    APIInterface apiInterface;
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -53,11 +58,11 @@ public class AgendaFragment extends Fragment {
                     new Runnable() {
                         @Override
                         public void run() {
-                            if(list.size()>0) {
-                                tabLayout.getTabAt( list.size() - 1 ).select();
-                            }else {
-                                tabLayout.getTabAt( listTrack.size() - 1 ).select();
-                            }
+//                            if (list.size() > 0) {
+//                                tabLayout.getTabAt( list.size() - 1 ).select();
+//                            } else {
+                            tabLayout.getTabAt( listTrack.size() - 1 ).select();
+//                            }
                         }
                     }, 50 );
 
@@ -74,67 +79,65 @@ public class AgendaFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_agenda, container, false );
 
-        //get agenda from json
-        setAgenda( getActivity() );
-        if (AgendaList.getAgenda().getStatusCode().equalsIgnoreCase( "200" )) {
-            tabCount = AgendaList.getAgenda().getAgenda().size();
-            list.clear();
-            listTrack.clear();
-            for (int i = 0; i < tabCount; i++) {
-                if(AgendaList.getAgenda().getAgenda().get( 0 ).getTrack().get( 0 ).getTrackName().equalsIgnoreCase( "" )){
-                    list.add( AgendaList.getAgenda().getAgenda().get( i ).getDisplayLabel() );
-                }else {
-                    listTrack.add( AgendaList.getAgenda().getAgenda().get( i ).getDisplayLabel() );
-                }
-            }
-
+        if (CommonUtils.isNetworkConnected( getContext() )) {
+            getAgenda();
+            Progress.showProgress( getActivity() );
+        } else {
+            CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Check Internet connection" );
         }
+
         tabLayout = view.findViewById( R.id.tabs );
         viewPager = view.findViewById( R.id.viewpager );
-        setupViewPager( viewPager );
-        if (list.size() <= 4 || listTrack.size()<= 4)
+
+        if (list.size() <= 4 || listTrack.size() <= 4)
             tabLayout.setTabMode( TabLayout.MODE_FIXED );
         else
             tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
 
-        tabLayout.setupWithViewPager( viewPager );
-
-        // Register to receive messages.
-        // We are registering an observer (mMessageReceiver) to receive Intents
-        // with actions named "custom-event-name".
         LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
                 new IntentFilter( "event-buddy" ) );
+
+        tabLayout.addOnTabSelectedListener( new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem( tab.getPosition() );
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        } );
 
         return view;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
-//        if(list.size()>0){
-//            for (int i = 0; i < list.size(); i++) {
-//                AgendaListFragment fView = new AgendaListFragment( i, list.size() );
-//                adapter.addFrag( fView, list.get( i ) );
-//           }
-//        }else {
-            for (int i = 0; i < listTrack.size(); i++) {
-//                AgendaTrackFragmentNew fView = new AgendaTrackFragmentNew( i, listTrack.size() );
-                AgendaTrackFragment fView = new AgendaTrackFragment( i, AgendaList.getAgenda().getAgenda().get( i ).getTrack().size() );
-                adapter.addFrag( fView, listTrack.get( i ) );
-            }
-//        }
+
+        for (int i = 0; i < listTrack.size(); i++) {
+            AgendaTrackFragment fView = new AgendaTrackFragment( i, modelAgenda.getAgenda().get( i ).getTrack().size(), modelAgenda );
+            adapter.addFrag( fView, listTrack.get( i ) );
+        }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
 
     }
 
-    public void setAgenda(Activity activity) {
-        modelAgenda = new Gson().fromJson(  ReadJson.loadJSONFromAsset( activity, "agenda.json" ),
-                ModelAgenda.class );
-        if (modelAgenda.getStatusCode().equalsIgnoreCase( "200" )) {
-            AgendaList.setAgenda( modelAgenda );
-        } else {
-            Log.e( "Status", String.valueOf( modelAgenda.getStatusCode() ) );
+    public void setAgenda(ModelAgenda modelAgenda) {
+        tabCount = modelAgenda.getAgenda().size();
+        listTrack.clear();
+        for (int i = 0; i < tabCount; i++) {
+            listTrack.add( modelAgenda.getAgenda().get( i ).getDisplayLabel() );
         }
+
+        setupViewPager( viewPager, modelAgenda );
+        tabLayout.setupWithViewPager( viewPager );
     }
 
 
@@ -144,5 +147,29 @@ public class AgendaFragment extends Fragment {
         LocalBroadcastManager.getInstance( getActivity() ).unregisterReceiver( mMessageReceiver );
         super.onDestroy();
     }
+
+    public void getAgenda() {
+
+        apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<ModelAgenda> call = apiInterface.getAgenda( (int) CONSTANTS.EVENTID );
+        call.enqueue( new Callback<ModelAgenda>() {
+            @Override
+            public void onResponse(Call<ModelAgenda> call, Response<ModelAgenda> response) {
+                if(response.code()==200) {
+                    Log.e( "Response ", "" + response.body().getStatusCode() );
+//                AgendaList.setAgenda( response.body() );
+                    setAgenda( response.body() );
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<ModelAgenda> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+    }
+
 
 }

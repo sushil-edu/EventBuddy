@@ -2,6 +2,7 @@ package in.kestone.eventbuddy.view.networking;
 
 import android.app.Dialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,17 @@ import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 
 public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.MyHolder> {
 
 
-    private ArrayList<Speaker> userList;
+    private ArrayList<SpeakerDetail> userList;
     private SelectedSpeaker selected;
     private Dialog dialog;
 
 
-    UserSelectAdapter(SelectedSpeaker selectedSpeaker, ArrayList<Speaker> userList, Dialog dialog) {
+    UserSelectAdapter(SelectedSpeaker selectedSpeaker, ArrayList<SpeakerDetail> userList, Dialog dialog) {
         this.userList = userList;
         this.dialog = dialog;
         this.selected=selectedSpeaker;
@@ -34,12 +36,13 @@ public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.My
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        final Speaker speaker = userList.get(position);
-        holder.nameTv.setText(speaker.getSpeakerName());
+        final SpeakerDetail speaker = userList.get(position);
+        Log.e("Name ", speaker.getFirstName());
+        holder.nameTv.setText(speaker.getFirstName()+" "+speaker.getLastName());
         holder.nameTv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selected.onSelect( speaker.getSpeakerName(), speaker.getSId() );
+                selected.onSelect( speaker.getFirstName()+" "+speaker.getLastName(), speaker.getUserID(),"Speaker");
                 dialog.dismiss();
             }
         } );
@@ -48,7 +51,7 @@ public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.My
 
     @Override
     public int getItemCount() {
-        return userList.size()-1;
+        return userList.size();
     }
 
     class MyHolder extends RecyclerView.ViewHolder {

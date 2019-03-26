@@ -7,10 +7,13 @@ public class AppConf {
 
     @SerializedName("AppVersion")
     private float mAppVersion;
-    @SerializedName("Event")
+    @SerializedName("Data")
     Event mEvent;
     @SerializedName("StatusCode")
-    private float mStatusCode;
+    private int mStatusCode;
+
+    @SerializedName("Message")
+    private String mMessage;
 
     public float getAppVersion() {
         return mAppVersion;
@@ -28,12 +31,19 @@ public class AppConf {
         mEvent = event;
     }
 
-    public float getStatusCode() {
+    public int getStatusCode() {
         return mStatusCode;
     }
 
-    public void setStatusCode(float statusCode) {
+    public void setStatusCode(int statusCode) {
         mStatusCode = statusCode;
     }
 
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String mMessage) {
+        this.mMessage = mMessage;
+    }
 }

@@ -50,8 +50,8 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
             }
         } );
 
-        holder.contact_us_Text.setText( faqLists.get( position ).getQuestion() );
-        holder.et_invoice.setText( faqLists.get( position ).getAnswer() );
+        holder.contact_us_Text.setText( faqLists.get( position ).getQuestionText());
+        holder.et_invoice.setText( faqLists.get( position ).getAnswerText() );
     }
 
     @Override

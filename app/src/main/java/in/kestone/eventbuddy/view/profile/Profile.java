@@ -50,7 +50,7 @@ import in.kestone.eventbuddy.widgets.ToolbarTextView;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
-public class Profile extends AppCompatActivity implements MvpView {
+public class Profile extends AppCompatActivity implements MvpView{
     private static final int SELECT_PHOTO = 0x01;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     @BindView(R.id.profileIv)
@@ -126,8 +126,8 @@ public class Profile extends AppCompatActivity implements MvpView {
         mobileTv.setText( dataManager.getMobile() );
         organizationTv.setText( dataManager.getOrganization() );
         designationTv.setText( dataManager.getDesignation() );
-        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
-        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+//        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
+//        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
         Picasso.with( this ).load( dataManager.getImagePath() )
                 .resize( 80, 80 )
                 .placeholder( R.drawable.user )
@@ -150,7 +150,7 @@ public class Profile extends AppCompatActivity implements MvpView {
                             public void onClick(DialogInterface dialog, int which) {
 
                                 Intent photoPickerIntent = new Intent( Intent.ACTION_PICK );
-                                photoPickerIntent.setType( "image/*" );
+                                photoPickerIntent.setType( "def_image/*" );
                                 startActivityForResult( photoPickerIntent, SELECT_PHOTO );
                             }
                         } );

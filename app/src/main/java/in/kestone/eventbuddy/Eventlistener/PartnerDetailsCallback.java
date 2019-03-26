@@ -1,10 +1,10 @@
 package in.kestone.eventbuddy.Eventlistener;
 
-import in.kestone.eventbuddy.model.partners_model.List;
+import in.kestone.eventbuddy.model.partners_model.Detail;
 
 public interface PartnerDetailsCallback {
 
 //    void onDetailClickCallback(ArrayList<in.kestone.eventbuddy.model.partners.List> detailArrayList);
 
-    void onDetailClickCallback(List list);
+    void onDetailClickCallback(Detail list);
 }

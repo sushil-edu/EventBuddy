@@ -1,224 +1,243 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_grey">
 
-    <ScrollView
+    <!-- TODO: Update blank fragment layout -->
+    <!--<ScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_margin="@dimen/dimen_10dp">-->
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_margin="@dimen/dimen_10dp">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/layoutTrack"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Poll Title"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/titleLimitTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="20dp"
-                    android:text="50 words left"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="12sp" />
-
-            </RelativeLayout>
-
-
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/pollTitleEt"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/white"
-                android:gravity="top"
-                android:maxLength="50"
-                android:padding="10dp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Poll Question"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/quetionLimitTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="20dp"
-                    android:text="200 words left"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="12sp" />
-
-            </RelativeLayout>
-
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/pollQuestionEt"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/white"
-                android:gravity="top"
-                android:maxLength="200"
-                android:padding="10dp" />
+            android:layout_height="45dp"
+            android:gravity="center_vertical">
 
             <in.kestone.eventbuddy.widgets.CustomTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Poll Answer Options"
+                android:id="@+id/selectTv"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Select Track"
                 android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:textSize="13sp"
+                android:visibility="gone" />
 
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/optionA"
+            <Spinner
+                android:id="@+id/spinnerTrack"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="20dp"
+                android:layout_weight="2"
+                android:visibility="gone" />
+
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/trackTv"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:hint="Option A"
-                android:paddingEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingStart="10dp" />
+                android:gravity="center"
+                android:text="Select Track" />
 
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/optionB"
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_down" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/blue_grey" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutSpeaker"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center_vertical">
+
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/selectTv2"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Select Speaker"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/spinnerSpeaker"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="20dp"
+                android:layout_weight="2"
+                android:visibility="gone" />
+
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/speakerTv"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:hint="Option B"
-                android:paddingEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingStart="10dp" />
+                android:gravity="center"
+                android:text="Select Speaker" />
 
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/optionC"
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_down" />
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:hint="Option C"
-                android:paddingEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingStart="10dp" />
+                android:layout_height="0.5dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/blue_grey" />
 
-            <in.kestone.eventbuddy.widgets.CustomEditText
-                android:id="@+id/optionD"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:hint="Option D"
-                android:paddingEnd="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingStart="10dp" />
 
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
             <LinearLayout
+                android:id="@+id/layout_poll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:padding="@dimen/dimen_10dp">
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:text="How would you rate the sesion?"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:gravity="center">
+                    <in.kestone.eventbuddy.widgets.CustomTextView
+                        android:id="@+id/optionA"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/outline"
+                        android:gravity="center"
+                        android:text="A"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp" />
 
-                <in.kestone.eventbuddy.widgets.CustomButton
-                    android:id="@+id/createPollBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:text="Create Poll"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="17sp" />
+                    <in.kestone.eventbuddy.widgets.CustomTextView
+                        android:id="@+id/optionB"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/outline"
+                        android:gravity="center"
+                        android:text="B"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp" />
+                </LinearLayout>
 
-                <in.kestone.eventbuddy.widgets.CustomButton
-                    android:id="@+id/mBtnCancel"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:text="Cancel"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="17sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/dimen_20dp">
+                    <in.kestone.eventbuddy.widgets.CustomTextView
+                        android:id="@+id/optionC"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/outline"
+                        android:gravity="center"
+                        android:text="C"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp" />
+
+                    <in.kestone.eventbuddy.widgets.CustomTextView
+                        android:id="@+id/optionD"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/outline"
+                        android:gravity="center"
+                        android:text="D"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp" />
+                </LinearLayout>
+
 
             </LinearLayout>
+
+
+            <in.kestone.eventbuddy.widgets.CustomButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="130dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginBottom="50sp"
+                android:background="@color/colorPrimary"
+                android:elevation="0dp"
+                android:text="Submit"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
         </LinearLayout>
+    </LinearLayout>
+    <!--</ScrollView>-->
 
-
-    </ScrollView>
-
-
-</RelativeLayout>
+</FrameLayout>

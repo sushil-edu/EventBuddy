@@ -11,18 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.partners_model.CategoryDetail;
-import in.kestone.eventbuddy.model.partners_model.Detail;
-import in.kestone.eventbuddy.model.partners_model.MPartnersSponsors;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.model.partners_model.PartnerDetail;
 import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,18 +34,15 @@ import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
 public class PartnerFragment extends Fragment {
 
     View view;
-    @BindView(R.id.text_title)
-    TextView title;
+//    @BindView(R.id.text_title)
+//    TextView title;
     @BindView(R.id.tabs)
     TabLayout tabs;
     @BindView(R.id.viewpager)
     ViewPager pager;
-    MPartnersSponsors partnersSponsors;
     int tabCount;
-    ArrayList<MPartnersSponsors> partnersSponsorsArrayList = new ArrayList<>();
     ArrayList<String> catDetailArrayList = new ArrayList<String>();
-    Detail detailClass;
-    CategoryDetail categoryDetailClass;
+    PartnerDetail partnerDetail;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,24 +50,26 @@ public class PartnerFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_partner, container, false );
         ButterKnife.bind( this, view );
-        getParents();
+        if(CommonUtils.isNetworkConnected( getContext() ) ){
+            if(getArguments()!=null) {
+                Log.e("Type", getArguments().getString( "type" ));
+                getPartner(getArguments().getString( "type" ));
+                Progress.showProgress( getContext() );
+            }
+        }else {
+            CustomDialog.showInvalidPopUp( getContext(),CONSTANTS.ERROR,CONSTANTS.CHECKINTERNET );
+        }
         return view;
     }
 
-    private void getParents() {
-        partnersSponsors = new Gson().fromJson( ReadJson.loadJSONFromAsset( getActivity(), "partner.json" ),
-                MPartnersSponsors.class );
-        if (partnersSponsors.getStatusCode().equalsIgnoreCase( "200" )) {
-            title.setText( partnersSponsors.getDetails().get( 0 ).getHeader() );
+    private void getParents(PartnerDetail partnerDetail) {
+        this.partnerDetail = partnerDetail;
 
-//            detailClass = (Detail) partnersSponsors.getDetails();
-            tabCount = partnersSponsors.getDetails().get( 0 ).getCategoryDetails().size();
+            tabCount = partnerDetail.getData().size();
             for (int i = 0; i < tabCount; i++) {
-                catDetailArrayList.add( partnersSponsors.getDetails().get( 0 ).getCategoryDetails().get( i ).getName() );
+                catDetailArrayList.add( partnerDetail.getData().get( i ).getCategory());
             }
-        } else {
-            Log.e( "Status", String.valueOf( partnersSponsors.getStatusCode() ) );
-        }
+
         setupViewPager( pager );
         if (tabCount <= 4)
             tabs.setTabMode( TabLayout.MODE_FIXED );
@@ -78,11 +81,41 @@ public class PartnerFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
         for (int i = 0; i < tabCount; i++) {
-            PartnerListFragment partner = new PartnerListFragment( i, partnersSponsors.getDetails().get( 0 ).getCategoryDetails().get( i ).getList() );
+            PartnerListFragment partner = new PartnerListFragment( i, partnerDetail.getData().get( i ).getDetail());
             adapter.addFrag( partner, catDetailArrayList.get( i ) );
         }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
+
+    }
+
+    public void getPartner(String type) {
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<PartnerDetail> call;
+        if(type.contains( CONSTANTS.PARTNERS )) {
+            call = apiInterface.getPartners( CONSTANTS.EVENTID );
+        }else {
+            call = apiInterface.getSponsors( CONSTANTS.EVENTID );
+        }
+        call.enqueue( new Callback<PartnerDetail>() {
+            @Override
+            public void onResponse(Call<PartnerDetail> call, Response<PartnerDetail> response) {
+                if (response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && !response.body().getData().isEmpty()) {
+                        getParents( response.body() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( getContext(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<PartnerDetail> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
 
     }
 

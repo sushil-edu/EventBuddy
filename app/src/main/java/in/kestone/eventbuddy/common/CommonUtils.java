@@ -1,7 +1,11 @@
 package in.kestone.eventbuddy.common;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class CommonUtils {
 
@@ -16,6 +20,13 @@ public class CommonUtils {
         matcher = pattern.matcher(email);
         return matcher.matches();
     }
+
+    public static boolean isNetworkConnected(Context context) {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE);
+
+            return cm.getActiveNetworkInfo() != null;
+    }
+
 
 }
 

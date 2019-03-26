@@ -22,9 +22,9 @@ public class CustomDialog {
     static int flag =0;
     private Context contxt;
     static boolean result=false;
-    public void showInvalidPopUp(Context context, String title, String body) {
-        contxt=context;
-        final Dialog dialog = new Dialog( contxt );
+    public static void showInvalidPopUp(final Context context, String title, String body) {
+
+        final Dialog dialog = new Dialog( context );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.dialog_incorrect_credentials );
         TextView titleTv = dialog.findViewById( R.id.titleTv );

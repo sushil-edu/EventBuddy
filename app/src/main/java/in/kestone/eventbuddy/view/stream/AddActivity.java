@@ -1,16 +1,20 @@
 package in.kestone.eventbuddy.view.stream;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -24,36 +28,57 @@ import android.widget.Toast;
 
 import com.master.permissionhelper.PermissionHelper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.data.SharedPrefsHelper;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
+import in.kestone.eventbuddy.model.activity_stream_model.Stream;
+import in.kestone.eventbuddy.model.activity_stream_model.StreamDatum;
 import in.kestone.eventbuddy.widgets.CustomEditText;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class AddActivity extends AppCompatActivity {
 
-    @BindView( R.id.cameraImage ) ImageView addImageView;
-    @BindView( R.id.checkinIcon ) ImageView checkinIcon;
-    private TextView checkInIv, mTitleTv;
-    private CustomEditText txtFeedback;
     private static final int SELECT_PHOTO = 0x01;
     private static final int SELECT_QR_CODE = 102;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     public static String status;
-    private String str;
+    @BindView(R.id.cameraImage)
+    ImageView addImageView;
+    @BindView(R.id.checkinIcon)
+    ImageView checkinIcon;
+    private TextView checkInIv, mTitleTv;
+    private CustomEditText txtFeedback;
+    private String str, uploadedImagePath="testurl";
+    APIInterface apiInterface;
+    Uri imageUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -64,51 +89,58 @@ public class AddActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
-        mTitleTv= toolbar.findViewById( R.id.mTitleTv );
-        mTitleTv.setText( getIntent().getStringExtra( "title" ));
+        mTitleTv = toolbar.findViewById( R.id.mTitleTv );
+        mTitleTv.setText( getIntent().getStringExtra( "title" ) );
+        apiInterface = APIClient.getClient().create( APIInterface.class );
 
 //        RadioButton imgRadioButton = (RadioButton) findViewById(R.id.imgRadioBtn);
 //        RadioButton txtRadioButton = (RadioButton) findViewById(R.id.textRadioBtn);
-        final CardView textCard = (CardView) findViewById(R.id.textCard);
-        final RelativeLayout imageCard = (RelativeLayout) findViewById(R.id.imageCard);
-        checkInIv = (TextView) findViewById(R.id.checkInIv);
-        txtFeedback = (CustomEditText) findViewById(R.id.txtFeedback);
-        checkinIcon = (ImageView) findViewById(R.id.checkinIcon);
+        final CardView textCard = (CardView) findViewById( R.id.textCard );
+        final RelativeLayout imageCard = (RelativeLayout) findViewById( R.id.imageCard );
+        checkInIv = (TextView) findViewById( R.id.checkInIv );
+        txtFeedback = (CustomEditText) findViewById( R.id.txtFeedback );
+        checkinIcon = (ImageView) findViewById( R.id.checkinIcon );
 
 
-        addImageView = (ImageView) findViewById(R.id.cameraImage);
-        addImageView.setOnClickListener(new View.OnClickListener() {
+        addImageView = (ImageView) findViewById( R.id.cameraImage );
+        addImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PermissionHelper permissionHelper = new PermissionHelper(AddActivity.this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
-                permissionHelper.request(new PermissionHelper.PermissionCallback() {
+                String filename = Environment.getExternalStorageDirectory().getPath() + "/stream/stream.jpg";
+                imageUri = Uri.fromFile(new File(filename));
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+
+                PermissionHelper permissionHelper = new PermissionHelper( AddActivity.this, new String[]{Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100 );
+                permissionHelper.request( new PermissionHelper.PermissionCallback() {
                     @Override
                     public void onPermissionGranted() {
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
-                        builder.setMessage("Select Source");
-                        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder( AddActivity.this );
+                        builder.setMessage( "Select Source" );
+//                        builder.setPositiveButton( "Gallery", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                Intent photoPickerIntent = new Intent( Intent.ACTION_PICK );
+//                                photoPickerIntent.setType( "def_image/*" );
+//                                startActivityForResult( photoPickerIntent, SELECT_PHOTO );
+//                            }
+//                        } );
+
+                        builder.setNegativeButton( "Camera", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                                photoPickerIntent.setType("image/*");
-                                startActivityForResult(photoPickerIntent, SELECT_PHOTO);
-                            }
-                        });
-
-                        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                Intent takePictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                                }
+                                Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri);
+//                                if (takePictureIntent.resolveActivity( getPackageManager() ) != null) {
+                                    startActivityForResult( takePictureIntent, REQUEST_IMAGE_CAPTURE );
+//                                }
 
                             }
-                        });
+                        } );
                         builder.show();
 
 
@@ -116,29 +148,49 @@ public class AddActivity extends AppCompatActivity {
 
                     @Override
                     public void onPermissionDenied() {
-                        Log.d("Permission", "onPermissionDenied() called");
+                        Log.d( "Permission", "onPermissionDenied() called" );
                     }
 
                     @Override
                     public void onPermissionDeniedBySystem() {
-                        Log.d("Permission", "onPermissionDeniedBySystem() called");
+                        Log.d( "Permission", "onPermissionDeniedBySystem() called" );
                     }
-                });
+                } );
             }
-        });
+        } );
 
-        checkInIv.setOnClickListener(new View.OnClickListener() {
+        checkInIv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent(AddActivity.this, CheckIn.class);
 //                startActivityForResult(intent, SELECT_QR_CODE);
 
             }
-        });
+        } );
 
-        findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
+        findViewById( R.id.btnSubmit ).setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateFormat dateFormat = new SimpleDateFormat( "dd-MM-yy" );
+
+                String insertedDate = String.valueOf(dateFormat.format(  Calendar.getInstance().getTime()));
+
+                if (txtFeedback.getText().length() > 0) {
+                    StreamDatum streamDatum = new StreamDatum();
+                    streamDatum.setComment( txtFeedback.getText().toString() );
+                    streamDatum.setEventID( CONSTANTS.EVENTID );
+                    streamDatum.setImageURL( uploadedImagePath );
+                    streamDatum.setInsertedOn( insertedDate );
+                    streamDatum.setUserID( (long) new SharedPrefsHelper( AddActivity.this ).getUserId() );
+                    if (CommonUtils.isNetworkConnected( AddActivity.this )) {
+                        postStream( streamDatum );
+                        Progress.showProgress( AddActivity.this );
+                    } else {
+                        CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, "Check your internet connection" );
+                    }
+                }else {
+                    CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, "Write your comment." );
+                }
 
 //                if (addImageView.getDrawable() == null && checkInIv.getText().length() == 0 && txtFeedback.getText().length() == 0) {
 //
@@ -175,14 +227,14 @@ public class AddActivity extends AppCompatActivity {
 //                }
 //
             }
-        });
+        } );
 
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected( item );
     }
 
     @Override
@@ -192,48 +244,39 @@ public class AddActivity extends AppCompatActivity {
             final Uri resultUri = data.getData();
             try {
 
-                Bitmap photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                byte[] barray = stream.toByteArray();
-
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.PNG, 10, baos); //bm is the bitmap object
-                byte[] b = baos.toByteArray();
-                Bitmap compressedImage = BitmapFactory.decodeByteArray(b, 0, b.length);
-
-                str = Base64.encodeToString(b, Base64.DEFAULT);
-                addImageView.setImageBitmap(compressedImage);
-
+                Bitmap photo = MediaStore.Images.Media.getBitmap( this.getContentResolver(), resultUri );
+                addImageView.setImageBitmap( photo );
+                String picturePath = getPath( AddActivity.this, resultUri );
+                Log.d("Picture Path", picturePath);
+//                postImage( new File( picturePath) );
+//                Progress.showProgress( AddActivity.this );
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
-
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 10, baos); //bm is the bitmap object
-            byte[] b = baos.toByteArray();
-            Bitmap compressedImage = BitmapFactory.decodeByteArray(b, 0, b.length);
-
-            str = Base64.encodeToString(b, Base64.DEFAULT);
-            addImageView.setImageBitmap(compressedImage);
+            addImageView.setImageURI( imageUri);
+            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//            Uri tempUri = getImageUri(getApplicationContext(), imageUri);
+            String picturePath =  imageUri.getPath() ;// getPath( AddActivity.this, imageUri );
+            Log.e("Image Path ", String.valueOf( picturePath ) );
+            postImage( new File( picturePath) );
+            Progress.showProgress( AddActivity.this );
 
         } else if (resultCode == RESULT_OK && requestCode == SELECT_QR_CODE) {
-            String boothStr = data.getStringExtra("boothStr");
+            String boothStr = data.getStringExtra( "boothStr" );
 
             if (boothStr.length() > 0) {
-                checkInIv.setText(boothStr);
-                checkinIcon.setVisibility(View.GONE);
+                checkInIv.setText( boothStr );
+                checkinIcon.setVisibility( View.GONE );
             } else {
-                checkinIcon.setVisibility(View.VISIBLE);
+                checkinIcon.setVisibility( View.VISIBLE );
             }
 
         }
+
+
 
 
     }
@@ -249,82 +292,88 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public void finish() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("Status", status);
-        setResult(RESULT_OK, returnIntent);
+        returnIntent.putExtra( "Status", status );
+        setResult( RESULT_OK, returnIntent );
         super.finish();
     }
 
+    public void postStream(StreamDatum streamData) {
 
-    class PostActivity {
-
-        private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-        PostActivity(String url, String postBody) {
-
-            try {
-                postRequest(url, postBody);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void postRequest(String postUrl, String postBody) throws IOException {
-
-            OkHttpClient client = new OkHttpClient();
-
-            RequestBody body = RequestBody.create(JSON, postBody);
-
-            Request request = new Request.Builder()
-                    .url(postUrl)
-                    .post(body)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    call.cancel();
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
-                    Progress.closeProgress();
-                    if (response.isSuccessful()) {
-                        String myResponse = response.body().string();
-
-                        Log.d("AddActivity Response", myResponse);
-                        try {
-                            JSONObject jsonObject = new JSONObject(myResponse);
-                            if (jsonObject.getString("retval").equals("Post submitted successfully")) {
-                                status = "Yes";
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AddActivity.this, "Submitted Scuccessfully", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                });
-                            } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(AddActivity.this, "Error in submitting", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+        retrofit2.Call<Stream> call = apiInterface.postStream( CONSTANTS.EVENTID, streamData );
+        call.enqueue( new retrofit2.Callback<Stream>() {
+            @Override
+            public void onResponse(retrofit2.Call<Stream> call, retrofit2.Response<Stream> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getStreamData().size() == 0) {
+                        CustomDialog.showValidPopUp( AddActivity.this, "", response.body().getMessage() );
+                        finish();
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(AddActivity.this, response.message(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, response.message() );
                 }
-            });
-        }
+                Progress.closeProgress();
+
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<Stream> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+
+        } );
     }
+
+    public void postImage(File file){
+        // create multipart
+        RequestBody requestFile = RequestBody.create(MediaType.parse("text/plain"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        Call<PostImageResponse> call = apiInterface.postImageStream( body );
+        call.enqueue( new Callback<PostImageResponse>() {
+            @Override
+            public void onResponse(Call<PostImageResponse> call, retrofit2.Response<PostImageResponse> response) {
+
+                if (response.code()==200) {
+                    Log.e( "Response ", response.body().getData() );
+                    uploadedImagePath= response.body().getData();
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<PostImageResponse> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+
+
+    }
+    public static String getPath(Context context, Uri uri ) {
+        String result = null;
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
+        if(cursor != null){
+            if ( cursor.moveToFirst( ) ) {
+                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
+                result = cursor.getString( column_index );
+            }
+            cursor.close( );
+        }
+        if(result == null) {
+            result = "Not found";
+        }
+        return result;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
 }

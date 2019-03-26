@@ -17,50 +17,44 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.SpacesItemDecoration;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.Helpdesk;
-import in.kestone.eventbuddy.model.partners_model.List;
+import in.kestone.eventbuddy.model.helpdesk_model.Datum;
+import in.kestone.eventbuddy.model.helpdesk_model.MHelpDesk;
 import in.kestone.eventbuddy.view.partners.PartnerAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HelpDeskFragment extends Fragment {
 
-    String strJson="{\n" +
-            "  \"statusCode\":\"200\",\n" +
-            "  \"helpDesk\":[\n" +
-            "    {\n" +
-            "      \"type\":\"Help Desk\",\n" +
-            "      \"email\":\"email@email.com\",\n" +
-            "      \"phone\":\"9876543210\"\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"type\":\"Help Desk2\",\n" +
-            "      \"email\":\"email@email.com\",\n" +
-            "      \"phone\":\"1234567890\"\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"Message\":\"success or error message\"\n" +
-            "}";
-
-//    @BindView( R.id.recyclerViewHelpDesk )
-//    RecyclerView recyclerViewHelpDesk;
-//    HelpDeskAdapter helpDeskAdapter;
+    @BindView( R.id.recyclerViewHelpDesk )
+    RecyclerView recyclerViewHelpDesk;
+    HelpDeskAdapter helpDeskAdapter;
     View view;
-    ArrayList<Helpdesk> listHelpDesk = new ArrayList<>(  );
+    ArrayList<Datum> listHelpDesk = new ArrayList<>(  );
 
-    @BindView( R.id.txtEmail )
-    TextView email;
-    @BindView( R.id.txtPhone )
-    TextView phone;
-    @BindView( R.id.txtTitle)
-    TextView title;
+//    @BindView( R.id.txtEmail )
+////    TextView email;
+//    @BindView( R.id.txtPhone )
+//    TextView phone;
+//    @BindView( R.id.txtTitle)
+//    TextView title;
 
     public HelpDeskFragment() {
         // Required empty public constructor
@@ -71,35 +65,33 @@ public class HelpDeskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.helpdesk_cell, container, false );
+        view = inflater.inflate( R.layout.fragment_help_desk, container, false );
         ButterKnife.bind( this, view );
 
-//        listHelpDesk.addAll( strJson )
+        getHelpDesk();
 //
-//        helpDeskAdapter = new HelpDeskAdapter( getActivity(), catDetailArrayList , this);
-//
-//        recyclerViewHelpDesk.setLayoutManager( new GridLayoutManager( getContext(), 2 ) );
-//        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
-//        recyclerViewHelpDesk.setHasFixedSize( true );
-//        recyclerViewHelpDesk.setAdapter( helpDeskAdapter );
-//        helpDeskAdapter.notifyDataSetChanged();
 
-     title.setText( "HelpDesk" );
-     email.setText( "Email  : test@email.com" );
-     phone.setText( "Mobile : 9876543210" );
+        recyclerViewHelpDesk.setLayoutManager( new GridLayoutManager( getContext(), 1 ) );
+//        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
+        recyclerViewHelpDesk.setHasFixedSize( true );
+
+
+//     title.setText( "HelpDesk" );
+//     email.setText( "Email  : test@email.com" );
+//     phone.setText( "Mobile : 9876543210" );
         return view;
     }
 
     private class HelpDeskAdapter extends RecyclerView.Adapter<HelpDeskAdapter.ViewHolder> {
 
         Activity activity;
-        ArrayList<List> detailArrayList;
+        ArrayList<Datum> detailArrayList;
         PartnerDetailsCallback detailsCallback;
 
-        public HelpDeskAdapter(FragmentActivity activity, ArrayList<in.kestone.eventbuddy.model.partners_model.List> detailArrayList, PartnerDetailsCallback detailsCallback) {
+        public HelpDeskAdapter(FragmentActivity activity, ArrayList<Datum> detailArrayList) {
             this.activity = activity;
             this.detailArrayList = detailArrayList;
-            this.detailsCallback = detailsCallback;
+//            this.detailsCallback = detailsCallback;
 
         }
 
@@ -121,6 +113,10 @@ public class HelpDeskFragment extends Fragment {
 //                    detailsCallback.onDetailClickCallback( detailArrayList.get( position ) );
 //                }
 //            } );
+            Datum helpDesk = listHelpDesk.get( position );
+            holder.title.setText( helpDesk.getName() );
+            holder.email.setText( helpDesk.getEmailID() );
+            holder.phone.setText( helpDesk.getPhoneno() );
         }
 
         @Override
@@ -130,16 +126,44 @@ public class HelpDeskFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
-            TextView title, email, phone;
+            TextView title, email, phone, name, designation;
 
 
             public ViewHolder(View view) {
                 super( view );
 
-                title = view.findViewById( R.id.txtTitle );
-                email = view.findViewById( R.id.txtEmail);
-                phone = view.findViewById( R.id.txtPhone );
+                title = view.findViewById( R.id.titleTv );
+                email = view.findViewById( R.id.emailTv );
+                phone = view.findViewById( R.id.contactTv );
+                name = view.findViewById( R.id.nameTv );
+                designation = view.findViewById( R.id.designationTv );
             }
         }
+    }
+    public void getHelpDesk(){
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<MHelpDesk> call = apiInterface.helpDesk( CONSTANTS.EVENTID );
+        call.enqueue( new Callback<MHelpDesk>() {
+            @Override
+            public void onResponse(Call<MHelpDesk> call, Response<MHelpDesk> response) {
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
+                        listHelpDesk.addAll( response.body().getData() );
+                        helpDeskAdapter = new HelpDeskAdapter( getActivity(), listHelpDesk );
+                        recyclerViewHelpDesk.setAdapter( helpDeskAdapter );
+                        helpDeskAdapter.notifyDataSetChanged();
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<MHelpDesk> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+            }
+        } );
     }
 }

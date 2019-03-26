@@ -1,7 +1,6 @@
 package in.kestone.eventbuddy.view.speaker;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,29 +14,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.data.SharedPrefsHelper;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
-import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FragmentSpeaker extends Fragment {
+    final String TAG = "Speaker Fragment";
     JSONArray jsonArray;
     ModelAgenda modelAgenda;
+    APIInterface apiInterface;
+    CustomDialog customDialog;
+    RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ArrayList<Speaker> speakerList;
+    private ArrayList<SpeakerDetail> speakerList;
     private SpeakersAdapter speakerAdapter;
     private EditText searchEt;
-    private String myReponse;
+    private String module;
 
     public FragmentSpeaker() {
         // Required empty public constructor
@@ -49,40 +58,38 @@ public class FragmentSpeaker extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.fragment_speaker, container, false );
-        RecyclerView recyclerView = view.findViewById( R.id.recyclerView );
+
+        if (getArguments() != null) {
+            module = getArguments().getString( "module" );
+            getSpeaker( module );
+            Progress.showProgress( getActivity() );
+        }
+
+
+        recyclerView = view.findViewById( R.id.recyclerView );
         searchEt = view.findViewById( R.id.searchEt );
         searchEt.setTextSize( 12f );
         recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
         recyclerView.setHasFixedSize( true );
         speakerList = new ArrayList<>();
-        setAgenda( getActivity() );
-        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getTrack().get( 0 ).getDetails().get( 0 ).getSpeaker() );
-        speakerAdapter = new SpeakersAdapter( getContext(), speakerList );
-        recyclerView.setAdapter( speakerAdapter );
-//        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                Progress.showProgress(getContext());
-////                if (ConnectionCheck.connectionStatus(getActivity())) {
-//
-//                    speakerList.clear();
-//                    speakerAdapter.notifyDataSetChanged();
-//
-////                    JSONObject jsonObject = new JSONObject();
-////                    try {
-////                        jsonObject.put("UserType","Speaker");
-////                        jsonObject.put("RefEmailID", UserDetails.EmailID);
-////                        new SpeakerDataFetch(ApiUrl.Users, jsonObject.toString());
-////                    } catch (JSONException e) {
-////                        e.printStackTrace();
-////                    }
-////                } else {
-////                    Progress.closeProgress();
-////                    Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-////                }
-//            }
-//        });
+        customDialog = new CustomDialog();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById( R.id.swipeRefreshLayout );
+        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Progress.showProgress( getContext() );
+
+//                if (ConnectionCheck.connectionStatus(getActivity())) {
+
+                speakerList.clear();
+                getSpeaker( module );
+                speakerAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing( false );
+
+//                }
+            }
+        } );
 
         searchEt.addTextChangedListener( new TextWatcher() {
             @Override
@@ -104,32 +111,63 @@ public class FragmentSpeaker extends Fragment {
         return view;
     }
 
-    public void setAgenda(Activity activity) {
-        modelAgenda = new Gson().fromJson( ReadJson.loadJSONFromAsset( activity, "agenda.json" ), ModelAgenda.class );
-        if (modelAgenda.getStatusCode().equalsIgnoreCase( "200" )) {
-            AgendaList.setAgenda( modelAgenda );
-
-        } else {
-            Log.e( "Status", String.valueOf( modelAgenda.getStatusCode() ) );
-        }
-    }
-
     private void filter(String text) {
         //new array list that will hold the filtered data
-        ArrayList<Speaker> filterdNames = new ArrayList<>();
+        ArrayList<SpeakerDetail> filterdNames = new ArrayList<>();
         filterdNames.clear();
         //looping through existing elements
-        for (Speaker s : speakerList) {
+        for (SpeakerDetail s : speakerList) {
             //if the existing elements contains the search input
-            if (s.getSpeakerName().toLowerCase().contains( text.toLowerCase() )) {
+            if (s.getFirstName().toLowerCase().contains( text.toLowerCase() )) {
                 //adding the element to filtered list
                 filterdNames.add( s );
-                Log.e("Name ", s.getSpeakerName());
+                Log.e( "Name ", s.getFirstName() );
             }
         }
 
         //calling a method of the adapter class and passing the filtered list
         speakerAdapter.filterList( filterdNames );
+    }
+
+    public void getSpeaker(String type) {
+        apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<Speaker> call;
+        if (type.equalsIgnoreCase( "speaker" )) {
+            call = apiInterface.getAllSpeaker();
+        } else {
+            call = apiInterface.getAllDelegates();
+        }
+        call.enqueue( new Callback<Speaker>() {
+            @Override
+            public void onResponse(Call<Speaker> call, Response<Speaker> response) {
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
+                        speakerList.clear();
+                        for (int i = 0; i < response.body().getData().size(); i++) {
+                            if (response.body().getData().get( i ).getUserID() != new SharedPrefsHelper( getContext() ).getUserId() &&
+                                    type.equalsIgnoreCase( response.body().getData().get( i ).getUserType() )) {
+                                speakerList.add( response.body().getData().get( i ) );
+                            }
+                        }
+
+                        speakerAdapter = new SpeakersAdapter( getContext(), speakerList );
+                        recyclerView.setAdapter( speakerAdapter );
+                        speakerAdapter.notifyDataSetChanged();
+                        Log.e( "Size ", "" + speakerList.size() );
+                    } else {
+                        customDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<Speaker> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+
+        } );
     }
 
 }

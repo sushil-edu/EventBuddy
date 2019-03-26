@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -16,17 +15,23 @@ import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
-import in.kestone.eventbuddy.common.ReadJson;
 import in.kestone.eventbuddy.data.DataManager;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.app_config_model.AppConf;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.view.login.ActivityLogin;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ActivitySplash extends Activity implements SplashMvpView {
@@ -42,7 +47,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     AppConf ac;
     SplashPresenter mSplashPresenter;
     String appConfiguration = "";
-
+    String TAG = "ActivitySplash";
 
     public static Intent getStartIntent(Context context) {
         return new Intent( context, ActivitySplash.class );
@@ -64,42 +69,24 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     private void initialiseView() {
         ButterKnife.bind( this );
         //set configuration
-        Progress.showProgress( this );
-        new Handler().postDelayed( new Runnable() {
-            @Override
-            public void run() {
-                appConfiguration = ReadJson.loadJSONFromAsset( ActivitySplash.this, "app_conf.json" );
-
-                Log.d( "Conf ", appConfiguration );
-                if (preferences == null ) {
-                    editor = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
-                    editor.putString( "AppConfiguration", appConfiguration );
-                    editor.apply();
-                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
-                    ac = new Gson().fromJson( preferences.getString( "AppConfiguration", "" ), AppConf.class );
-                } else {
-                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
-                    ac = new Gson().fromJson( preferences.getString( "AppConfiguration", "" ), AppConf.class );
-
-                }
-                setAppConf( ac );
-            }
-        }, 2000 );
-
+        if(CommonUtils.isNetworkConnected( getApplicationContext() )) {
+            Progress.showProgress( this );
+            getConfig();
+        }else{
+            CustomDialog.showInvalidPopUp( this, CONSTANTS.ERROR,"Check Internet connection" );
+        }
     }
 
-    private void setAppConf(AppConf acf ) {
-        if (acf.getStatusCode() == 200) {
+    private void setAppConf(AppConf acf) {
+
             ListEvent.setAppConf( acf );
+            tv_eventName.setText( acf.getEvent().getEventName() );
+//            Log.e("Event name  ", acf.getEvent().getEventName());
             DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
             mSplashPresenter = new SplashPresenter( dataManager );
             mSplashPresenter.onAttach( this );
             mSplashPresenter.decideNextActivity();
-        } else {
-            Log.e( "Status", String.valueOf( acf.getStatusCode() ) );
-            tv_error.setVisibility( View.VISIBLE );
-        }
-        Progress.closeProgress();
+
     }
 
     @Override
@@ -116,4 +103,42 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         startActivity( intent );
         finish();
     }
+
+    public void getConfig() {
+
+            //get config from server
+            APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+            Call<AppConf> call = apiInterface.getAppConfiguration( (int) CONSTANTS.EVENTID );
+            call.enqueue( new Callback<AppConf>() {
+                @Override
+                public void onResponse(Call<AppConf> call, Response<AppConf> response) {
+                    if(response.code()==200) {
+                        //get config from preferences
+//                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
+//                    if (preferences.getFloat( "version",0 ) == response.body().getAppVersion()  || preferences!=null) {
+//                        String config = preferences.getString( "AppConfiguration", "" );
+//                        Log.e("Config ", config);
+//                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
+////                        setAppConf( appConf );
+//                    } else {
+                        editor = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
+                        editor.putFloat( "version", response.body().getAppVersion() );
+                        String gson = new Gson().toJson( response.body() );
+                        editor.putString( "AppConfiguration", gson );
+                        editor.apply();
+                        setAppConf( response.body() );
+//                    }
+                    }
+                    Progress.closeProgress();
+                }
+
+                @Override
+                public void onFailure(Call<AppConf> call, Throwable t) {
+                    CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                    Progress.closeProgress();
+                }
+            } );
+
+        }
+
 }

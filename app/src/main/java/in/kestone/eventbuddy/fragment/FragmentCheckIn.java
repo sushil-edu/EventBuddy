@@ -57,6 +57,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -124,8 +125,8 @@ public class FragmentCheckIn extends Fragment {
         view = inflater.inflate( R.layout.fragment_check_in, container, false );
         ButterKnife.bind( this, view );
 
-        latA = ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
-        logA = ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
+        latA = 77.2933485;//ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
+        logA = 28.5211297;//ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
         radius = ListEvent.getAppConf().getEvent().getGeoTag().getRadius();
 
         dialog = new CustomDialog();
@@ -145,10 +146,10 @@ public class FragmentCheckIn extends Fragment {
         }
 
         try {
-//            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.compareTo( dateFormat.parse( activationDateTo ) ) );
+            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.compareTo( dateFormat.parse( activationDateTo ) ) );
             Log.e( "Compare time", "" + dtTime.compareTo( timeFormat.parse( activationTimeFrom ) ) + " to " + dtTime.compareTo( timeFormat.parse( activationTimeTo ) ) );
             if (dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
-                if (dtTime.compareTo( timeFormat.parse( activationTimeFrom ) )>=0 && dtTime.compareTo( timeFormat.parse( activationTimeTo ) )<=0) {
+                if (dtTime.compareTo( timeFormat.parse( activationTimeFrom ) )>=0 && dtTime.compareTo( timeFormat.parse( activationTimeTo ) )<=1) {
                     tv_checkIn.setEnabled( true );
                 }else {
                     tv_checkIn.setEnabled( false );
@@ -187,7 +188,7 @@ public class FragmentCheckIn extends Fragment {
                         dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                     }
                 } else {
-                    dialog.showInvalidPopUp( getActivity(), "Error", "Please try again." );
+                    dialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please try again." );
                 }
             }
         } );

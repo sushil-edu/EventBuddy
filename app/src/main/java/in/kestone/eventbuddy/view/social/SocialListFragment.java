@@ -16,12 +16,12 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 
-@SuppressLint("ValidFragment")
 public class SocialListFragment extends Fragment {
     @BindView(R.id.webView)
     WebView webView;
     View view;
     String url;
+
 
     public SocialListFragment(String url) {
 
@@ -34,7 +34,6 @@ public class SocialListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_social_list, container, false );
-        Log.e( "URL ", url );
         ButterKnife.bind( this, view );
         webView.setWebViewClient( new MyWebViewClient() );
         webView.loadUrl( url );
@@ -53,12 +52,11 @@ public class SocialListFragment extends Fragment {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
         }
 
         @Override
-        public void onPageFinished(WebView view, String url) {
-
+        public void onPageFinished(WebView view, String url)
+        {
         }
     }
 

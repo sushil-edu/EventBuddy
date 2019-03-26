@@ -8,22 +8,33 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.data.DataManager;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.app_config_model.Button;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Password;
 import in.kestone.eventbuddy.model.app_config_model.UserName;
+import in.kestone.eventbuddy.model.user_model.Profile;
+import in.kestone.eventbuddy.model.user_model.User;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.view.verify.ActivityVerify;
 import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomEditText;
 import in.kestone.eventbuddy.widgets.CustomTextView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ActivityLogin extends Activity implements View.OnClickListener, LoginMvpView {
 
@@ -43,11 +54,12 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 //    @BindView( R.id.image_show_password )
 //    ImageView image_show_password;
 
-    String er_email_message, er_password_message,er_email_header, er_password_header ;
-    boolean flag=false;
+    String er_email_message, er_password_message, er_email_header, er_password_header;
+    boolean flag = false;
 
-    CustomDialog customDialog;
     LoginPresenter loginPresenter;
+    APIInterface apiInterface;
+
 
     public static Intent getStartIntent(Context context) {
 
@@ -74,7 +86,6 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         tv_event_title.setText( ListEvent.getAppConf().getEvent().getLogin().getWelcomeText() );
         et_mail.setHint( ListEvent.getAppConf().getEvent().getLogin().getUserName().getHint() );
 
-        customDialog = new CustomDialog();
         //configure user name field
         setEmailConf( ListEvent.getAppConf().getEvent().getLogin().getUserName() );
         setPasswordConf( ListEvent.getAppConf().getEvent().getLogin().getPassword() );
@@ -92,7 +103,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         if (password.getVisibility().equalsIgnoreCase( "yes" )) {
             et_password.setHint( password.getHint() );
             er_password_message = password.getErrorMessage();
-            er_password_header=password.getErrorHeader();
+            er_password_header = password.getErrorHeader();
             if (password.getType().equalsIgnoreCase( "password" )) {
                 et_password.setInputType( InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_CLASS_TEXT );
             } else {
@@ -106,7 +117,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     private void setEmailConf(UserName userName) {
         et_mail.setHint( userName.getHint() );
         er_email_message = userName.getErrorMessage();
-        er_email_header=userName.getErrorHeader();
+        er_email_header = userName.getErrorHeader();
         if (userName.getType().equalsIgnoreCase( "email" )) {
             et_mail.setInputType( InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_CLASS_TEXT );
         } else {
@@ -154,26 +165,70 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         String password = et_password.getText().toString();
 
         if (email.isEmpty() && password.isEmpty()) {
-            customDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credential", "Please enter valid credential" );
+            CustomDialog.showInvalidPopUp( ActivityLogin.this, "Invalid Credential", "Please enter valid credential" );
             et_mail.requestFocus();
         } else if (!CommonUtils.isEmailValid( email ) || email.isEmpty()) {
-            customDialog.showInvalidPopUp( ActivityLogin.this, er_email_header, er_email_message );
+            CustomDialog.showInvalidPopUp( ActivityLogin.this, er_email_header, er_email_message );
             et_mail.requestFocus();
         } else if (layout_password.getVisibility() == View.VISIBLE) {
             if (password.isEmpty() || password == null) {
-                customDialog.showInvalidPopUp( ActivityLogin.this, er_password_header, er_password_message );
+                CustomDialog.showInvalidPopUp( ActivityLogin.this, er_password_header, er_password_message );
                 et_password.requestFocus();
             } else {
-                int id = 1001;
-                String name = "Sushil Kumar";
-//                        String email="sushil.k@kestone.in";
-                String path = "/image/image.png";
-                String designation = "Software Engineer";
-                String organization = "Kestone Pvt. Ltd.";
-                String mobile = "9876543210";
-                loginPresenter.startLogin( email, id, name, designation, path, organization, mobile );
+//                int id = 1001;//profile.getUserId();
+//                String name = "Sushil Kumar";
+////                        String email="sushil.k@kestone.in";
+//                String path = "/def_image/def_image.png.png";
+//                String designation = "Software Engineer";
+//                String organization = "Kestone Pvt. Ltd.";
+//                String mobile = "9876543210";
+//                loginPresenter.startLogin( email, id, name, designation, path, organization, mobile );
+
+                Profile profile = new Profile();
+                profile.setEmailID( email );
+                profile.setPassword( password );
+                if(CommonUtils.isNetworkConnected( getApplicationContext() )) {
+                    login( profile );
+                    Progress.showProgress( getApplicationContext() );
+              }else{
+                CustomDialog.showInvalidPopUp( this, CONSTANTS.ERROR,"Check Internet connection" );
+            }
             }
         }
+
+    }
+
+    private void login(Profile profile) {
+        apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<User> call = apiInterface.login( profile );
+        call.enqueue( new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200) {
+
+                        ArrayList<Profile> profile = (ArrayList<Profile>) response.body().getData();
+//                    Log.e( "Response ", profiles.get( 0 ).getEmailID());
+                        loginPresenter.startLogin( profile.get( 0 ).getEmailID(), profile.get( 0 ).getUserID(), profile.get( 0 ).getFirstName()
+                                        + " " + profile.get( 0 ).getLastName(), profile.get( 0 ).getDesignation(),
+                                profile.get( 0 ).getImage(), profile.get( 0 ).getOrganization(), profile.get( 0 ).getMobile() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( ActivityLogin.this, CONSTANTS.ERROR, response.body().getMessage() );
+                        et_mail.getText().clear();
+                        et_password.getText().clear();
+                        et_mail.requestFocus();
+                    }
+                }
+                Progress.closeProgress();
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
 
     }
 }

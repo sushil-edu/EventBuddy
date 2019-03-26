@@ -17,13 +17,14 @@ import java.util.ArrayList;
 
 import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.model.partners_model.Detail;
 
 public class PartnerAdapter extends RecyclerView.Adapter<PartnerAdapter.ViewHolder> {
 
     Activity activity;
-    ArrayList<in.kestone.eventbuddy.model.partners_model.List> detailArrayList;
+    ArrayList<Detail> detailArrayList;
     PartnerDetailsCallback detailsCallback;
-    public PartnerAdapter(FragmentActivity activity, ArrayList<in.kestone.eventbuddy.model.partners_model.List> detailArrayList, PartnerDetailsCallback detailsCallback) {
+    public PartnerAdapter(FragmentActivity activity, ArrayList<Detail> detailArrayList, PartnerDetailsCallback detailsCallback) {
         this.activity = activity;
         this.detailArrayList = detailArrayList;
         this.detailsCallback = detailsCallback;
@@ -40,16 +41,17 @@ public class PartnerAdapter extends RecyclerView.Adapter<PartnerAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Picasso.with( activity ).load( detailArrayList.get( position ).getLogo() )
+        Detail detail = detailArrayList.get( position );
+        Picasso.with( activity ).load( detail.getLogo() )
                 .resize( 80, 80 )
                 .placeholder( R.drawable.user )
                 .into( holder.partnerLogo );
-        holder.partnerName.setText( detailArrayList.get( position ).getName() );
+        holder.partnerName.setText( detail.getName() );
 
         holder.rootLayout.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                detailsCallback.onDetailClickCallback( detailArrayList.get( position ) );
+                detailsCallback.onDetailClickCallback( detail );
             }
         } );
     }

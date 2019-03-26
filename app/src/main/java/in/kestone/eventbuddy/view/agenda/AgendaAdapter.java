@@ -31,7 +31,7 @@ import java.util.List;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.model.agenda_model.Detail;
-import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
 public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder> {
@@ -41,7 +41,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
     private Context context;
     private Activity activity;
     private List<Detail> agendaList;
-    private ArrayList<Speaker> speakerList;
+    private ArrayList<SpeakerDetail> speakerList;
 
     public AgendaAdapter(Activity activity, List<Detail> detailArrayList) {
         this.context = activity;
@@ -82,7 +82,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
         //speaker list
         speakerList = new ArrayList<>();
         speakerList.clear();
-        speakerList.addAll( agendaData.getSpeaker() );
+        speakerList= (ArrayList<SpeakerDetail>) agendaData.getSpeaker();
         if (speakerList.size() > 0) {
             holder.nestedReyclerView.setVisibility( View.VISIBLE );
             SpeakerAdapter spkAdapter = new SpeakerAdapter( activity, speakerList );

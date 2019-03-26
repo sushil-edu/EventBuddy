@@ -24,7 +24,7 @@
         android:id="@+id/layout_continue"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
-        android:background="@drawable/btn_design_solid"
+        android:background="#19FFFFFF"
         android:elevation="4dp"
         android:layout_marginBottom="@dimen/dimen_5dp"
         android:layout_alignParentBottom="true"

@@ -12,12 +12,14 @@ public class Event {
     private GeoTag mGeoTag;
     @SerializedName("Login")
     private Login mLogin;
-    @SerializedName("menu")
+    @SerializedName("Menu")
     private List<Menu> mMenu;
     @SerializedName("OTP")
     private OTP mOTP;
     @SerializedName("Priority")
     private Priority mPriority;
+    @SerializedName("Networking")
+    private ConfNetworking nNetworking;
 
     public String getEventName() {
         return mEventName;
@@ -67,4 +69,11 @@ public class Event {
         mPriority = priority;
     }
 
+    public ConfNetworking getnNetworking() {
+        return nNetworking;
+    }
+
+    public void setnNetworking(ConfNetworking nNetworking) {
+        this.nNetworking = nNetworking;
+    }
 }

@@ -1,8 +1,10 @@
 package in.kestone.eventbuddy.view.speaker;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +17,22 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.fragment.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 
 public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHolder> {
 
     private Context context;
-    private ArrayList<Speaker> speakerList;
+    private ArrayList<SpeakerDetail> speakerList;
+    Bundle bundle;
 
-    SpeakersAdapter(Context context, ArrayList<Speaker> speakerList) {
+    public SpeakersAdapter(Context context, ArrayList<SpeakerDetail> speakerList) {
 
         this.speakerList = speakerList;
         this.context = context;
     }
+
 
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,8 +42,8 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        final Speaker speakerData = speakerList.get( position );
-        holder.nameTv.setText( speakerData.getSpeakerName() );
+        final SpeakerDetail speakerData = speakerList.get( position );
+        holder.nameTv.setText( speakerData.getFirstName() +" "+speakerData.getLastName() );
         holder.designationTv.setText( speakerData.getDesignation() );
         holder.organizationTv.setText( speakerData.getOrganization() );
         holder.itemView.setOnClickListener( new View.OnClickListener() {
@@ -45,20 +51,24 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
             public void onClick(View v) {
 //                if(!UserDetails.getEmailID().equals(speakerData.getEmailID())){
                 Intent intent = new Intent( context, ActivitySpeaterDetails.class );
-                intent.putExtra( "Name", speakerData.getSpeakerName() );
-                intent.putExtra( "Designation", speakerData.getDesignation() );
-                intent.putExtra( "Organization", speakerData.getOrganization() );
-                intent.putExtra( "Email", speakerData.getBio() );
-                intent.putExtra( "Image", speakerData.getSpeakerImage() );
+//                intent.putExtra( "Name", speakerData.getFirstName() +" "+speakerData.getLastName() );
+//                intent.putExtra( "Designation", speakerData.getDesignation() );
+//                intent.putExtra( "Organization", speakerData.getOrganization() );
+//                intent.putExtra( "Email", speakerData.getEmailID() );
+//                intent.putExtra( "Image", speakerData.getImage() );
                 intent.putExtra( "Type", "Speaker" );
                 intent.putExtra( "Tag", "Speaker" );
-                intent.putExtra( "details", speakerData.getDescription() );
+//                intent.putExtra( "details", speakerData.getProfileDescription() );
+                bundle = new Bundle(  );
+                bundle.putSerializable( "data", speakerData );
+                intent.putExtras(  bundle );
+
                 context.startActivity( intent );
-                ((Activity)context).finish();
+//                ((Activity)context).finish();
 //                }
             }
         } );
-        Picasso.with( context ).load( speakerData.getSpeakerImage() )
+        Picasso.with( context ).load( speakerData.getImage() )
                 .resize( 80, 80 )
                 .placeholder( R.drawable.user )
                 .into( holder.profileIv );
@@ -66,13 +76,13 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
 
     @Override
     public int getItemCount() {
-        return speakerList.size()-1;
+        return speakerList.size();
     }
 
     //This method will filter the list
     //here we are passing the filtered data
     //and assigning it to the list with notifydatasetchanged method
-    public void filterList(ArrayList<Speaker> filterdNames) {
+    public void filterList(ArrayList<SpeakerDetail> filterdNames) {
         this.speakerList = filterdNames;
         notifyDataSetChanged();
     }

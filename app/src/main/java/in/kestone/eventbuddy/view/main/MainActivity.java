@@ -1,14 +1,11 @@
 package in.kestone.eventbuddy.view.main;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +20,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +50,9 @@ import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.fragment.AskQuestionFragment;
 import in.kestone.eventbuddy.fragment.FAQFragment;
 import in.kestone.eventbuddy.fragment.FeedbackFragment;
-import in.kestone.eventbuddy.fragment.GalleryFragment;
 import in.kestone.eventbuddy.fragment.HelpDeskFragment;
+import in.kestone.eventbuddy.fragment.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.fragment.PollFragment;
-import in.kestone.eventbuddy.view.social.SocialFragment;
 import in.kestone.eventbuddy.fragment.WebViewFragment;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Menu;
@@ -65,6 +60,7 @@ import in.kestone.eventbuddy.view.agenda.AgendaFragment;
 import in.kestone.eventbuddy.view.networking.Networking;
 import in.kestone.eventbuddy.view.partners.PartnerFragment;
 import in.kestone.eventbuddy.view.profile.Profile;
+import in.kestone.eventbuddy.view.social.SocialFragment;
 import in.kestone.eventbuddy.view.speaker.FragmentSpeaker;
 import in.kestone.eventbuddy.view.splash.ActivitySplash;
 import in.kestone.eventbuddy.view.stream.ActivityStream;
@@ -114,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     MainPresenter mainPresenter;
     DataManager dataManager;
     String appTitle;
-    Bundle bundle = new Bundle(  );
+    Bundle bundle = new Bundle();
 
     public static Intent getStartIntent(Context context) {
         return new Intent( context, MainActivity.class );
@@ -171,10 +167,16 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
         count = ListEvent.getAppConf().getEvent().getMenu().size();
         for (int i = 0; i < count; i++) {
-            if (ListEvent.getAppConf().getEvent().getMenu().get( i ).getStatus() == 1) {
-                list.add( ListEvent.getAppConf().getEvent().getMenu().get( i ) );
-            }
+//            if (ListEvent.getAppConf().getEvent().getMenu().get( i ).getStatus() == 1) {
+            list.add( ListEvent.getAppConf().getEvent().getMenu().get( i ) );
+//            }
         }
+        Menu m = new Menu();
+        m.setDisplayTitle( "Log Out" );
+        m.setMenuicon( "" );
+        m.setMenutitle( "Log Out" );
+        list.add( m );
+
 //        //set user details in nave header
 //        tvName.setText( dataManager.getName() );
 //        tvEmail.setText( dataManager.getEmailId() );
@@ -219,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
     @Override
     public void onClick(int mId, final String dTitle, String mTitle) {
-        Log.e( "Menu ID ", String.valueOf( mId ) +" title "+mTitle);
+        Log.e( "Menu ID ", String.valueOf( mId ) + " title " + mTitle );
 //        Handler handler = new Handler();
 //        handler.postDelayed(new Runnable() {
 //            public void run() {
@@ -238,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
             case "Log Out":
                 showPopUpLogOut();
                 break;
-            case "Activity Stream":
+            case CONSTANTS.ACTIVITYSTREAM:
                 bundle.putString( "title", dTitle );
                 ActivityStream activityStream = new ActivityStream();
                 activityStream.setArguments( bundle );
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                         .replace( R.id.container, activityStream )
                         .commit();
                 break;
-            case "Agenda":
+            case CONSTANTS.AGENDA:
                 new Handler().postDelayed( new Runnable() {
                     @Override
                     public void run() {
@@ -257,69 +259,79 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 }, 50 );
 
                 break;
-            case "Speakers":
-                new Handler().postDelayed( new Runnable() {
-                    @Override
-                    public void run() {
-                        getSupportFragmentManager().beginTransaction()
-                                .replace( R.id.container, new FragmentSpeaker() )
-                                .commit();
-                    }
-                }, 50 );
-
-                break;
-            case "Delegates":
+            case CONSTANTS.SPEAKER:
+                bundle.putString( "module", "speaker" );
+                FragmentSpeaker fragments = new FragmentSpeaker();
+                fragments.setArguments( bundle );
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new FragmentSpeaker() )
+                        .replace( R.id.container, fragments )
                         .commit();
                 break;
-            case "Networking":
+            case CONSTANTS.DELEGATES:
+                bundle.putString( "module", "delegate" );
+                FragmentSpeaker fragmentd = new FragmentSpeaker();
+                fragmentd.setArguments( bundle );
+                getSupportFragmentManager().beginTransaction()
+                        .replace( R.id.container, fragmentd )
+                        .commit();
+                break;
+            case CONSTANTS.NETWORKING:
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new Networking() )
                         .commit();
                 break;
-            case "Polls":
+            case CONSTANTS.POLLING:
+                PollFragment askQuestionFragment3 = new PollFragment();
+                bundle.putString( "type", CONSTANTS.POLLING );
+                askQuestionFragment3.setArguments( bundle );
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new PollFragment() )
+                        .replace( R.id.container, askQuestionFragment3 )
                         .commit();
                 break;
-            case "Ask a Question":
-            case "Knowledge Base":
+            case CONSTANTS.ASKAQUESTION:
+                AskQuestionFragment askQuestionFragment = new AskQuestionFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new AskQuestionFragment() )
+                        .replace( R.id.container, askQuestionFragment )
                         .commit();
                 break;
-            case "Social":
+            case CONSTANTS.KNOWLEDGEBASE:
+                KnowlegdeBaseFragment askQuestionFragment2 = new KnowlegdeBaseFragment();
+                bundle.putString( "type", CONSTANTS.KNOWLEDGEBASE );
+                askQuestionFragment2.setArguments( bundle );
+                getSupportFragmentManager().beginTransaction()
+                        .replace( R.id.container, askQuestionFragment2 )
+                        .commit();
+                break;
+            case CONSTANTS.SOCIAL:
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new SocialFragment() )
                         .commit();
                 break;
-            case "Gallery":
-                getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new GalleryFragment() )
-                        .commit();
-                break;
-            case "Venue":
+//            case "Gallery":
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace( R.id.container, new GalleryFragment() )
+//                        .commit();
+//                break;
+            case CONSTANTS.VENUE:
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new FragmentVenue() )
                         .commit();
                 break;
-            case "Feedback":
-                getSupportFragmentManager().beginTransaction()
-                        .replace( R.id.container, new PollFragment() )
-                        .commit();
+            case CONSTANTS.FEEDBACK:
 //                getSupportFragmentManager().beginTransaction()
-//                        .replace( R.id.container, new FeedbackFragment() )
+//                        .replace( R.id.container, new PollFragment() )
 //                        .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .replace( R.id.container, new FeedbackFragment() )
+                        .commit();
                 break;
-            case "Help Desk":
+            case CONSTANTS.HELPDESK:
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new HelpDeskFragment() )
                         .commit();
                 break;
-            case "Terms And Conditions":
-                String module = "Terms And Conditions";
-                bundle.putString( "module", module );
+            case CONSTANTS.TANDC:
+                bundle.putString( "module", CONSTANTS.TANDC );
                 WebViewFragment fragment = new WebViewFragment();
                 fragment.setArguments( bundle );
 
@@ -328,25 +340,36 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                         .commit();
                 break;
 
-            case "Faq":
+            case CONSTANTS.FAQS:
                 getSupportFragmentManager().beginTransaction()
                         .replace( R.id.container, new FAQFragment() )
 //                .addToBackStack( null )
                         .commit();
                 break;
 
-            case "Partners":
-            case "Sponsors":
-
+            case CONSTANTS.PARTNERS:
                 PartnerFragment pfragment = new PartnerFragment();
-
+                bundle.putString( "type", CONSTANTS.PARTNERS );
+                pfragment.setArguments( bundle );
                 FragmentManager manager = getSupportFragmentManager();
                 FragmentTransaction ft = manager.beginTransaction();
 //        ft.setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right );
 //        ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
-                ft.replace( R.id.container, pfragment, CONSTANTS.PARTNERSDETAILS );
-                ft.addToBackStack( null );
+                ft.replace( R.id.container, pfragment );
+//                ft.addToBackStack( null );
                 ft.commit();
+                break;
+            case CONSTANTS.SPONSORS:
+                PartnerFragment pfragment2 = new PartnerFragment();
+                bundle.putString( "type", CONSTANTS.SPONSORS );
+                pfragment2.setArguments( bundle );
+                FragmentManager manager2 = getSupportFragmentManager();
+                FragmentTransaction ft2 = manager2.beginTransaction();
+//        ft.setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right );
+//        ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+                ft2.replace( R.id.container, pfragment2 );
+//                ft2.addToBackStack( null );
+                ft2.commit();
                 break;
 
         }
@@ -373,9 +396,14 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         } else if (getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Schedule" ) ||
                 getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Reschedule" )) {
             mTitleTv.setText( "Networking" );
-
+            Networking networking = new Networking();
+            Bundle bundle = new Bundle();
+            bundle.putString( "name", getIntent().getStringExtra( "Name" ) );
+            bundle.putString( "type", getIntent().getStringExtra( "Type" ) );
+            bundle.putSerializable( "data", getIntent().getExtras().getSerializable( "Data" ) );
+            networking.setArguments( bundle );
             getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.container, new Networking() )
+                    .replace( R.id.container, networking )
                     .commit();
 
         } else if ((getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Speaker" ))) {
@@ -397,8 +425,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
 
-        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
-        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
+//        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
+//        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
         Picasso.with( this ).load( "ksdlfksdmsdmfsldkfsd" )
                 .resize( 80, 80 )
                 .placeholder( R.drawable.user )

@@ -1,8 +1,13 @@
 package in.kestone.eventbuddy.view.networking;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,18 +23,29 @@ import android.widget.TextView;
 
 import com.github.badoualy.datepicker.DatePickerTimeline;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.kestone.eventbuddy.Altdialog.CustomDialog;
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
-import in.kestone.eventbuddy.model.agenda_model.AgendaList;
-import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.http.APIClient;
+import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.Location;
+import in.kestone.eventbuddy.model.networking_model.MNetworking;
+import in.kestone.eventbuddy.model.networking_model.NetworkingList;
+import in.kestone.eventbuddy.model.speaker_model.Speaker;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class NetworkScheduleFragment extends Fragment implements View.OnClickListener, SelectedSpeaker {
 
@@ -47,15 +63,42 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     TextView minuteTv;
     @BindView(R.id.labelTv)
     TextView labelTv;
+    @BindView(R.id.locationNameTv)
+    TextView tvLocation;
     @BindView(R.id.speakerRLl)
     RelativeLayout speakerRLl;
     @BindView(R.id.nameRLl)
     RelativeLayout nameRLl;
-    @BindView( R.id.meetingRequestBtn )
+    @BindView(R.id.LocationRLl)
+    RelativeLayout locationRLl;
+    @BindView(R.id.meetingRequestBtn)
     Button meetingRequestBtn;
-    String dayStr = "", monthStr = "", hoursStr = "", minutesStr = "";
-    long speakerId=999;
-    private ArrayList<Speaker> speakerList = new ArrayList<>();
+    String dayStr = "", monthStr = "", hoursStr = "", minutesStr = "", name = "";
+    String speakerId = "";
+    boolean flag = true;// true for schedule and false for reschedule
+    String emb_id;
+    SpeakerDetail speakerDetail;
+    ArrayList<Location> listLocation = new ArrayList<>();
+    private ArrayList<SpeakerDetail> speakerList = new ArrayList<>();
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra( "message" );
+            Log.d( "Message ", message );
+            name = intent.getStringExtra( "name" );
+            nameTv.setText( name );
+            typeTv.setText( intent.getStringExtra( "type" ) );
+            labelTv.setText( intent.getStringExtra( "type" ) );
+            emb_id = intent.getStringExtra( "emb_id" );
+            speakerId = intent.getStringExtra( "id" );
+            nameRLl.setOnClickListener( null );
+            speakerRLl.setOnClickListener( null );
+            flag = false;
+
+        }
+    };
+
     public NetworkScheduleFragment() {
     }
 
@@ -65,6 +108,22 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.fragment_schedule_meeting, container, false );
         initialiseView( view );
+        LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
+                new IntentFilter( CONSTANTS.SCHEDULE ) );
+        LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
+                new IntentFilter( CONSTANTS.RESCHEDULE ) );
+
+        listLocation.addAll( ListEvent.getAppConf().getEvent().getnNetworking().getLocation() );
+
+        if (getArguments() != null) {
+            Log.e( "Name type ", getArguments().getString( "name" ) + " and " + getArguments().getString( "type" ) );
+            speakerDetail = (SpeakerDetail) getArguments().getSerializable( "data" );
+            if (speakerDetail != null) {
+                nameTv.setText( speakerDetail.getFirstName() + " " + speakerDetail.getLastName() );
+                typeTv.setText( speakerDetail.getUserType() );
+                speakerId = String.valueOf( speakerDetail.getUserID() );
+            }
+        }
 
         return view;
     }
@@ -75,10 +134,13 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         monthTv.setOnClickListener( this );
         hourTv.setOnClickListener( this );
         minuteTv.setOnClickListener( this );
+        locationRLl.setOnClickListener( this );
 
         nameRLl.setOnClickListener( this );
         speakerRLl.setOnClickListener( this );
         meetingRequestBtn.setOnClickListener( this );
+
+//        Log.e("Data ", getArguments().getString( "type" ));
     }
 
 
@@ -88,10 +150,10 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.alert_date_time );
         dialog.setCancelable( true );
-        DatePickerTimeline datePicker =  dialog.findViewById( R.id.datePicker );
-        Log.e("Year ",""+datePicker.getSelectedMonth());
-        datePicker.setFirstVisibleDate( 2014,10, 10 );
-        datePicker.setLastVisibleDate( 2014, 10, 15 );
+        DatePickerTimeline datePicker = dialog.findViewById( R.id.datePicker );
+        Log.e( "Year ", "" + datePicker.getSelectedMonth() );
+        datePicker.setFirstVisibleDate( 2019, 02, 01 );
+        datePicker.setLastVisibleDate( 2019, 02, 10 );
         datePicker.setSelectedDate( 0, 0, 0 );
         datePicker.setOnDateSelectedListener( new DatePickerTimeline.OnDateSelectedListener() {
             @Override
@@ -130,8 +192,8 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         dialog.setContentView( R.layout.alert_time_spinner );
         dialog.setCancelable( true );
 
-        final Spinner hourSpinner =  dialog.findViewById( R.id.hourSpinner );
-        final Spinner minuteSpinner =  dialog.findViewById( R.id.minuteSpinner );
+        final Spinner hourSpinner = dialog.findViewById( R.id.hourSpinner );
+        final Spinner minuteSpinner = dialog.findViewById( R.id.minuteSpinner );
 
         ArrayAdapter adapter = new ArrayAdapter( getContext(), android.R.layout.simple_spinner_dropdown_item, hourList );
         hourSpinner.setAdapter( adapter );
@@ -159,42 +221,27 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
     }
 
-    public void populateSpeaker() {
+    public void populateLocation(ArrayList<Location> locationDetails) {
         Dialog dialog = new Dialog( getContext() );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.alert_user_type );
-        TextView headTv =  dialog.findViewById( R.id.headTv );
-        headTv.setText( "Select " + typeTv.getText().toString() );
-
-//        try {
-//            JSONArray jsonArray = new JSONArray(myResponse);
-//            for (int i = 0; i < speakerList; i++) {
-//
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//
-//                UserData speakerData = new UserData();
-//                speakerData.setID(jsonObject.getString("ID"));
-//                speakerData.setName(jsonObject.getString("Name"));
-//                speakerData.setDesignation(jsonObject.getString("Designation"));
-//                speakerData.setOrganization(jsonObject.getString("Organization"));
-//                speakerData.setEmailID(jsonObject.getString("EmailID"));
-//                speakerData.setMobile(jsonObject.getString("Mobile"));
-//                speakerData.setPassportNo(jsonObject.getString("PassportNo"));
-//                speakerData.setRegistrationType(jsonObject.getString("RegistrationType"));
-//                speakerData.setImageURL(jsonObject.getString("ImageURL"));
-//
-//                speakerList.add(speakerData);
-//
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-        speakerList.clear();
-        speakerList.addAll( AgendaList.getAgenda().getAgenda().get( 1 ).getTrack().get( 0 ).getDetails().get( 0 ).getSpeaker() );
-        RecyclerView recyclerView =  dialog.findViewById( R.id.recyclerView );
+        TextView headTv = dialog.findViewById( R.id.headTv );
+        headTv.setText( "Select Location" );
+        RecyclerView recyclerView = dialog.findViewById( R.id.recyclerView );
         recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
-        recyclerView.setAdapter( new UserSelectAdapter( this, speakerList, dialog ) );
+        recyclerView.setAdapter( new LocationAdapter( this, locationDetails, dialog ) );
+        dialog.show();
+    }
+
+    public void populateSpeaker(ArrayList<SpeakerDetail> speakerDetails) {
+        Dialog dialog = new Dialog( getContext() );
+        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
+        dialog.setContentView( R.layout.alert_user_type );
+        TextView headTv = dialog.findViewById( R.id.headTv );
+        headTv.setText( "Select " + typeTv.getText().toString() );
+        RecyclerView recyclerView = dialog.findViewById( R.id.recyclerView );
+        recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
+        recyclerView.setAdapter( new UserSelectAdapter( this, speakerDetails, dialog ) );
         dialog.show();
     }
 
@@ -204,8 +251,8 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         dialog.setContentView( R.layout.speaker_delegate_select );
         dialog.setCancelable( true );
 
-        TextView speakerTv =  dialog.findViewById( R.id.speakerTV );
-        TextView delegatesTv =  dialog.findViewById( R.id.delegateTv );
+        TextView speakerTv = dialog.findViewById( R.id.speakerTV );
+        TextView delegatesTv = dialog.findViewById( R.id.delegateTv );
 
         speakerTv.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -232,6 +279,11 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+
+            case R.id.LocationRLl:
+                populateLocation( listLocation );
+                break;
+
             case R.id.dayTv:
             case R.id.monthTv:
                 populateCalendar();
@@ -243,24 +295,41 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.nameRLl:
-                populateSpeaker();
+                getSpeaker( typeTv.getText().toString() );
                 break;
             case R.id.speakerRLl:
                 selectType();
                 break;
             case R.id.meetingRequestBtn:
-                JSONObject object = new JSONObject();
-                try {
-                    object.put( "scheduleFrom",new SharedPrefsHelper( getContext() ).getUserId());
-                    object.put( "scheduleTo",speakerId);
-                    object.put( "scheduleDate",dayTv.getText().toString()+" "+monthTv.getText().toString());
-                    object.put( "scheduleTime",hourTv.getText().toString()+":"+minuteTv.getText().toString());
-                    object.put( "scheduleBy",typeTv.getText().toString());
-
-                    Log.e("Meeting request ", String.valueOf( object ));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (nameTv.getText().length() > 5) {
+                    if (!dayTv.getText().toString().contains( "Day" ) && !monthTv.getText().toString().contains( "Month" )
+                            && !hourTv.getText().toString().contains( "Hrs" ) && !minuteTv.getText().toString().contains( "Min" )) {
+                        Progress.showProgress( getActivity() );
+                        NetworkingList mNetworking = new NetworkingList();
+                        mNetworking.setEventID( CONSTANTS.EVENTID );
+                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
+                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
+                        mNetworking.setEBMRID( (long) 1 );
+                        if (flag) {
+                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
+                            mNetworking.setIsApproved( "Pending" );
+                            mNetworking.setApprovedOn( "08-03-2019" );
+                            schedule( mNetworking );
+                        } else {
+                            mNetworking.setEBMRID( Long.valueOf( emb_id ) );
+                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
+//                            mNetworking.setIsApproved( "Approved" );
+                            mNetworking.setApprovedOn( String.valueOf( Calendar.getInstance().getTime() ) );
+                            reSchedule( mNetworking );
+                        }
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please select date and time" );
+                    }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please select speaker/delegates" );
                 }
                 break;
 
@@ -268,8 +337,100 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     }
 
     @Override
-    public void onSelect(String speakerName, long sid) {
-        speakerId = sid;
-        nameTv.setText( speakerName );
+    public void onSelect(String name, long sid, String typ) {
+        Log.e( "Type", typ );
+        if (typ.contains( "Location" )) {
+            tvLocation.setText( name );
+        } else {
+            speakerId = String.valueOf( sid );
+            nameTv.setText( name );
+        }
+    }
+
+    public void getSpeaker(String type) {
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<Speaker> call;
+        if (type.equalsIgnoreCase( "Speaker" )) {
+            call = apiInterface.getAllSpeaker();
+        } else {
+            call = apiInterface.getAllDelegates();
+        }
+        call.enqueue( new Callback<Speaker>() {
+            @Override
+            public void onResponse(Call<Speaker> call, Response<Speaker> response) {
+                if (response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
+                        speakerList.clear();
+                        for (int i = 0; i < response.body().getData().size(); i++) {
+                            if (response.body().getData().get( i ).getUserID() != new SharedPrefsHelper( getContext() ).getUserId() &&
+                                    type.equalsIgnoreCase( response.body().getData().get( i ).getUserType() )) {
+                                speakerList.add( response.body().getData().get( i ) );
+                            }
+                        }
+
+                        populateSpeaker( speakerList );
+                        Log.e( "Size ", "" + speakerList.size() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<in.kestone.eventbuddy.model.speaker_model.Speaker> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+
+        } );
+    }
+
+    public void schedule(NetworkingList mNetworking) {
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<MNetworking> call = apiInterface.schedule( mNetworking );
+        call.enqueue( new Callback<MNetworking>() {
+            @Override
+            public void onResponse(Call<MNetworking> call, Response<MNetworking> response) {
+
+                if (response.code() == 200) {
+                    CustomDialog.showValidPopUp( getActivity(), "", response.body().getMessage() );
+                }
+                Progress.closeProgress();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<MNetworking> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+    }
+
+    public void reSchedule(NetworkingList mNetworking) {
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<MNetworking> call = apiInterface.reSchedule( mNetworking );
+        call.enqueue( new Callback<MNetworking>() {
+            @Override
+            public void onResponse(Call<MNetworking> call, Response<MNetworking> response) {
+
+                Progress.closeProgress();
+                if (response.code() == 200) {
+                    CustomDialog.showValidPopUp( getActivity(), "", response.body().getMessage() );
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<MNetworking> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
     }
 }

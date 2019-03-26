@@ -16,6 +16,7 @@ import java.util.List;
 
 import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.model.partners_model.Detail;
 
 @SuppressLint("ValidFragment")
 public class PartnerListFragment extends Fragment implements PartnerDetailsCallback {
@@ -23,11 +24,11 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
     PartnerAdapter adapter;
     View view;
     int pos, size;
-    ArrayList<in.kestone.eventbuddy.model.partners_model.List> catDetailArrayList = new ArrayList<>();
+    ArrayList<Detail> catDetailArrayList = new ArrayList<>();
 
 
-    public PartnerListFragment(int pos, List<in.kestone.eventbuddy.model.partners_model.List> catDetailArrayList) {
-        this.catDetailArrayList = (ArrayList<in.kestone.eventbuddy.model.partners_model.List>) catDetailArrayList;
+    public PartnerListFragment(int pos, List<Detail> catDetailArrayList) {
+        this.catDetailArrayList = (ArrayList<Detail>) catDetailArrayList;
         this.pos = pos;
     }
 
@@ -50,10 +51,10 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
 
 
     @Override
-    public void onDetailClickCallback(in.kestone.eventbuddy.model.partners_model.List list) {
+    public void onDetailClickCallback(Detail list) {
         Intent intent = new Intent( getActivity(), PartnerDetails.class );
         Bundle bundle = new Bundle(  );
-        bundle.putSerializable( "details", (Serializable) list );
+        bundle.putSerializable( "details",  list );
         intent.putExtras(  bundle );
         startActivity( intent );
     }

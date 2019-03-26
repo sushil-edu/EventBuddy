@@ -17,6 +17,7 @@ import java.util.List;
 
 import in.kestone.eventbuddy.Eventlistener.ViewClickListener;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.model.app_config_model.Menu;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 
@@ -88,32 +89,43 @@ public class NavMenuAdapter<T> implements ListAdapter {
         final Menu item = getItem( i );
             vh.textViewName.setText( item.getDisplayTitle() );
             if(item.getMenutitle().equalsIgnoreCase( "Log Out" )){
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.log_out).error( R.drawable.log_out).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Activity Stream" )){
-                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_activity_stream ).error( R.drawable.ic_activity_stream ).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Agenda" )){
+                Picasso.with( context ).load( "test" ).placeholder( R.drawable.log_out).error( R.drawable.log_out).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.ACTIVITYSTREAM )){
+                Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.log_out ).error( R.drawable.ic_user ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.AGENDA )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_agenda ).error( R.drawable.ic_agenda ).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Speakers" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.SPEAKER )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder(R.drawable.ic_speaker ).error( R.drawable.ic_speaker).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Delegates" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.DELEGATES )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.delegates ).error( R.drawable.delegates).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Networking" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.NETWORKING )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_menu_slideshow ).error( R.drawable.ic_menu_slideshow).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Polls" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.POLLING )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_polls ).error( R.drawable.ic_polls).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Ask a Question" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.ASKAQUESTION )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Social" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.SOCIAL )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_menu_share ).error( R.drawable.ic_menu_share).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Gallery" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.DELEGATES )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_gallery_logo ).error( R.drawable.ic_gallery_logo ).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Venue" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.VENUE )){
                 Picasso.with( context ).load( item.getMenuicon()).placeholder( R.drawable.ic_location ).error( R.drawable.ic_location ).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Feedback" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.FEEDBACK )){
                 Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ic_feedback ).error( R.drawable.ic_feedback ).into( vh.imageView );
-            }else if(item.getMenutitle().equalsIgnoreCase( "Help Desk" )){
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.HELPDESK )){
                 Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ic_help ).error( R.drawable.ic_help  ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.PARTNERS )){
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.delegates ).error( R.drawable.delegates  ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.SPONSORS )){
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.delegates ).error( R.drawable.delegates  ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.KNOWLEDGEBASE )){
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.knowledge_bank ).error( R.drawable.knowledge_bank  ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.FAQS )){
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question  ).into( vh.imageView );
+            }else if(item.getMenutitle().equalsIgnoreCase( CONSTANTS.TANDC )){
+                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question  ).into( vh.imageView );
             }
+
 
 
 

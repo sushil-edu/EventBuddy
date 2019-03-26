@@ -13,14 +13,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.partners_model.List;
+import in.kestone.eventbuddy.model.partners_model.Detail;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PartnerDetails extends AppCompatActivity {
 
-    List partnersList;
+    Detail partnersList;
     TextView mTitleTv;
 
     @Override
@@ -28,7 +29,7 @@ public class PartnerDetails extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.fragment_partner_details );
         Bundle bundle = getIntent().getExtras();
-        partnersList = (List) bundle.getSerializable( "details" );
+        partnersList = (Detail) bundle.getSerializable( "details" );
 
         Toolbar toolbar = findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
@@ -49,8 +50,8 @@ public class PartnerDetails extends AppCompatActivity {
         ImageView image = findViewById(R.id.image);
 
         Picasso.with( this )
-                .load(partnersList.getLogoUrl())
-                .placeholder(R.mipmap.ic_launcher)
+                .load(partnersList.getLogo())
+                .placeholder(R.drawable.user)
                 .error(R.mipmap.ic_launcher)
                 .into(image);
 

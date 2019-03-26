@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.model.agenda_model.AgendaList;
+import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
 import in.kestone.eventbuddy.model.agenda_model.Track;
 
 /**
@@ -35,13 +37,13 @@ public class AgendaTrackFragment extends Fragment {
     @BindView(R.id.viewpagerTrack)
     ViewPager pagerTrack;
     List<String> listTrack = new ArrayList<>();
+    ModelAgenda modelAgenda;
 
-    public AgendaTrackFragment() {
-    }
-
-    public AgendaTrackFragment(int i, int size) {
+    public AgendaTrackFragment(int i, int size, ModelAgenda modelAgenda) {
         this.pos = i;
         this.size = size;
+        this.modelAgenda=modelAgenda;
+
     }
 
 
@@ -52,18 +54,41 @@ public class AgendaTrackFragment extends Fragment {
         view = inflater.inflate( R.layout.fragment_agenda_track, container, false );
         ButterKnife.bind( this, view );
         trackArrayList.clear();
+        if (modelAgenda.getAgenda().get( pos ).getTrack().size() > 0) {
+            trackArrayList= (  modelAgenda.getAgenda().get( pos ).getTrack() );
+            setupViewPager( pagerTrack );
+            tabTrack.setupWithViewPager( pagerTrack );
+        } else {
+            tabTrack.setVisibility( View.GONE );
+        }
+        tabTrack.addOnTabSelectedListener( new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                pagerTrack.setCurrentItem(tab.getPosition());
+                Log.e("Tab",  ""+tab.getPosition());
+            }
 
-        trackArrayList.addAll( AgendaList.getAgenda().getAgenda().get( pos ).getTrack() );
-        setupViewPager( pagerTrack );
-        tabTrack.setupWithViewPager( pagerTrack );
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        } );
         return view;
     }
 
+
     private void setupViewPager(ViewPager viewPager) {
         ChildViewPagerAdapter adapter = new ChildViewPagerAdapter( getChildFragmentManager() );
+
         for (int i = 0; i < trackArrayList.size(); i++) {
-            AgendaListFragment partner = new AgendaListFragment( i, trackArrayList.size() );
+            AgendaListFragment partner = new AgendaListFragment( i, trackArrayList.size(),modelAgenda.getAgenda().get( pos ) );
             adapter.addFrag( partner, trackArrayList.get( i ).getTrackName() );
+
         }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
