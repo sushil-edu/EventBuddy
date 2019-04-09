@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +17,14 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
-import in.kestone.eventbuddy.model.social_model.MDatum;
 import in.kestone.eventbuddy.model.social_model.MSocial;
 import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class SocialFragment extends Fragment {
     View view;
     @BindView(R.id.tabs)
@@ -45,14 +39,10 @@ public class SocialFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_social, container, false );
         ButterKnife.bind( this, view );
 
-        if (CommonUtils.isNetworkConnected( getContext() )) {
-            social();
-            Progress.showProgress( getContext() );
-        }
+        social();
         return view;
     }
 
@@ -64,19 +54,17 @@ public class SocialFragment extends Fragment {
         }
 
         setupViewPager( pager );
-//        if (pageList.size() <= 4)
-//            tabs.setTabMode( TabLayout.MODE_FIXED );
-//        else
-//            tabs.setTabMode( TabLayout.MODE_SCROLLABLE );
-
         tabs.setupWithViewPager( pager );
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
         for (int i = 0; i < tabList.size(); i++) {
-            SocialListFragment partner = new SocialListFragment( socialDetailsList.getMData().get( i ).getURL() );
-            adapter.addFrag( partner, tabList.get( i ));
+            SocialListFragment partner = new SocialListFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString( "url", socialDetailsList.getMData().get( i ).getURL() );
+            partner.setArguments( bundle );
+            adapter.addFrag( partner, tabList.get( i ) );
         }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
@@ -89,21 +77,21 @@ public class SocialFragment extends Fragment {
         call.enqueue( new Callback<MSocial>() {
             @Override
             public void onResponse(Call<MSocial> call, Response<MSocial> response) {
-                if (response.body().getStatusCode() == 200 && !response.body().getMData().isEmpty() && response.code()==200) {
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && !response.body().getMData().isEmpty()) {
 
-                    getSocials( response.body() );
+                        getSocials( response.body() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
-
-                Progress.closeProgress();
-
             }
 
             @Override
             public void onFailure(Call<MSocial> call, Throwable t) {
                 CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
-                Progress.closeProgress();
             }
         } );
     }

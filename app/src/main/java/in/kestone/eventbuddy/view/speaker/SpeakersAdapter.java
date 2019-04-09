@@ -1,7 +1,5 @@
 package in.kestone.eventbuddy.view.speaker;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.fragment.KnowlegdeBaseFragment;
-import in.kestone.eventbuddy.model.agenda_model.Speaker;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 
 public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHolder> {
@@ -50,7 +47,7 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
             @Override
             public void onClick(View v) {
 //                if(!UserDetails.getEmailID().equals(speakerData.getEmailID())){
-                Intent intent = new Intent( context, ActivitySpeaterDetails.class );
+                Intent intent = new Intent( context, ActivitySpeakerDetails.class );
 //                intent.putExtra( "Name", speakerData.getFirstName() +" "+speakerData.getLastName() );
 //                intent.putExtra( "Designation", speakerData.getDesignation() );
 //                intent.putExtra( "Organization", speakerData.getOrganization() );
@@ -68,9 +65,9 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
 //                }
             }
         } );
-        Picasso.with( context ).load( speakerData.getImage() )
+        Picasso.with( context ).load( LocalStorage.getImagePath( context )+""+speakerData.getImage() )
                 .resize( 80, 80 )
-                .placeholder( R.drawable.user )
+                .placeholder( R.drawable.default_user_grey )
                 .into( holder.profileIv );
     }
 
@@ -79,9 +76,7 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
         return speakerList.size();
     }
 
-    //This method will filter the list
-    //here we are passing the filtered data
-    //and assigning it to the list with notifydatasetchanged method
+    //filter speaker/delegate
     public void filterList(ArrayList<SpeakerDetail> filterdNames) {
         this.speakerList = filterdNames;
         notifyDataSetChanged();

@@ -1,6 +1,7 @@
 package in.kestone.eventbuddy.view.stream;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,9 +21,9 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.http.CallUtils;
 import in.kestone.eventbuddy.model.activity_stream_model.Stream;
 import in.kestone.eventbuddy.model.activity_stream_model.StreamDatum;
 import retrofit2.Call;
@@ -35,10 +36,11 @@ import retrofit2.Response;
  */
 public class ActivityStream extends Fragment {
     FloatingActionButton fab;
-        ArrayList<StreamDatum> streamDataList;
+    ArrayList<StreamDatum> streamDataList;
     ActivityStreamAdapter activityStreamAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     public ActivityStream() {
         // Required empty public constructor
     }
@@ -56,7 +58,7 @@ public class ActivityStream extends Fragment {
 
             @Override
             public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-                LinearSmoothScroller smoothScroller = new LinearSmoothScroller(getActivity()) {
+                LinearSmoothScroller smoothScroller = new LinearSmoothScroller( getActivity() ) {
 
                     private static final float SPEED = 300f;
 
@@ -66,29 +68,23 @@ public class ActivityStream extends Fragment {
                     }
 
                 };
-                smoothScroller.setTargetPosition(position);
-                startSmoothScroll(smoothScroller);
+                smoothScroller.setTargetPosition( position );
+                startSmoothScroll( smoothScroller );
             }
 
         };
         recyclerView.setLayoutManager( layoutManager );
         streamDataList = new ArrayList<>();
-
-        if(CommonUtils.isNetworkConnected( getContext() )){
-            getStream();
-            Progress.showProgress( getContext() );
-        }
-
+        getStream();
+        Progress.showProgress( getActivity() );
 
         fab = view.findViewById( R.id.fab );
         fab.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent( getContext(), AddActivity.class );
-                intent.putExtra( "title", getArguments().getString( "title") );
+                intent.putExtra( "title", getArguments().getString( "title" ) );
                 startActivityForResult( intent, 100 );
-
-
             }
         } );
 
@@ -97,10 +93,9 @@ public class ActivityStream extends Fragment {
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (CommonUtils.isNetworkConnected( getContext() )) {
-                    getStream();
-                    Progress.showProgress( getContext() );
-                }
+
+                getStream();
+                Progress.showProgress( getContext() );
                 swipeRefreshLayout.setRefreshing( false );
             }
         } );
@@ -110,10 +105,11 @@ public class ActivityStream extends Fragment {
     public void getStream() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Stream> call = apiInterface.activityStream( CONSTANTS.EVENTID );
-        call.enqueue( new Callback<Stream>() {
+
+        CallUtils.enqueueWithRetry( call, 3, new Callback<Stream>() {
             @Override
             public void onResponse(Call<Stream> call, Response<Stream> response) {
-                if(response.code()==200) {
+                if (response.code() == 200 ) {
                     if (response.body().getStatusCode() == 200 && response.body().getStreamData().size() > 0) {
                         streamDataList = (ArrayList<StreamDatum>) response.body().getStreamData();
                         activityStreamAdapter = new ActivityStreamAdapter( getContext(), streamDataList );
@@ -123,9 +119,9 @@ public class ActivityStream extends Fragment {
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                }else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
-
-
                 Progress.closeProgress();
             }
 
@@ -134,9 +130,27 @@ public class ActivityStream extends Fragment {
                 CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
-
         } );
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.getStringExtra( "Status" ).equalsIgnoreCase( "yes" )) {
+                    getStream();
+                    Progress.showProgress( getContext() );
+                }
+            }
+        }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+//        if (CommonUtils.isNetworkConnected( getContext() )) {
+//            getStream();
+//            Progress.showProgress( getContext() );
+//        }
+    }
 }

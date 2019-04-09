@@ -4,7 +4,9 @@ public class CONSTANTS {
 
 
     public static final long EVENTID = 1;
-    public static final String ACTIVITYSTREAM = "ActivityStream";
+    //Menu Title
+    public static final String  ACTIVITYSTREAM ="Activity Stream";
+    public static final String  ACTIVITYSTREAM2 ="ActivityStream";
     public static final String AGENDA = "Agenda";
     public static final String SPEAKER = "Speakers";
     public static final String DELEGATES = "Delegates";
@@ -20,12 +22,17 @@ public class CONSTANTS {
     public static final String VENUE = "Venue";
     public static final String FEEDBACK = "Feedback";
     public static final String HELPDESK = "Helpdesk";
+    public static final String NOTIFICATION = "Notification";
 
-
+    //constant value
     public static final String SCHEDULE = "schedule";
     public static final String RESCHEDULE = "reschedule";
-    public static final String CHECKINTERNET = "Check Internet Connection";
-
+    public static final String CHECKIN = "Check-In";
+    public static final String LOGOUT = "Log Out";
+    public static final String SUCCESS = "Success";
     public static final String ERROR = "Error";
     public static final String CONNECTIONERROR = "Connection Error";
+    public static final String LOGOUTSTRING = "Are you sure. You want to exit?" ;
+    public static final String PROFILE = "Profile";
+
 }

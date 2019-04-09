@@ -81,6 +81,7 @@ public class WebViewFragment extends Fragment {
 
 
     private void openURL(String url) {
+        mWebView.getSettings().setJavaScriptEnabled( true );
         mWebView.loadUrl( url );
         mWebView.requestFocus();
     }
@@ -92,8 +93,7 @@ public class WebViewFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.code()==200) {
                     JsonObject jsonObject = response.body();
-                    if (Long.parseLong( String.valueOf( jsonObject.get( "StatusCode" ) ) ) == 200
-                            && response.code() == 200) {
+                    if (Long.parseLong( String.valueOf( jsonObject.get( "StatusCode" ) ) ) == 200) {
                         if (jsonObject.get( "Data" ).getAsJsonArray().size() > 0) {
                             url = jsonObject.get( "Data" ).getAsJsonArray
                                     ().get( 0 ).getAsJsonObject().get( "Webpage_Link" ).toString().replace( "\"","" );
@@ -101,10 +101,12 @@ public class WebViewFragment extends Fragment {
                             openURL( url );
                         }
                     } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, jsonObject.get( "Message" ).toString() );
                         errorListener.onError( true );
 
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }

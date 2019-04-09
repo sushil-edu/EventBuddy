@@ -3,7 +3,9 @@ package in.kestone.eventbuddy.model.app_config_model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AppConf {
+import java.io.Serializable;
+
+public class AppConf implements Serializable {
 
     @SerializedName("AppVersion")
     private float mAppVersion;

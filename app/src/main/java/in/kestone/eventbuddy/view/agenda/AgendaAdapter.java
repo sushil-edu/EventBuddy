@@ -75,6 +75,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
 
 //        holder.titleTv.setText( agendaData.getTitleTrack() );
 
+        holder.titleTv.setText(agendaData.getLongTitle() );
         holder.timeTv.setText( agendaData.getTime() );
         holder.locationTv.setText( "Location: " + agendaData.getLocation() );
         holder.headingTv.setText( agendaData.getShortTitle() );
@@ -92,10 +93,10 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
         }
 
         //rating
-        if (agendaData.getRatingLabel() != null || !agendaData.getShortTitle().contains( "Break" )) {
+        if (agendaData.getRatingLabel() != null && !agendaData.getShortTitle().toLowerCase().contains( "break" )) {
             holder.layout_rating.setVisibility( View.VISIBLE );
             holder.addIv.setVisibility( View.VISIBLE );
-            holder.avgRatingBar.setRating( agendaData.getRating() );
+//            holder.avgRatingBar.setRating( agendaData.getRating() );
             holder.rateTv.setText( agendaData.getRatingLabel() );
             holder.layout_rating.setOnClickListener( new View.OnClickListener() {
                 @Override
@@ -200,8 +201,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private CustomTextView addIv;
-        private CustomTextView titleTv, timeTv, rateTv, locationTv, headingTv;
+        private TextView addIv, titleTv, timeTv, rateTv, locationTv, headingTv;
         private RatingBar avgRatingBar;
         private CardView card;
         private RecyclerView nestedReyclerView;

@@ -2,6 +2,8 @@ package in.kestone.eventbuddy.http;
 
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -14,7 +16,12 @@ public class APIClient {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel( HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .writeTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(300, TimeUnit.SECONDS)
+                .retryOnConnectionFailure( true )
+                .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURL)
                 .addConverterFactory( GsonConverterFactory.create())

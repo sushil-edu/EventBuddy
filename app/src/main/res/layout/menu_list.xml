@@ -15,9 +15,9 @@
         android:id="@+id/imageView"
         android:layout_width="@dimen/dimen_32dp"
         android:layout_height="@dimen/dimen_32dp"
-        android:src="@mipmap/ic_launcher_round"
-        android:padding="@dimen/dimen_8dp"
+        android:src="@drawable/app_icon_circular"
         android:layout_centerVertical="true"
+        android:padding="6dp"
         android:layout_margin="@dimen/padding_5"/>
 
     <ImageView

@@ -30,7 +30,7 @@
                 android:layout_height="58dp"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/dimen_10dp"
-                android:src="@drawable/ic_user" />
+                android:src="@drawable/default_user_grey" />
 
 
             <LinearLayout

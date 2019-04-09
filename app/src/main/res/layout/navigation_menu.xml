@@ -6,8 +6,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_height="150dp"
+        android:background="@drawable/app_masthead_image"
         android:padding="@dimen/dimen_10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -16,7 +16,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/user"
+            android:src="@drawable/default_user_grey"
+            app:civ_circle_background_color="#C4FFFFFF"
             android:tint="@color/white"/>
 
         <LinearLayout
@@ -59,11 +60,11 @@
 
         <ImageView
             android:id="@+id/imageEdit"
-            android:layout_width="@dimen/dimen_15dp"
-            android:layout_height="@dimen/dimen_15dp"
+            android:layout_width="@dimen/dimen_25dp"
+            android:layout_height="@dimen/dimen_25dp"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/layout_profile"
-            android:src="@drawable/ic_edit" />
+            android:src="@drawable/edit_grey"
+            android:tint="@color/white"/>
 
     </RelativeLayout>
 

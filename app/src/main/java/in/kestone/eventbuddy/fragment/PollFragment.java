@@ -60,7 +60,6 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
     LinearLayout layoutDetails;
     @BindView(R.id.btnSubmit)
     Button btnSubmit;
-    PostRequest postRequest;
     @BindView(R.id.layout_poll)
     LinearLayout layout_poll;
     @BindView(R.id.optionA)
@@ -112,16 +111,14 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
                 populatePollingTrack( lisPolling );
                 break;
             case R.id.layoutSpeaker:
+                listSession.clear();
                 if (lisPolling.size() > 0) {
                     for (int i = 0; i < lisPolling.size(); i++) {
-                        if (trackTv.getText().toString().equals( lisPolling.get( i ).getTrackName() ) &&
-                                lisPolling.get( i ).getSession().size() > 0) {
+                        if (trackTv.getText().toString().equals( lisPolling.get( i ).getTrackName() )) {
                             listSession.addAll( lisPolling.get( i ).getSession() );
-                            populateSession( listSession );
-                        } else {
-                            speakerTv.setText( "Select Session" );
                         }
                     }
+                    populateSession( listSession );
                 }
 
                 break;
@@ -201,15 +198,21 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
     }
 
     public void populateSession(ArrayList<Session> details) {
-        Dialog dialog = new Dialog( getContext() );
-        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
-        dialog.setContentView( R.layout.alert_user_type );
-        TextView headTv = dialog.findViewById( R.id.headTv );
-        headTv.setText( "Select Session" );
-        RecyclerView recyclerView = dialog.findViewById( R.id.recyclerView );
-        recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
-        recyclerView.setAdapter( new KnowledgeAdapter( this, details, dialog, type ) );
-        dialog.show();
+        if(details.size()>0) {
+            Dialog dialog = new Dialog( getContext() );
+            dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
+            dialog.setContentView( R.layout.alert_user_type );
+            TextView headTv = dialog.findViewById( R.id.headTv );
+            headTv.setText( "Select Session" );
+            RecyclerView recyclerView = dialog.findViewById( R.id.recyclerView );
+            recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
+            recyclerView.setAdapter( new KnowledgeAdapter( this, details, dialog, type ) );
+            dialog.show();
+        }else {
+            CustomDialog.showInvalidPopUp( getContext(),"","Session not available in this track" );
+            speakerTv.setText( "Select Session" );
+        }
+
     }
 
     public void getPolling() {
@@ -219,12 +222,16 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
             @Override
             public void onResponse(Call<Polling> call, Response<Polling> response) {
 
-                if (response.body().getStatusCode() == 200 && response.body().getMData().size() > 0 && response.code() == 200) {
-                    lisPolling = (ArrayList<MDatum>) response.body().getMData();
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getMData().size() > 0 && response.code() == 200) {
+                        lisPolling = (ArrayList<MDatum>) response.body().getMData();
 
 
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }
@@ -255,8 +262,8 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
         call.enqueue( new Callback<JSONObject>() {
             @Override
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                if (response.code() == 201) {
-                    CustomDialog.showValidPopUp( getContext(), "Success", "Request send" );
+                if (response.code() == 201 || response.code()==200) {
+                    CustomDialog.showValidPopUp( getContext(), CONSTANTS.SUCCESS, "Request send" );
                     optionD.setBackgroundDrawable( getResources().getDrawable( R.drawable.outline ) );
                     optionB.setBackgroundDrawable( getResources().getDrawable( R.drawable.outline ) );
                     optionC.setBackgroundDrawable( getResources().getDrawable( R.drawable.outline ) );
@@ -269,7 +276,7 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
                     speakerTv.setText( "Select Session" );
 
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Request not send" );
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }

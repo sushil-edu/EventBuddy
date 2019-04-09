@@ -26,6 +26,7 @@ import in.kestone.eventbuddy.model.user_model.Profile;
 import in.kestone.eventbuddy.model.user_model.User;
 import in.kestone.eventbuddy.model.venue_model.MVenue;
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -121,10 +122,6 @@ public interface APIInterface {
 
     @GET("TnCModuleConfiguration/{id}")
     Call<JsonObject> termsAndCondition(@Path("id") long eventId);
-
-    //    @FormUrlEncoded
-//    @POST("ActivityStream/post")
-//    Call<JSONObject> postImageStream(@Field("def_image") String def_image);
 
 
 }

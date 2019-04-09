@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,7 +21,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -42,12 +43,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     CustomTextView tv_error;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    SharedPreferences.Editor editor;
-    SharedPreferences preferences;
-    AppConf ac;
     SplashPresenter mSplashPresenter;
-    String appConfiguration = "";
-    String TAG = "ActivitySplash";
 
     public static Intent getStartIntent(Context context) {
         return new Intent( context, ActivitySplash.class );
@@ -68,31 +64,41 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 
     private void initialiseView() {
         ButterKnife.bind( this );
-        //set configuration
-        if(CommonUtils.isNetworkConnected( getApplicationContext() )) {
-            Progress.showProgress( this );
-            getConfig();
-        }else{
-            CustomDialog.showInvalidPopUp( this, CONSTANTS.ERROR,"Check Internet connection" );
-        }
+
+//        String config = LocalStorage.getConfiguration( ActivitySplash.this );
+//                        Log.e( "Config ", config );
+//                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
+//                        setAppConf( appConf );
+        getConfig();
+        Progress.showProgress( this );
     }
 
     private void setAppConf(AppConf acf) {
 
-            ListEvent.setAppConf( acf );
-            tv_eventName.setText( acf.getEvent().getEventName() );
-//            Log.e("Event name  ", acf.getEvent().getEventName());
-            DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
-            mSplashPresenter = new SplashPresenter( dataManager );
-            mSplashPresenter.onAttach( this );
-            mSplashPresenter.decideNextActivity();
+        ListEvent.setAppConf( acf );
+        DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
+        mSplashPresenter = new SplashPresenter( dataManager );
+        mSplashPresenter.onAttach( this );
+        tv_eventName.setVisibility( View.GONE );
+        tv_eventName.setText( acf.getEvent().getEventName() );
+
+        new Handler().postDelayed( new Runnable() {
+            public void run() {
+                mSplashPresenter.decideNextActivity();
+            }
+        }, 2000 );
 
     }
 
     @Override
     public void openMainActivity() {
-        Intent intent = MainActivity.getStartIntent( this );
-//        Intent intent = ActivityLogin.getStartIntent( this );
+        SharedPreferences prefs = getSharedPreferences( CONSTANTS.CHECKIN, MODE_PRIVATE );
+        Intent intent;
+        if (prefs.getBoolean( "status", false )) {
+            intent = MainActivity.getStartIntent( this );
+        } else {
+            intent = ActivityLogin.getStartIntent( this );
+        }
         startActivity( intent );
         finish();
     }
@@ -105,40 +111,35 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     }
 
     public void getConfig() {
-
-            //get config from server
-            APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-            Call<AppConf> call = apiInterface.getAppConfiguration( (int) CONSTANTS.EVENTID );
-            call.enqueue( new Callback<AppConf>() {
-                @Override
-                public void onResponse(Call<AppConf> call, Response<AppConf> response) {
-                    if(response.code()==200) {
-                        //get config from preferences
-//                    preferences = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE );
-//                    if (preferences.getFloat( "version",0 ) == response.body().getAppVersion()  || preferences!=null) {
-//                        String config = preferences.getString( "AppConfiguration", "" );
-//                        Log.e("Config ", config);
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<AppConf> call = apiInterface.getAppConfiguration( (int) CONSTANTS.EVENTID );
+        call.enqueue( new Callback<AppConf>() {
+            @Override
+            public void onResponse(Call<AppConf> call, Response<AppConf> response) {
+                if (response.code() == 200 || response.code() == 201) {
+                    //set config to preferences
+//                    if (LocalStorage.getConfigVersion( ActivitySplash.this ) == response.body().getAppVersion()
+//                    && LocalStorage.getConfiguration( ActivitySplash.this )!=null) {
+//                        //get configuration from prefaces
+//                        String config = LocalStorage.getConfiguration( ActivitySplash.this );
+//                        Log.e( "Config ", config );
 //                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
-////                        setAppConf( appConf );
-//                    } else {
-                        editor = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
-                        editor.putFloat( "version", response.body().getAppVersion() );
-                        String gson = new Gson().toJson( response.body() );
-                        editor.putString( "AppConfiguration", gson );
-                        editor.apply();
-                        setAppConf( response.body() );
+//                        setAppConf( appConf );
+//                    }else {
+                    LocalStorage.saveConfiguration( response.body(), ActivitySplash.this );
+                    setAppConf( response.body() );
 //                    }
-                    }
-                    Progress.closeProgress();
+                } else {
+                    CustomDialog.invalidPopUp( ActivitySplash.this, CONSTANTS.ERROR, response.message() );
                 }
+                Progress.closeProgress();
+            }
 
-                @Override
-                public void onFailure(Call<AppConf> call, Throwable t) {
-                    CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
-                    Progress.closeProgress();
-                }
-            } );
-
-        }
-
+            @Override
+            public void onFailure(Call<AppConf> call, Throwable t) {
+                CustomDialog.invalidPopUp( ActivitySplash.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+    }
 }

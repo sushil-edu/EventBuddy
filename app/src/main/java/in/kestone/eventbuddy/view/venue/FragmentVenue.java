@@ -103,6 +103,8 @@ public class FragmentVenue extends Fragment {
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
 
                 Progress.closeProgress();

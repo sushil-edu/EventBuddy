@@ -114,12 +114,9 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
                         if (listQA.get( i ).getSession().size() > 0 &&
                                 trackTv.getText().equals( listQA.get( i ).getTrackName() )) {
                             listQASession.addAll( listQA.get( i ).getSession() );
-                            populateQandASession( listQASession );
-                        } else {
-                            speakerTv.setText( "Select Session" );
                         }
-
                     }
+                    populateQandASession( listQASession );
                 }
             }
         } );
@@ -148,15 +145,19 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 
 
     private void populateQandASession(ArrayList<in.kestone.eventbuddy.model.qanda_model.Session> listQASession) {
-        Dialog dialog = new Dialog( getContext() );
-        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
-        dialog.setContentView( layout.alert_user_type );
-        TextView headTv = dialog.findViewById( id.headTv );
-        headTv.setText( "Select Session" );
-        RecyclerView recyclerView = dialog.findViewById( id.recyclerView );
-        recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
-        recyclerView.setAdapter( new QASessionAdapter( this, listQASession, dialog, type ) );
-        dialog.show();
+        if (listQASession.size()>0) {
+            Dialog dialog = new Dialog( getContext() );
+            dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
+            dialog.setContentView( layout.alert_user_type );
+            TextView headTv = dialog.findViewById( id.headTv );
+            headTv.setText( "Select Session" );
+            RecyclerView recyclerView = dialog.findViewById( id.recyclerView );
+            recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
+            recyclerView.setAdapter( new QASessionAdapter( this, listQASession, dialog, type ) );
+            dialog.show();
+        }else {
+            CustomDialog.showInvalidPopUp( getContext(),"","Session not available in this track" );
+        }
     }
 
     public void getAskQuestion() {
@@ -164,11 +165,14 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
         call.enqueue( new Callback<QandA>() {
             @Override
             public void onResponse(Call<QandA> call, Response<QandA> response) {
-
-                if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0 && response.code() == 200) {
-                    listQA.addAll( response.body().getData() );
+                if(response.code()==200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0 && response.code() == 200) {
+                        listQA.addAll( response.body().getData() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }
@@ -182,27 +186,7 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 
     }
 
-    private void postPollingRequest(PostRequest postRequest) {
-        Call<JSONObject> call = apiInterface.postPolling( postRequest );
-        call.enqueue( new Callback<JSONObject>() {
-            @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                if (response.code() == 201) {
-                    CustomDialog.showValidPopUp( getContext(), "Success", "Request send" );
-                    txtFeedback.getText().clear();
-                } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Request not send" );
-                }
-                Progress.closeProgress();
-            }
 
-            @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                Progress.closeProgress();
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
-            }
-        } );
-    }
 
     private void postQA(PostRequest postRequest) {
         Call<JSONObject> call = apiInterface.postQandA( CONSTANTS.EVENTID, postRequest );
@@ -210,12 +194,12 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
             @Override
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 if (response.code() == 201) {
-                    CustomDialog.showValidPopUp( getContext(), "Success", "Request send" );
+                    CustomDialog.showValidPopUp( getContext(), CONSTANTS.SUCCESS, "Request send" );
                     txtFeedback.getText().clear();
                     trackTv.setText( "Select Track" );
                     speakerTv.setText( "Select Session" );
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Request not send" );
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }

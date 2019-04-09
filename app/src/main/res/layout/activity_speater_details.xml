@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/light_grey">
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/bg_grey">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -31,7 +33,7 @@
                     android:layout_height="96dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="@dimen/dimen_20dp"
-                    android:src="@drawable/user" />
+                    android:src="@drawable/default_user_grey" />
 
 
             <in.kestone.eventbuddy.widgets.CustomTextView

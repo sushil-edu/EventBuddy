@@ -22,9 +22,9 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.http.CallUtils;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
 import in.kestone.eventbuddy.model.agenda_model.Track;
 import retrofit2.Call;
@@ -58,14 +58,9 @@ public class AgendaFragment extends Fragment {
                     new Runnable() {
                         @Override
                         public void run() {
-//                            if (list.size() > 0) {
-//                                tabLayout.getTabAt( list.size() - 1 ).select();
-//                            } else {
                             tabLayout.getTabAt( listTrack.size() - 1 ).select();
-//                            }
                         }
                     }, 50 );
-
         }
     };
 
@@ -79,15 +74,12 @@ public class AgendaFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_agenda, container, false );
 
-        if (CommonUtils.isNetworkConnected( getContext() )) {
-            getAgenda();
-            Progress.showProgress( getActivity() );
-        } else {
-            CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Check Internet connection" );
-        }
+        getAgenda();
+        Progress.showProgress( getActivity() );
 
         tabLayout = view.findViewById( R.id.tabs );
         viewPager = view.findViewById( R.id.viewpager );
+        tabLayout.setVisibility( View.GONE );
 
         if (list.size() <= 4 || listTrack.size() <= 4)
             tabLayout.setTabMode( TabLayout.MODE_FIXED );
@@ -118,26 +110,39 @@ public class AgendaFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
+
         ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
 
         for (int i = 0; i < listTrack.size(); i++) {
-            AgendaTrackFragment fView = new AgendaTrackFragment( i, modelAgenda.getAgenda().get( i ).getTrack().size(), modelAgenda );
+            AgendaTrackFragment fView = new AgendaTrackFragment( i, modelAgenda );
+//            AgendaTrackFragment fView = new AgendaTrackFragment( i, modelAgenda.getAgenda().get( i ).getTrack().size() );
             adapter.addFrag( fView, listTrack.get( i ) );
         }
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
-
     }
 
     public void setAgenda(ModelAgenda modelAgenda) {
-        tabCount = modelAgenda.getAgenda().size();
-        listTrack.clear();
-        for (int i = 0; i < tabCount; i++) {
-            listTrack.add( modelAgenda.getAgenda().get( i ).getDisplayLabel() );
-        }
+        new Handler().postDelayed( new Runnable() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        tabCount = modelAgenda.getAgenda().size();
+                        listTrack.clear();
+                        for (int i = 0; i < tabCount; i++)
+                            listTrack.add( modelAgenda.getAgenda().get( i ).getDisplayLabel() );
 
-        setupViewPager( viewPager, modelAgenda );
-        tabLayout.setupWithViewPager( viewPager );
+                        setupViewPager( viewPager, modelAgenda );
+                        tabLayout.setupWithViewPager( viewPager );
+                        tabLayout.setVisibility( View.VISIBLE );
+//                        Progress.closeProgress();
+                    }
+                } );
+            }
+        }, 500 );
+
     }
 
 
@@ -152,24 +157,26 @@ public class AgendaFragment extends Fragment {
 
         apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<ModelAgenda> call = apiInterface.getAgenda( (int) CONSTANTS.EVENTID );
-        call.enqueue( new Callback<ModelAgenda>() {
+        CallUtils.enqueueWithRetry( call, 3, new Callback<ModelAgenda>() {
             @Override
             public void onResponse(Call<ModelAgenda> call, Response<ModelAgenda> response) {
-                if(response.code()==200) {
+                if (response.code() == 200) {
                     Log.e( "Response ", "" + response.body().getStatusCode() );
 //                AgendaList.setAgenda( response.body() );
                     setAgenda( response.body() );
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
+
             }
 
             @Override
             public void onFailure(Call<ModelAgenda> call, Throwable t) {
+                Log.e( "Error ", t.getMessage() );
                 CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
         } );
     }
-
-
 }

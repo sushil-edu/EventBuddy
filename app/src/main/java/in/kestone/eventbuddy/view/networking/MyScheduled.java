@@ -111,7 +111,7 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
             @Override
             public void onResponse(Call<ScheduleStatusResponse> call, Response<ScheduleStatusResponse> response) {
                 if (response.code() == 200 && response.body().getStatusCode() == 200) {
-                    CustomDialog.showValidPopUp( getContext(), "Success", "Request has been rejected" );
+                    CustomDialog.showValidPopUp( getContext(), CONSTANTS.SUCCESS, "Request has been rejected" );
                     networkingListsStatus.remove( pos );
                     recyclerViewMyMeeting.removeViewAt( pos );
                     myMeetingAdapter.notifyItemRemoved( pos );
@@ -136,12 +136,14 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
             public void onResponse(Call<ScheduleStatusResponse> call, Response<ScheduleStatusResponse> response) {
 
                 if (response.code() == 200 && response.body().getStatusCode() == 200) {
-                    CustomDialog.showValidPopUp( getContext(), "Success", "Request has been approved" );
+                    CustomDialog.showValidPopUp( getContext(), CONSTANTS.SUCCESS, response.body().getMessage() );
                     networkingListsStatus.remove( pos );
                     recyclerViewMyMeeting.removeViewAt( pos );
                     myMeetingAdapter.notifyItemRemoved( pos );
                     myMeetingAdapter.notifyItemRangeChanged( pos, networkingListsStatus.size() );
                     myMeetingAdapter.notifyDataSetChanged();
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
             }
 

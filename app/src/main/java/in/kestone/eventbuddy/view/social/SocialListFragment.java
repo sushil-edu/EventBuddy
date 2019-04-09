@@ -1,10 +1,8 @@
 package in.kestone.eventbuddy.view.social;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +20,9 @@ public class SocialListFragment extends Fragment {
     View view;
     String url;
 
-
-    public SocialListFragment(String url) {
-
-        this.url = url;
+    public SocialListFragment() {
     }
+
 
 
     @Override
@@ -35,6 +31,10 @@ public class SocialListFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_social_list, container, false );
         ButterKnife.bind( this, view );
+
+        url = getArguments().getString( "url" );
+
+        webView.getSettings().setJavaScriptEnabled( true );
         webView.setWebViewClient( new MyWebViewClient() );
         webView.loadUrl( url );
         webView.requestFocus();
@@ -55,8 +55,7 @@ public class SocialListFragment extends Fragment {
         }
 
         @Override
-        public void onPageFinished(WebView view, String url)
-        {
+        public void onPageFinished(WebView view, String url) {
         }
     }
 

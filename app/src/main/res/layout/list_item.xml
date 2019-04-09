@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    android:id="@+id/layout_parent">
+    android:id="@+id/layout_parent"
+    android:focusableInTouchMode="true">
 
     <in.kestone.eventbuddy.widgets.CustomTextView
         android:id="@+id/tv_trackName"

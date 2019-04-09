@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_5"
+    android:focusableInTouchMode="true"
     tools:context=".view.agenda.AgendaListFragment">
 
     <android.support.v7.widget.RecyclerView

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#E11323</color>
-    <color name="colorPrimaryDark">#A70F1B</color>
+    <color name="colorPrimary">#007cb8</color>
+    <color name="colorPrimaryDark">#01608e</color>
     <color name="colorAccent">#878686</color>
 
     <color name="error">#E11323</color>
@@ -15,5 +15,7 @@
     <color name="light_grey">#e9e5e5</color>
     <color name="blue_grey">#90A4AE</color>
     <color name="bg_grey">#e5e7e7</color>
+
+    <color name="actionbar_color">#0C1F2C</color>
 
 </resources>

@@ -126,6 +126,9 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
 
                     }
                 }
+                else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                }
             }
 
             @Override

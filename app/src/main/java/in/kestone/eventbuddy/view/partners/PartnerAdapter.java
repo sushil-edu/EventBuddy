@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.partners_model.Detail;
 
 public class PartnerAdapter extends RecyclerView.Adapter<PartnerAdapter.ViewHolder> {
@@ -42,9 +43,9 @@ public class PartnerAdapter extends RecyclerView.Adapter<PartnerAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Detail detail = detailArrayList.get( position );
-        Picasso.with( activity ).load( detail.getLogo() )
+        Picasso.with( activity ).load( LocalStorage.getImagePath( activity )+""+ detail.getLogo() )
                 .resize( 80, 80 )
-                .placeholder( R.drawable.user )
+                .placeholder( R.drawable.default_user_grey )
                 .into( holder.partnerLogo );
         holder.partnerName.setText( detail.getName() );
 

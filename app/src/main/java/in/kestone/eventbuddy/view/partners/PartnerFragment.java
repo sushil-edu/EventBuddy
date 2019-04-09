@@ -50,15 +50,11 @@ public class PartnerFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_partner, container, false );
         ButterKnife.bind( this, view );
-        if(CommonUtils.isNetworkConnected( getContext() ) ){
             if(getArguments()!=null) {
                 Log.e("Type", getArguments().getString( "type" ));
                 getPartner(getArguments().getString( "type" ));
                 Progress.showProgress( getContext() );
             }
-        }else {
-            CustomDialog.showInvalidPopUp( getContext(),CONSTANTS.ERROR,CONSTANTS.CHECKINTERNET );
-        }
         return view;
     }
 
@@ -106,6 +102,8 @@ public class PartnerFragment extends Fragment {
                     } else {
                         CustomDialog.showInvalidPopUp( getContext(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }

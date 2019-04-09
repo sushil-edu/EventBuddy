@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_grey">
+    android:background="@color/bg_grey"
+    android:focusableInTouchMode="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,29 +23,27 @@
             <!--android:text=""-->
             <!--android:textColor="@color/black" />-->
 
+
+
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@color/light_grey"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:elevation="0dp"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp">
+            android:background="@color/colorPrimary">
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
-                style="@style/AppTabLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabBackground="@drawable/tab_selector_2"
-                app:tabGravity="center"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/black"
-                app:tabTextAppearance="@style/MyCustomTextAppearance2"
-                app:tabTextColor="@color/black" />
+                app:tabUnboundedRipple="true"
+                app:tabBackground="?attr/selectableItemBackground"
+                app:tabTextAppearance="@style/Toolbar.Agenda"
+                app:tabTextColor="@color/grey"
+                app:tabSelectedTextColor="@color/white"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorHeight="2dp"
+                app:tabRippleColor="@color/white"
+                app:tabIndicatorColor="@color/white"/>
 
         </android.support.design.widget.AppBarLayout>
 

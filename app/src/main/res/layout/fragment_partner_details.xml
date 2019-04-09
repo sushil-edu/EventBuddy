@@ -2,15 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/bg_grey"
     android:orientation="vertical"
-    android:background="@color/light_grey">
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
-        <include layout="@layout/toolbar"/>
+
+        <include layout="@layout/toolbar" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -39,7 +42,7 @@
                     android:layout_height="170dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/logo" />
+                    android:src="@drawable/default_user_grey" />
 
                 <in.kestone.eventbuddy.widgets.CustomTextView
                     android:id="@+id/nameTv"
@@ -116,68 +119,48 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/getConnectTv"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/email_grey"
+                android:tint="@color/grey" />
+
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/mailTv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1.2"
-                android:gravity="right"
-                android:orientation="horizontal"
-                android:padding="2dp">
+                android:layout_gravity="center_vertical"
+                android:autoLink="email"
+                android:paddingLeft="5dp"
+                android:text="partner@gmail.com"
+                android:textColor="@color/grey"
+                android:textSize="14sp" />
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_location"
-                    android:tint="@color/grey" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_phone"
+                android:tint="@color/grey" />
 
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/mailTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:autoLink="email"
-                    android:paddingLeft="5dp"
-                    android:text="partner@gmail.com"
-                    android:textColor="@color/grey"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <in.kestone.eventbuddy.widgets.CustomTextView
+                android:id="@+id/callTv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="0.8"
-                android:gravity="right"
-                android:orientation="horizontal"
-                android:padding="2dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="5dp"
-                    android:src="@drawable/upload_photo"
-                    android:tint="@color/grey" />
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/callTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:autoLink="phone"
-                    android:paddingLeft="5dp"
-                    android:text="8979132556"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                android:layout_gravity="center_vertical"
+                android:autoLink="phone"
+                android:paddingLeft="5dp"
+                android:text="8979132556"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

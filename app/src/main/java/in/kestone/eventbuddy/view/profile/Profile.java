@@ -8,8 +8,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +26,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -50,7 +56,7 @@ import in.kestone.eventbuddy.widgets.ToolbarTextView;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
-public class Profile extends AppCompatActivity implements MvpView{
+public class Profile extends AppCompatActivity implements MvpView {
     private static final int SELECT_PHOTO = 0x01;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     @BindView(R.id.profileIv)
@@ -75,12 +81,25 @@ public class Profile extends AppCompatActivity implements MvpView{
     Button updateBtn;
     @BindView(R.id.mPassIv)
     ImageView mPassIv;
+    ActionBar mActionBar;
     private String str = "";
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
+        Window window = getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags( WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS );
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags( WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS );
+
+        // finally change the color
+        window.setStatusBarColor( ContextCompat.getColor( this, R.color.actionbar_color ) );
+
         setContentView( R.layout.activity_profile );
         ButterKnife.bind( this );
 
@@ -128,10 +147,13 @@ public class Profile extends AppCompatActivity implements MvpView{
         designationTv.setText( dataManager.getDesignation() );
 //        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
 //        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
-        Picasso.with( this ).load( dataManager.getImagePath() )
-                .resize( 80, 80 )
-                .placeholder( R.drawable.user )
-                .into( profileIv );
+
+        if (dataManager.getImagePath() != null && !dataManager.getImagePath().isEmpty()) {
+            Picasso.with( this ).load( dataManager.getImagePath() )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileIv );
+        }
 //        profileIv.setImageBitmap( decodedByte );
 
         profileIv.setOnClickListener( new View.OnClickListener() {

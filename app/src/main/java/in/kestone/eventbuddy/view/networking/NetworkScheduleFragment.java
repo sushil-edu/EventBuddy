@@ -373,6 +373,8 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
             }
@@ -395,6 +397,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
                 if (response.code() == 200) {
                     CustomDialog.showValidPopUp( getActivity(), "", response.body().getMessage() );
+                }
+                else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();
 

@@ -1,6 +1,7 @@
 package in.kestone.eventbuddy.view.stream;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -233,7 +234,7 @@ public class AddActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
+        onBackPressed();
         return super.onOptionsItemSelected( item );
     }
 
@@ -286,7 +287,6 @@ public class AddActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         status = "No";
-
     }
 
     @Override
@@ -306,6 +306,7 @@ public class AddActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getStreamData().size() == 0) {
                         CustomDialog.showValidPopUp( AddActivity.this, "", response.body().getMessage() );
+                        status="yes";
                         finish();
                     } else {
                         CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, response.body().getMessage() );
@@ -319,7 +320,7 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(retrofit2.Call<Stream> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
 
@@ -345,7 +346,7 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostImageResponse> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getApplicationContext(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(AddActivity.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
         } );

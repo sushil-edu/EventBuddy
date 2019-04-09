@@ -90,7 +90,7 @@ public class FAQFragment extends Fragment {
                         LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
                         mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );
                         faqRV.setLayoutManager( mLayoutManager );
-//        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
+//                        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
                         faqRV.setHasFixedSize( true );
                         faqRV.setAdapter( faqAdapter );
                         faqAdapter.notifyDataSetChanged();
@@ -98,6 +98,8 @@ public class FAQFragment extends Fragment {
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
 
 

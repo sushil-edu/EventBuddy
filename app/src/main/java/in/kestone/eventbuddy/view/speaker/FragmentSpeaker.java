@@ -1,7 +1,9 @@
 package in.kestone.eventbuddy.view.speaker;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import org.json.JSONArray;
@@ -25,6 +28,7 @@ import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.http.CallUtils;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
 import in.kestone.eventbuddy.model.speaker_model.Speaker;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
@@ -111,6 +115,13 @@ public class FragmentSpeaker extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated( savedInstanceState );
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+    }
+
     private void filter(String text) {
         //new array list that will hold the filtered data
         ArrayList<SpeakerDetail> filterdNames = new ArrayList<>();
@@ -137,10 +148,10 @@ public class FragmentSpeaker extends Fragment {
         } else {
             call = apiInterface.getAllDelegates();
         }
-        call.enqueue( new Callback<Speaker>() {
+        CallUtils.enqueueWithRetry( call, 3, new Callback<Speaker>() {
             @Override
             public void onResponse(Call<Speaker> call, Response<Speaker> response) {
-                if(response.code()==200) {
+                if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
                         speakerList.clear();
                         for (int i = 0; i < response.body().getData().size(); i++) {
@@ -158,6 +169,9 @@ public class FragmentSpeaker extends Fragment {
                         customDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }
                 }
+                else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                }
                 Progress.closeProgress();
             }
 
@@ -166,7 +180,6 @@ public class FragmentSpeaker extends Fragment {
                 CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
-
         } );
     }
 

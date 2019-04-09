@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+    <in.kestone.eventbuddy.widgets.TouchImageView
+        android:id="@+id/imagePreviewIV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:clickable="true"/>
+    <ImageView
+        android:id="@+id/closeIV"
+        android:layout_width="@dimen/dimen_30dp"
+        android:layout_height="@dimen/dimen_30dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_close"
+        android:tint="@color/white"/>
+</RelativeLayout>

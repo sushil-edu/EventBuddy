@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg_grey"
-    android:padding="@dimen/dimen_5dp">
+    android:padding="@dimen/dimen_5dp"
+    android:focusableInTouchMode="true">
 
     <!--<ImageView-->
         <!--android:layout_width="60dp"-->

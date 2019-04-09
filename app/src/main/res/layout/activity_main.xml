@@ -34,7 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:paddingTop="20dp">
+        android:defaultFocusHighlightEnabled="true"
+        android:fitsSystemWindows="false">
 
         <include layout="@layout/navigation_menu" />
 

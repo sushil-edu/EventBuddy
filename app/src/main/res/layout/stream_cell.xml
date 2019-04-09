@@ -51,11 +51,12 @@
                             android:layout_height="40dp"
                             android:layout_centerInParent="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_user" />
+                            android:src="@drawable/default_user_grey" />
                     <!--</in.galaxyofandroid.widgets.AwesomeRelativeLayout>-->
                 </RelativeLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/timeTv"
@@ -131,11 +132,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <in.kestone.eventbuddy.widgets.TopCropImageView
+                <!--<in.kestone.eventbuddy.widgets.TopCropImageView-->
+                <ImageView
                     android:id="@+id/mActivityIv"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:scaleType="centerCrop"
+                    android:src="@drawable/def_image"
                     android:visibility="visible" />
 
             </RelativeLayout>
