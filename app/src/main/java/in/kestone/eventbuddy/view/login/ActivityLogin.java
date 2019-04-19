@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -61,7 +63,6 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 //    ImageView image_show_password;
 
     String er_email_message, er_password_message, er_email_header, er_password_header;
-    boolean flag = false;
 
     LoginPresenter loginPresenter;
     APIInterface apiInterface;
@@ -75,6 +76,10 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
+        //remove title
+        requestWindowFeature( Window.FEATURE_NO_TITLE );
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN );
         setContentView( R.layout.activity_login );
 
         initialiseView();
@@ -157,6 +162,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         if (ListEvent.getAppConf().getEvent().getOTP().getVisibility().equalsIgnoreCase( "true" )) {
             intent = ActivityVerify.getStartIntent( this );
             intent.putExtra( "type", "otp" );
+            intent.putExtra( "EMAIL", et_mail.getText().toString() );
 
         } else if (ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase( "true" )) {
             intent = ActivityVerify.getStartIntent( this );
@@ -190,10 +196,20 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                     profile.setPassword( password );
                     if (CommonUtils.isNetworkConnected( getApplicationContext() )) {
                         login( profile );
-                        Progress.showProgress( getApplicationContext() );
+                        Progress.showProgress( ActivityLogin.this);
                     } else {
                         CustomDialog.showInvalidPopUp( this, CONSTANTS.ERROR, "Check Internet connection" );
                     }
+                }
+            }else {
+                Profile profile = new Profile();
+                profile.setEmailID( email );
+                profile.setPassword( "" );
+                if (CommonUtils.isNetworkConnected( getApplicationContext() )) {
+                    otp( profile );
+                    Progress.showProgress( getApplicationContext() );
+                } else {
+                    CustomDialog.showInvalidPopUp( this, CONSTANTS.ERROR, "Check Internet connection" );
                 }
             }
 
@@ -204,8 +220,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
             } else {
                 Profile profile = new Profile();
                 profile.setEmailID( email );
-                login( profile );
-                Progress.showProgress( getApplicationContext() );
+                otp( profile );
+                Progress.showProgress( ActivityLogin.this );
             }
         }
     }
@@ -220,11 +236,9 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                     if (response.body().getStatusCode() == 200) {
 
                         profileDetails.addAll( response.body().getData() );
-//                    Log.e( "Response ", profiles.get( 0 ).getEmailID());
                         loginPresenter.startLogin( profileDetails.get( 0 ).getEmailID(), profileDetails.get( 0 ).getUserID(), profileDetails.get( 0 ).getFirstName()
                                         + " " + profileDetails.get( 0 ).getLastName(), profileDetails.get( 0 ).getDesignation(),
-                                profileDetails.get( 0 ).getImage(), profileDetails.get( 0 ).getOrganization(), profileDetails.get( 0 ).getMobile() );
-                        Log.e("Image path ", response.body().getImagePath());
+                                profileDetails.get( 0 ).getImage(), profileDetails.get( 0 ).getOrganization(), profileDetails.get( 0 ).getMobile(), profileDetails.get( 0 ).getPassword() );
                         LocalStorage.saveImagePath( response.body().getImagePath(), ActivityLogin.this );
                     } else {
                         CustomDialog.showInvalidPopUp( ActivityLogin.this, CONSTANTS.ERROR, response.body().getMessage());
@@ -235,6 +249,41 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                 } else {
                 CustomDialog.invalidPopUp( ActivityLogin.this, CONSTANTS.ERROR, response.message() );
             }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                CustomDialog.invalidPopUp(ActivityLogin.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
+                Progress.closeProgress();
+            }
+        } );
+    }
+    private void otp(Profile profile) {
+        apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<User> call = apiInterface.getOtp( profile );
+        CallUtils.enqueueWithRetry( call, 2, new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatusCode() == 200) {
+
+                        profileDetails.addAll( response.body().getData() );
+//                    Log.e( "Response ", profiles.get( 0 ).getEmailID());
+                        loginPresenter.startLogin( profileDetails.get( 0 ).getEmailID(), profileDetails.get( 0 ).getUserID(), profileDetails.get( 0 ).getFirstName()
+                                        + " " + profileDetails.get( 0 ).getLastName(), profileDetails.get( 0 ).getDesignation(),
+                                profileDetails.get( 0 ).getImage(), profileDetails.get( 0 ).getOrganization(), profileDetails.get( 0 ).getMobile(), profileDetails.get( 0 ).getPassword() );
+                        LocalStorage.saveImagePath( response.body().getImagePath(), ActivityLogin.this );
+                        CustomDialog.showValidPopUp( ActivityLogin.this, CONSTANTS.SUCCESS, "Check main box for otp");
+                    } else {
+                        CustomDialog.showInvalidPopUp( ActivityLogin.this, CONSTANTS.ERROR, response.body().getMessage());
+                        et_mail.getText().clear();
+                        et_password.getText().clear();
+                        et_mail.requestFocus();
+                    }
+                } else {
+                    CustomDialog.invalidPopUp( ActivityLogin.this, CONSTANTS.ERROR, response.message() );
+                }
                 Progress.closeProgress();
             }
 

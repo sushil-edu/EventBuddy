@@ -7,11 +7,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +24,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -37,7 +34,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -58,14 +59,13 @@ import in.kestone.eventbuddy.fragment.FeedbackFragment;
 import in.kestone.eventbuddy.fragment.HelpDeskFragment;
 import in.kestone.eventbuddy.fragment.PollFragment;
 import in.kestone.eventbuddy.fragment.WebViewFragment;
-import in.kestone.eventbuddy.knowledgeBase.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Menu;
-import in.kestone.eventbuddy.model.user_model.User;
 import in.kestone.eventbuddy.view.agenda.AgendaFragment;
+import in.kestone.eventbuddy.view.knowledgeBase.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.view.networking.Networking;
 import in.kestone.eventbuddy.view.partners.PartnerFragment;
-import in.kestone.eventbuddy.view.profile.Profile;
+import in.kestone.eventbuddy.view.profile.ProfileActivity;
 import in.kestone.eventbuddy.view.social.SocialFragment;
 import in.kestone.eventbuddy.view.speaker.FragmentSpeaker;
 import in.kestone.eventbuddy.view.splash.ActivitySplash;
@@ -96,10 +96,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     @BindView(R.id.mTitleTv)
     ToolbarTextView mTitleTv;
 
+    @BindView(R.id.subTitleTv)
+    TextView subTitle;
+
     //nav header
     @BindView(R.id.imageEdit)
     ImageView imageEdit;
-    @BindView( R.id.layout_profile )
+    @BindView(R.id.layout_profile)
     LinearLayout layout_profile;
     @BindView(R.id.tv_version_code)
     CustomTextView tv_version_code;
@@ -194,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 //                .into( profileImage );
 
         //load default fragment
-        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(), list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
 
 
         // menu list adapter
@@ -226,14 +229,25 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     }
 
     @Override
-    public void onClick(int mId, final String dTitle, String mTitle) {
+    public void onClick(int mId, final String dTitle, String mTitle, String header, String subHeader) {
         Log.e( "Menu ID ", String.valueOf( mId ) + " title " + mTitle );
-        openFragment( dTitle, mTitle );
+        openFragment( dTitle, mTitle, header, subHeader );
         drawerLayout.closeDrawers();
     }
 
-    private void openFragment(String dTitle, String mTitle) {
-        appTitle = dTitle;
+    private void openFragment(String dTitle, String mTitle, String header, String subHeader) {
+        if(subHeader.length()>0){
+            subTitle.setVisibility( View.VISIBLE );
+        }else {
+            subTitle.setVisibility( View.GONE );
+        }
+
+        if(header.length()>0){
+            appTitle = header;
+        }else {
+            appTitle = dTitle;
+        }
+
 //        if (!dTitle.equals( CONSTANTS.LOGOUT )) {
 //            mTitleTv.setText( appTitle );
 //        }
@@ -250,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
             case CONSTANTS.ACTIVITYSTREAM:
             case CONSTANTS.ACTIVITYSTREAM2:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 bundle.putString( "title", dTitle );
                 fragment = new ActivityStream();
                 fragment.setArguments( bundle );
@@ -259,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.AGENDA:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new AgendaFragment();
                 ft.replace( R.id.container, fragment, CONSTANTS.AGENDA );
                 ft.addToBackStack( null );
@@ -266,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.SPEAKER:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 bundle.putString( "module", "speaker" );
                 fragment = new FragmentSpeaker();
                 fragment.setArguments( bundle );
@@ -275,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.DELEGATES:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 bundle.putString( "module", "delegate" );
                 fragment = new FragmentSpeaker();
                 fragment.setArguments( bundle );
@@ -283,13 +301,22 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.commit();
                 break;
             case CONSTANTS.NETWORKING:
-                mTitleTv.setText( appTitle );
-                ft.replace( R.id.container, new Networking(), CONSTANTS.NETWORKING );
-                ft.addToBackStack( null );
-                ft.commit();
+//                String date = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateFrom();
+//                String time = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeFrom();
+//                String errorStr = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithinDelegates();
+//                if (onCompareDate( date, time )) {
+                    mTitleTv.setText( appTitle );
+                    subTitle.setText( subHeader );
+                    ft.replace( R.id.container, new Networking(), CONSTANTS.NETWORKING );
+                    ft.addToBackStack( null );
+                    ft.commit();
+//                } else {
+//                    CustomDialog.showInvalidPopUp( MainActivity.this, CONSTANTS.ERROR, errorStr );
+//                }
                 break;
             case CONSTANTS.POLLING:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new PollFragment();
                 bundle.putString( "type", CONSTANTS.POLLING );
                 fragment.setArguments( bundle );
@@ -299,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.ASKAQUESTION:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new AskQuestionFragment();
                 ft.replace( R.id.container, fragment, CONSTANTS.ASKAQUESTION );
                 ft.addToBackStack( null );
@@ -306,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.KNOWLEDGEBASE:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new KnowlegdeBaseFragment();
                 bundle.putString( "type", CONSTANTS.KNOWLEDGEBASE );
                 fragment.setArguments( bundle );
@@ -315,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.SOCIAL:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 ft.replace( R.id.container, new SocialFragment(), CONSTANTS.SOCIAL );
                 ft.addToBackStack( null );
                 ft.commit();
@@ -326,24 +356,28 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 //                break;
             case CONSTANTS.VENUE:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 ft.replace( R.id.container, new FragmentVenue(), CONSTANTS.VENUE );
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
             case CONSTANTS.FEEDBACK:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 ft.replace( R.id.container, new FeedbackFragment(), CONSTANTS.FEEDBACK );
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
             case CONSTANTS.HELPDESK:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 ft.replace( R.id.container, new HelpDeskFragment(), CONSTANTS.SPEAKER );
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
             case CONSTANTS.TANDC:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 bundle.putString( "module", CONSTANTS.TANDC );
                 fragment = new WebViewFragment();
                 fragment.setArguments( bundle );
@@ -354,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
             case CONSTANTS.FAQS:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 ft.replace( R.id.container, new FAQFragment(), CONSTANTS.FAQS );
                 ft.addToBackStack( null );
                 ft.commit();
@@ -361,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
             case CONSTANTS.PARTNERS:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new PartnerFragment();
                 bundle.putString( "type", CONSTANTS.PARTNERS );
                 fragment.setArguments( bundle );
@@ -370,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 break;
             case CONSTANTS.SPONSORS:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new PartnerFragment();
                 bundle.putString( "type", CONSTANTS.SPONSORS );
                 fragment.setArguments( bundle );
@@ -380,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
             case CONSTANTS.NOTIFICATION:
                 mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
                 fragment = new NotificationFragment();
                 ft.replace( R.id.container, fragment, CONSTANTS.NOTIFICATION );
                 ft.addToBackStack( null );
@@ -395,8 +433,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     //edit profile
     @OnClick({R.id.imageEdit, R.id.layout_profile})
     public void editProfile() {
-        Intent intent = new Intent( MainActivity.this, Profile.class );
-        overridePendingTransition( R.anim.enter_from_right, R.anim.exit_to_right);
+        Intent intent = new Intent( MainActivity.this, ProfileActivity.class );
+        overridePendingTransition( R.anim.enter_from_right, R.anim.exit_to_right );
         startActivity( intent );
         drawerLayout.closeDrawers();
     }
@@ -449,16 +487,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
 
-//        byte[] decodedString = Base64.decode( dataManager.getImagePath(), Base64.DEFAULT );
-//        Bitmap decodedByte = BitmapFactory.decodeByteArray( decodedString, 0, decodedString.length );
-
-        Picasso.with( this ).load( LocalStorage.getImagePath( MainActivity.this )+""+dataManager.getImagePath() )
+        Picasso.with( this ).load( LocalStorage.getImagePath( MainActivity.this ).concat(dataManager.getImagePath() ))
                 .resize( 80, 80 )
                 .placeholder( R.drawable.default_user_grey )
                 .into( profileImage );
-//        profileImage.setImageBitmap( decodedByte );
     }
 
+    int flag=0;
     @Override
     public void onBackPressed() {
 
@@ -470,14 +505,15 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 showPopUpExitFromApp();
             }
             //call default fragment
+//            openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
             this.doubleBackToExitPressedOnce = true;
-            //default activity
-            openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+
             new Handler().postDelayed( new Runnable() {
 
                 @Override
                 public void run() {
                     doubleBackToExitPressedOnce = false;
+
                 }
             }, 3000 );
 
@@ -564,6 +600,36 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
     @Override
     public void onError(boolean status) {
-        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(), list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
+    }
+
+    public boolean onCompareDate(String date, String time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+        SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
+        Date cDate = Calendar.getInstance().getTime();
+        String strDate = dateFormat.format( cDate );
+        String strTime = timeFormat.format( cDate );
+        Date dtDate, dtTime;
+
+        try {
+            dtDate = dateFormat.parse( strDate );
+            dtTime = timeFormat.parse( strTime );
+            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( date ) ) );
+            Log.e( "Compare time", "" + dtTime.compareTo( timeFormat.parse( time ) ) );
+            if (dtDate.compareTo( dateFormat.parse( date ) ) >= 0) {
+                if (dtTime.compareTo( timeFormat.parse( time ) ) >= 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            } else {
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

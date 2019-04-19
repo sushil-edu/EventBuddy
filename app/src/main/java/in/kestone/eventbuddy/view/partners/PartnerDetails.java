@@ -10,9 +10,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -29,7 +31,8 @@ import in.kestone.eventbuddy.model.partners_model.PartnerDetail;
 public class PartnerDetails extends AppCompatActivity {
 
     Detail partnersList;
-    TextView mTitleTv;
+    TextView mTitleTv, subTitle;
+    LinearLayout getConnectTv;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -54,12 +57,14 @@ public class PartnerDetails extends AppCompatActivity {
         setSupportActionBar( toolbar );
         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
         mTitleTv= toolbar.findViewById( R.id.mTitleTv );
-        mTitleTv.setText(  "Profile Details" );
+        subTitle= toolbar.findViewById( R.id.subTitleTv );
+        mTitleTv.setText( bundle.getString( "type" ));
+        subTitle.setText( "Description" );
 
         TextView nameTv = findViewById(R.id.nameTv);
         nameTv.setText(partnersList.getName());
         TextView partnerTv = findViewById(R.id.partnerTv);
-        partnerTv.setText(partnersList.getBiography());
+        partnerTv.setText(partnersList.getCategory());
         TextView bioTv = findViewById(R.id.bioTv);
         bioTv.setText(partnersList.getBiography());
         TextView callTv = findViewById(R.id.callTv);
@@ -74,6 +79,13 @@ public class PartnerDetails extends AppCompatActivity {
                 .error(R.drawable.default_user_grey)
                 .into(image);
 
+
+        getConnectTv = findViewById( R.id.getConnectTv );
+        if (partnersList.getIsDisplayContactNo().equalsIgnoreCase( "True" )){
+            getConnectTv.setVisibility( View.VISIBLE );
+        }else {
+            getConnectTv.setVisibility( View.GONE );
+        }
 
     }
 

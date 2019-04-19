@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +23,17 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
     StatusUpdate statusUpdate;
     private Context context;
     private ArrayList<NetworkingList> networkingLists;
-    private String status;
+    private String status, page;
+    int userID;
 
-    MyMeetingAdapter(Context context, ArrayList<NetworkingList> networkingLists, String type, StatusUpdate statusUpdate) {
+    MyMeetingAdapter(Context context, ArrayList<NetworkingList> networkingLists, String type, StatusUpdate statusUpdate, int userID, String page) {
 
         this.networkingLists = networkingLists;
         this.context = context;
         this.status = type;
         this.statusUpdate = statusUpdate;
+        this.userID =userID;
+        this.page = page;
 
     }
 
@@ -41,24 +45,42 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
-        final NetworkingList speakerData = networkingLists.get( position );
-//        if(status.contains( speakerData.getIsApproved() )) {
-        holder.nameTv.setText( speakerData.getFirst_Name() + " " + speakerData.getLast_Name() );
-        holder.designationTv.setText( speakerData.getDesignation() );
-        holder.organizationTv.setText( speakerData.getOrganization() );
-        holder.dateTv.setText( speakerData.getNetworkingRequestDate() );
-        holder.timeTv.setText( speakerData.getNetworingRequestTime() );
-        if (status.contains( "approve" )) {
-            holder.btnReschedule.setText( "Approve" );
+        final NetworkingList networkingList = networkingLists.get( position );
+
+        if(page.equalsIgnoreCase( CONSTANTS.APPROVE )){
+            //for approve page
+            holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
+            holder.designationTv.setText( networkingList.getDesignation() );
+            holder.organizationTv.setText( networkingList.getOrganization() );
+            holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
+            holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+            holder.btnReschedule.setText( CONSTANTS.APPROVE );
+
+        }else if(page.equalsIgnoreCase( CONSTANTS.PENDING )){
+            //for pending page
+            holder.nameTv.setText( networkingList.getToFname() + " " + networkingList.getToLname() );
+            holder.designationTv.setText( networkingList.getToDes() );
+            holder.organizationTv.setText( networkingList.getToORG() );
+            holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
+            holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+
+        }else if(page.equalsIgnoreCase( CONSTANTS.SCHEDULE )){
+            holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
+            holder.designationTv.setText( networkingList.getDesignation() );
+            holder.organizationTv.setText( networkingList.getOrganization() );
+            holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
+            holder.timeTv.setText( networkingList.getNetworingRequestTime() );
         }
+
         holder.btnReschedule.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!status.contains( "approve" )) {
-                    callSchedule( holder.nameTv.getText().toString(), speakerData.getUserType(),
-                            speakerData.getEBMRID(), speakerData.getRequestToID(), status );
+                Log.e("ID ", ""+networkingList.getEBMRID());
+                if (!page.equalsIgnoreCase( CONSTANTS.APPROVE ) ) {
+                    callSchedule( holder.nameTv.getText().toString(), networkingList.getToUsertype(),
+                            networkingList.getEBMRID(), networkingList.getRequestToID(), networkingList.getNetworkingLocation() , status );
                 } else {
-                    statusUpdate.onStatusUpdate( "approve", speakerData.getEBMRID(), position );
+                    statusUpdate.onStatusUpdate( CONSTANTS.APPROVE, networkingList.getEBMRID(), position );
 //                        approve(speakerData.getEBMRID());
                 }
             }
@@ -67,7 +89,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
         holder.btnCancel.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                statusUpdate.onStatusUpdate( "reject", speakerData.getEBMRID(), position );
+                statusUpdate.onStatusUpdate( CONSTANTS.REJECT, networkingList.getEBMRID(), position );
 //                    rejectRequest(speakerData.getEBMRID());
             }
         } );
@@ -83,20 +105,21 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
 
     // Send an Intent with an action named "custom-event-name". The Intent sent should
 // be received by the ReceiverActivity.
-    private void callSchedule(String name, String type, long emb_id, String userId, String status) {
+    private void callSchedule(String name, String type, long emb_id, String userId,String location, String status) {
         Intent intent = new Intent( CONSTANTS.SCHEDULE );
         // You can also include some extra data.
         intent.putExtra( "message", CONSTANTS.SCHEDULE );
         intent.putExtra( "name", name );
         intent.putExtra( "type", type );
-        intent.putExtra( "emb_id", "" + emb_id );
+        intent.putExtra( "emb_id",  emb_id );
         intent.putExtra( "id", userId );
+        intent.putExtra( "location", location );
         intent.putExtra( "status", status );
         LocalBroadcastManager.getInstance( context ).sendBroadcast( intent );
     }
 
     public interface StatusUpdate {
-        void onStatusUpdate(String type, long id, int pos);
+        void onStatusUpdate(String status, long id, int pos);
 
     }
 

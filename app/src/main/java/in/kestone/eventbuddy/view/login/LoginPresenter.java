@@ -28,8 +28,8 @@ public class LoginPresenter<V extends LoginMvpView> extends BasePresenter<V> imp
 
     @Override
     public void startLogin(String emailId, int id, String name, String designation, String imagePath,
-                           String organization, String mobile) {
-        getDataManager().saveDetail(id, name, emailId, designation, imagePath, organization, mobile);
+                           String organization, String mobile, String password) {
+        getDataManager().saveDetail(id, name, emailId, designation, imagePath, organization, mobile, password);
         getDataManager().setLoggedIn();
         getMvpView().openMainActivity();
 //      getMvpView().openCheckInActivity();

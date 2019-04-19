@@ -15,6 +15,10 @@ public class Menu {
     private int mStatus;
     @SerializedName("displayTitle")
     private String mdisplayTitle;
+    @SerializedName("Header")
+    private String mHeader;
+    @SerializedName("Subheader")
+    private String mSubheader;
 
     public String getMenuicon() {
         return mMenuicon;
@@ -54,5 +58,21 @@ public class Menu {
 
     public void setDisplayTitle(String mdisplayTitle) {
         this.mdisplayTitle = mdisplayTitle;
+    }
+
+    public String getHeader() {
+        return mHeader;
+    }
+
+    public void setHeader(String mHeader) {
+        this.mHeader = mHeader;
+    }
+
+    public String getSubheader() {
+        return mSubheader;
+    }
+
+    public void setSubheader(String mSubheader) {
+        this.mSubheader = mSubheader;
     }
 }

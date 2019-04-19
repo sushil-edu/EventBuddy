@@ -2,7 +2,9 @@ package in.kestone.eventbuddy.view.stream;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
@@ -24,12 +28,12 @@ import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.model.activity_stream_model.StreamDatum;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
-import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.view.speaker.ActivitySpeakerDetails;
-import in.kestone.eventbuddy.widgets.TopCropImageView;
 
 class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.MyHolder> {
 
+    DateFormat writeFormat = new SimpleDateFormat( "MMM dd yyyy hh:mm aaa" );
+    DateFormat readFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
     private Context mContext;
     private ArrayList<StreamDatum> streamList;
 
@@ -44,25 +48,29 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
         return new MyHolder( view );
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
 
         StreamDatum streamData = streamList.get( position );
-        holder.nameTv.setText( new SharedPrefsHelper( mContext ).getName() );
-        holder.designationTv.setText( new SharedPrefsHelper( mContext ).getDesignation() );
-        holder.timeTv.setVisibility( View.GONE );//.setText(streamData.getPunchTime());
+        holder.nameTv.setText( streamData.getFirstName() + " " + streamData.getLastName() );
+        holder.designationTv.setText( streamData.getDesignation() );
+        String[] st = streamData.getDt().split( "ago" );
+        String str = streamData.getDt();
+        holder.timeTv.setText( st[0] + "\n" + streamData.getDt().substring( str.length()-3, str.length() ) );
+
 
         holder.layout_profile.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent( mContext, ActivitySpeakerDetails.class );
                 SpeakerDetail speakerDetail = new SpeakerDetail();
-                speakerDetail.setUserID( new SharedPrefsHelper(mContext ).getUserId() );
-                speakerDetail.setFirstName( new  SharedPrefsHelper( mContext ).getName() );
-                speakerDetail.setLastName( "" );
-                speakerDetail.setDesignation( new SharedPrefsHelper( mContext ).getDesignation() );
-                speakerDetail.setOrganization( new SharedPrefsHelper( mContext ).getOrganization() );
-                speakerDetail.setImage( LocalStorage.getImagePath( mContext)+""+new SharedPrefsHelper( mContext ).getImagePath() );
+                speakerDetail.setUserID( Math.toIntExact( streamData.getUserID() ) );
+                speakerDetail.setFirstName(streamData.getFirstName());
+                speakerDetail.setLastName( streamData.getLastName() );
+                speakerDetail.setDesignation( streamData.getDesignation() );
+                speakerDetail.setOrganization( streamData.getOrganization() );
+                speakerDetail.setImage( LocalStorage.getImagePath( mContext ).concat( streamData.getImage()));
                 Bundle bundle = new Bundle();
                 bundle.putSerializable( "data", speakerDetail );
                 intent.putExtras( bundle );
@@ -81,7 +89,7 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
             holder.mActivityIv.setVisibility( View.VISIBLE );
             Glide.with( mContext )
                     .load( streamData.getImageURL() )
-                    .placeholder( R.drawable.def_image )
+                    .placeholder( R.drawable.gallery_grey )
                     .centerCrop()
                     .into( holder.mActivityIv );
 
@@ -95,20 +103,11 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
             holder.mActivityIv.setVisibility( View.GONE );
         }
 
-
-        // int pos = getItemViewType(position);
-
-//        if (streamData.getImageURL().length() > 0) {
-
         Picasso.with( mContext )
-                .load( LocalStorage.getImagePath( mContext)+""+new SharedPrefsHelper( mContext ).getImagePath())
+                .load( LocalStorage.getImagePath( mContext ).concat( streamData.getImage()) )
                 .placeholder( R.drawable.default_user_grey )
                 .error( R.drawable.default_user_grey )
                 .into( holder.userIv );
-//        }else {
-//            holder.userIv.setBackgroundResource(R.drawable.ic_user);
-//        }
-
     }
 
     @Override
@@ -127,7 +126,7 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
         private LinearLayout layout_profile;
         private CircularImageView userIv;
         private TextView nameTv, timeTv, designationTv, mActivityTv;
-//                private TopCropImageView mActivityIv;
+        //                private TopCropImageView mActivityIv;
         private ImageView mActivityIv;
 
         public MyHolder(View itemView) {
@@ -143,4 +142,5 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
 
         }
     }
+
 }

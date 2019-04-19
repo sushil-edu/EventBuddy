@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="@dimen/dimen_40dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:background="@drawable/layout_selector"
+    android:id="@+id/root"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:layout_gravity="center_horizontal">
+
+    <in.kestone.eventbuddy.widgets.CustomTextView
+        android:id="@+id/tv_tab_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dimen_40dp"
+        android:text="Track Name"
+        android:gravity="center"
+        app:tabTextAppearance="@style/Toolbar.Agenda"/>
+        <View
+            android:id="@+id/viewIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"/>
+
+</LinearLayout>

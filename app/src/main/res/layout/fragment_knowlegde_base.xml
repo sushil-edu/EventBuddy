@@ -1,8 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
     android:background="@color/bg_grey">
 
     <!-- TODO: Update blank fragment layout -->
@@ -14,9 +12,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_margin="@dimen/dimen_10dp"
         android:background="@color/white"
-        android:layout_margin="@dimen/dimen_10dp">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/layoutTrack"
@@ -72,7 +70,8 @@
             android:id="@+id/layoutSpeaker"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="invisible">
 
             <in.kestone.eventbuddy.widgets.CustomTextView
                 android:id="@+id/selectTv2"
@@ -86,7 +85,6 @@
                 android:visibility="gone" />
 
             <Spinner
-
                 android:id="@+id/spinnerSpeaker"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
@@ -118,6 +116,11 @@
 
 
         </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/knowledgeBaseRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
     </LinearLayout>

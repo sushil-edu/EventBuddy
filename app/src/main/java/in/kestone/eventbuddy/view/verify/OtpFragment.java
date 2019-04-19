@@ -1,4 +1,4 @@
-package in.kestone.eventbuddy.fragment;
+package in.kestone.eventbuddy.view.verify;
 
 
 import android.app.Activity;
@@ -36,10 +36,11 @@ public class OtpFragment extends Fragment {
     @BindView(R.id.tv_verify)
     CustomButton tv_verify;
 
-    String err_msg = "", err_header="";
+    String err_msg = "", err_header = "";
 
     OnVerifiedListener onVerifiedListener;
     CustomDialog customDialog;
+
 
     public OtpFragment() {
         // Required empty public constructor
@@ -73,8 +74,8 @@ public class OtpFragment extends Fragment {
         tv_verify.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!otp1.getText().toString().isEmpty() && otp1.getText().length()==6) {
-                        onVerifiedListener.onVerified( "verified" );
+                if (!otp1.getText().toString().isEmpty() && otp1.getText().length() == 6) {
+                    onVerifiedListener.onVerified( "verified", otp1.getText().toString() );
                 } else {
                     customDialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                     otp1.getText().clear();
@@ -89,7 +90,7 @@ public class OtpFragment extends Fragment {
     private class GenericTextWatcher implements TextWatcher {
         View view;
 
-         GenericTextWatcher(CustomEditText otp) {
+        GenericTextWatcher(CustomEditText otp) {
             this.view = otp;
         }
 
@@ -105,56 +106,10 @@ public class OtpFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable editable) {
-             if(editable.length()==6){
-                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-             }
-//            String text = editable.toString();
-//            switch (view.getId()) {
-//                case R.id.et_otp1:
-//                    if (text.length() == 1)
-//                        otp2.requestFocus();
-//                    else if (text.length() == 0)
-//                        otp1.requestFocus();
-//                    break;
-//                case R.id.et_otp2:
-//                    if (text.length() == 1)
-//                        otp3.requestFocus();
-//                    else if (text.length() == 0)
-//                        otp1.requestFocus();
-//                    break;
-//                case R.id.et_otp3:
-//                    if (text.length() == 1)
-//                        otp4.requestFocus();
-//                    else if (text.length() == 0)
-//                        otp2.requestFocus();
-//                    break;
-//                case R.id.et_otp4:
-//                    if (text.length() == 1)
-//                        otp5.requestFocus();
-//                    else if (text.length() == 0)
-//                        otp3.requestFocus();
-//                    break;
-//                case R.id.et_otp5:
-//                    if (text.length() == 1)
-//                        otp6.requestFocus();
-//                    else if (text.length() == 0)
-//                        otp4.requestFocus();
-//                    break;
-//                case R.id.et_otp6:
-//                    if (text.length() == 0)
-//                        otp5.requestFocus();
-//                    else otp6.clearFocus();
-//
-//                    break;
-//            }
-//            if (!otp1.getText().toString().isEmpty() && !otp2.getText().toString().isEmpty() && !otp3.getText().toString().isEmpty()
-//                    && !otp4.getText().toString().isEmpty() && !otp5.getText().toString().isEmpty() && !otp6.getText().toString().isEmpty()) {
-//                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Activity.INPUT_METHOD_SERVICE );
-//                imm.hideSoftInputFromWindow( v.getWindowToken(), 0 );
-//            } else {
-////                otp1.requestFocus();
-//            }
+            if (editable.length() == 6) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService( Activity.INPUT_METHOD_SERVICE );
+                imm.hideSoftInputFromWindow( view.getWindowToken(), 0 );
+            }
         }
     }
 }

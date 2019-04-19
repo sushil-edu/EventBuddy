@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <permission
         android:name="your.package.name.permission.MAPS_RECEIVE"
@@ -32,7 +32,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/app_icon_circular"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity android:name=".view.splash.ActivitySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,13 +43,10 @@
         </activity>
         <activity android:name=".view.verify.ActivityVerify" />
         <activity android:name=".view.login.ActivityLogin" />
-        <activity android:name=".view.main.MainActivity"
-            android:theme="@style/TransparentActionBar"/>
-        <!-- <activity android:name=".view.ActivityVerify" /> -->
+        <activity android:name=".view.main.MainActivity" /> <!-- <activity android:name=".view.ActivityVerify" /> -->
         <service android:name=".Service.MyIntentService" />
 
-        <activity android:name=".view.speaker.ActivitySpeakerDetails"
-            android:theme="@style/TransparentActionBar"/>
+        <activity android:name=".view.speaker.ActivitySpeakerDetails" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -56,19 +54,12 @@
 
         <activity
             android:name=".view.venue.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:theme="@style/TransparentActionBar"/>
-        <activity android:name=".view.agenda.AddSpeaker"
-            android:theme="@style/TransparentActionBar"/>
-        <activity android:name=".view.profile.Profile"
-            android:theme="@style/TransparentActionBar"/>
-        <activity android:name=".view.stream.AddActivity"
-            android:theme="@style/TransparentActionBar"/>
-
-        <activity android:name=".view.partners.PartnerDetails"
-            android:theme="@style/TransparentActionBar"/>
-
-
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".view.agenda.AddSpeaker" />
+        <activity android:name=".view.profile.ProfileActivity" />
+        <activity android:name=".view.stream.AddActivity" />
+        <activity android:name=".view.partners.PartnerDetails" />
+        <activity android:name=".view.WebviewActivity"></activity>
     </application>
 
 </manifest>

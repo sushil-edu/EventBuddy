@@ -1,4 +1,4 @@
-package in.kestone.eventbuddy.fragment;
+package in.kestone.eventbuddy.view.verify;
 
 
 import android.Manifest;
@@ -94,8 +94,9 @@ public class FragmentCheckIn extends Fragment {
     String activationDateFrom = null, activationTimeFrom = null;
     String activationDateTo = null, activationTimeTo = null;
     //current date and time
-    SimpleDateFormat dateFormat = new SimpleDateFormat( "dd-MM-yyyy" );
-    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
+    SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+//    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
+    SimpleDateFormat timeFormat = new SimpleDateFormat( "kk:mm" );
     Date date = Calendar.getInstance().getTime();
     String strDate = dateFormat.format( date );
     String strTime = timeFormat.format( new Date() );
@@ -125,8 +126,8 @@ public class FragmentCheckIn extends Fragment {
         view = inflater.inflate( R.layout.fragment_check_in, container, false );
         ButterKnife.bind( this, view );
 
-        latA = 77.2933485;//ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
-        logA = 28.5211297;//ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
+        latA = ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
+        logA = ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
         radius = ListEvent.getAppConf().getEvent().getGeoTag().getRadius();
 
         dialog = new CustomDialog();
@@ -137,6 +138,10 @@ public class FragmentCheckIn extends Fragment {
 
         activationDateTo = ListEvent.getAppConf().getEvent().getGeoTag().getActivationDateTo();
         activationTimeTo = ListEvent.getAppConf().getEvent().getGeoTag().getActivationTimeTo();
+
+        //fetch location
+        init();
+        startLocation();
 
         try {
             dtDate = dateFormat.parse( strDate );
@@ -171,19 +176,17 @@ public class FragmentCheckIn extends Fragment {
         tv_checkIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //fetch location
-                init();
-                startLocation();
+
                 if (mCurrentLocation != null) {
 
 //                    updateLocationUI();
                     latB = mCurrentLocation.getLatitude();
                     logB = mCurrentLocation.getLongitude();
 
-                    Log.e( "Diff ", "" + getDifference( latB, logB ) + " error " + err_msg );
-                    if (getDifference( latB, logB ) < radius) {
+                    Log.d( "Get Difference ", "" + getDifference( latB, logB ) + " error " + err_msg );
+                    if (getDifference( latB, logB ) <= radius) {
 
-                        onVerifiedListener.onVerified( "check-in" );
+                        onVerifiedListener.onVerified( "check-in","" );
                     } else {
                         dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                     }
@@ -197,7 +200,7 @@ public class FragmentCheckIn extends Fragment {
         tv_skip.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onVerifiedListener.onVerified( "check-in" );
+                onVerifiedListener.onVerified( "check-in" ,"");
             }
         } );
         return view;

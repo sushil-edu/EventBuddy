@@ -31,16 +31,16 @@ public class CustomDialog {
         dialog.setContentView( R.layout.dialog_incorrect_credentials );
         TextView titleTv = dialog.findViewById( R.id.titleTv );
         titleTv.setText( title );
+
         TextView bodyTv = dialog.findViewById( R.id.bodyTv );
         bodyTv.setText( body );
         LinearLayout root = dialog.findViewById( R.id.layout_root );
         TextView yesTv = dialog.findViewById( R.id.yes );
-        yesTv.setText( "Retry" );
+        yesTv.setText( "Ok" );
         yesTv.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                flag = 1;
             }
         } );
 
@@ -56,6 +56,36 @@ public class CustomDialog {
         root.setAnimation( shake );
 
     }
+
+    public static void showDetail(final Context context, String title, String body, String brief) {
+
+        final Dialog dialog = new Dialog( context );
+        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
+        dialog.setContentView( R.layout.dialog_detail );
+        TextView titleTv = dialog.findViewById( R.id.titleTv );
+        titleTv.setText( title );
+        TextView bodyTv = dialog.findViewById( R.id.bodyTv );
+        TextView bodyTvsbrief = dialog.findViewById( R.id.bodyTvBreaf );
+        bodyTv.setText( body );
+        bodyTvsbrief.setText( brief );
+        LinearLayout root = dialog.findViewById( R.id.layout_root );
+        TextView yesTv = dialog.findViewById( R.id.yes );
+        yesTv.setText( "Ok" );
+        yesTv.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        } );
+
+
+        dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT );
+        dialog.show();
+
+
+    }
+
 
     public static void showValidPopUp(final Context context, String title, String body) {
         final Dialog dialog = new Dialog( context );
@@ -80,9 +110,6 @@ public class CustomDialog {
         dialog.show();
     }
 
-    public static int retry() {
-        return flag;
-    }
 
 
     @SuppressLint("JavascriptInterface")

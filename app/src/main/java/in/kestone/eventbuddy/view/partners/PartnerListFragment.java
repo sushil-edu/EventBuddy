@@ -25,11 +25,13 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
     View view;
     int pos, size;
     ArrayList<Detail> catDetailArrayList = new ArrayList<>();
+    String type;
 
 
-    public PartnerListFragment(int pos, List<Detail> catDetailArrayList) {
+    public PartnerListFragment(int pos, List<Detail> catDetailArrayList, String type) {
         this.catDetailArrayList = (ArrayList<Detail>) catDetailArrayList;
         this.pos = pos;
+        this.type = type;
     }
 
 
@@ -55,6 +57,7 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
         Intent intent = new Intent( getActivity(), PartnerDetails.class );
         Bundle bundle = new Bundle(  );
         bundle.putSerializable( "details",  list );
+        bundle.putString( "type", type );
         intent.putExtras(  bundle );
         startActivity( intent );
     }

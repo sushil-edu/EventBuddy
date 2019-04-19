@@ -2,6 +2,7 @@ package in.kestone.eventbuddy.common;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.util.Patterns;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,11 @@ public class CommonUtils {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE);
 
             return cm.getActiveNetworkInfo() != null;
+    }
+
+
+    public static boolean isValidUrl(String url){
+       return Patterns.WEB_URL.matcher(url).matches();
     }
 
 

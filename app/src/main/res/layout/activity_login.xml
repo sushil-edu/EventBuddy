@@ -6,7 +6,6 @@
     android:background="@drawable/app_background_image"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:fitsSystemWindows="true"
     android:gravity="center_vertical"
     android:orientation="vertical">
 

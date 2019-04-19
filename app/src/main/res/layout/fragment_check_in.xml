@@ -51,7 +51,7 @@
                 android:layout_height="@dimen/dimen_100dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_pin_drop"
-                android:tint="@color/grey" />
+                android:tint="@color/colorPrimary" />
 
 
             <in.kestone.eventbuddy.widgets.CustomButton

@@ -49,6 +49,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.ImageFilePath;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -124,9 +125,10 @@ public class AddActivity extends AppCompatActivity {
 //                            @Override
 //                            public void onClick(DialogInterface dialog, int which) {
 //
-//                                Intent photoPickerIntent = new Intent( Intent.ACTION_PICK );
-//                                photoPickerIntent.setType( "def_image/*" );
-//                                startActivityForResult( photoPickerIntent, SELECT_PHOTO );
+//                                Intent photoPickerIntent = new Intent(  );
+//                                photoPickerIntent.setType( "image/*" );
+//                                photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
+//                                startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), SELECT_PHOTO);
 //                            }
 //                        } );
 
@@ -172,7 +174,7 @@ public class AddActivity extends AppCompatActivity {
         findViewById( R.id.btnSubmit ).setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateFormat dateFormat = new SimpleDateFormat( "dd-MM-yy" );
+                DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss aa" );
 
                 String insertedDate = String.valueOf(dateFormat.format(  Calendar.getInstance().getTime()));
 
@@ -247,10 +249,11 @@ public class AddActivity extends AppCompatActivity {
 
                 Bitmap photo = MediaStore.Images.Media.getBitmap( this.getContentResolver(), resultUri );
                 addImageView.setImageBitmap( photo );
-                String picturePath = getPath( AddActivity.this, resultUri );
+//                addImageView.setImageURI( imageUri);
+                String picturePath = ImageFilePath.getPath(AddActivity.this, data.getData());
                 Log.d("Picture Path", picturePath);
-//                postImage( new File( picturePath) );
-//                Progress.showProgress( AddActivity.this );
+                postImage( new File( picturePath) );
+                Progress.showProgress( AddActivity.this );
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -262,7 +265,7 @@ public class AddActivity extends AppCompatActivity {
 //            Uri tempUri = getImageUri(getApplicationContext(), imageUri);
             String picturePath =  imageUri.getPath() ;// getPath( AddActivity.this, imageUri );
             Log.e("Image Path ", String.valueOf( picturePath ) );
-            postImage( new File( picturePath) );
+            postImage( new File( picturePath ) );
             Progress.showProgress( AddActivity.this );
 
         } else if (resultCode == RESULT_OK && requestCode == SELECT_QR_CODE) {

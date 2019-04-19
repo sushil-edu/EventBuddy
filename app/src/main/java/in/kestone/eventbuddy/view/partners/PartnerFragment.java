@@ -23,6 +23,7 @@ import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.partners_model.PartnerDetail;
+import in.kestone.eventbuddy.view.adapter.SingleViewPagerAdapter;
 import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +44,7 @@ public class PartnerFragment extends Fragment {
     int tabCount;
     ArrayList<String> catDetailArrayList = new ArrayList<String>();
     PartnerDetail partnerDetail;
+    String type;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +53,7 @@ public class PartnerFragment extends Fragment {
         view = inflater.inflate( R.layout.fragment_partner, container, false );
         ButterKnife.bind( this, view );
             if(getArguments()!=null) {
-                Log.e("Type", getArguments().getString( "type" ));
+                type = getArguments().getString( "type" );
                 getPartner(getArguments().getString( "type" ));
                 Progress.showProgress( getContext() );
             }
@@ -75,9 +77,9 @@ public class PartnerFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
+        SingleViewPagerAdapter adapter = new SingleViewPagerAdapter( getFragmentManager() );
         for (int i = 0; i < tabCount; i++) {
-            PartnerListFragment partner = new PartnerListFragment( i, partnerDetail.getData().get( i ).getDetail());
+            PartnerListFragment partner = new PartnerListFragment( i, partnerDetail.getData().get( i ).getDetail(), type);
             adapter.addFrag( partner, catDetailArrayList.get( i ) );
         }
         viewPager.setAdapter( adapter );

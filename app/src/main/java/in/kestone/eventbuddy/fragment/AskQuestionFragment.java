@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -26,11 +28,13 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CompareDateTime;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.polling_model.PostRequest;
 import in.kestone.eventbuddy.model.polling_model.Session;
+import in.kestone.eventbuddy.model.qanda_model.FeedbackModel;
 import in.kestone.eventbuddy.model.qanda_model.QandA;
 import in.kestone.eventbuddy.model.qanda_model.Track;
 import in.kestone.eventbuddy.view.adapter.KnowledgeAdapter;
@@ -72,6 +76,7 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
     EditText txtFeedback;
     @BindView(id.layoutFeedback)
     LinearLayout layoutFeedback;
+    String dateFrom, dateTo, timeFrom, timeTo;
 
     int flag = 0;
 
@@ -133,11 +138,21 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 //                } else
 //                if (type.equalsIgnoreCase( CONSTANTS.ASKAQUESTION )) {
 //                    {"Event_ID":1,"User_ID":1,"Comment":"test","ImageURL":"trest","Inserted_On":"12-12-12"}
-                    postRequest.setEventID( CONSTANTS.EVENTID );
-                    postRequest.setDelegateID( (long) new SharedPrefsHelper( getContext() ).getUserId() );
-                    postRequest.setResponse( txtFeedback.getText().toString() );
-                    postQA( postRequest );
-                    Progress.showProgress( getContext() );
+
+                if (CompareDateTime.compareDate( dateFrom, dateTo )) {
+                    if (CompareDateTime.compareTime( timeFrom, timeTo )) {
+                        postRequest.setEventID( CONSTANTS.EVENTID );
+                        postRequest.setDelegateID( (long) new SharedPrefsHelper( getContext() ).getUserId() );
+                        postRequest.setResponse( txtFeedback.getText().toString() );
+                        postQA( postRequest );
+                        Progress.showProgress( getContext() );
+                    } else {
+                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Q & A disable" );
+                    }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Q & A disable" );
+                }
+
 //                }
             }
         } );
@@ -168,6 +183,17 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
                 if(response.code()==200) {
                     if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0 && response.code() == 200) {
                         listQA.addAll( response.body().getData() );
+
+                        if (response.body().getFeedback().size()>0) {
+                            FeedbackModel model = response.body().getFeedback().get( 0 );
+                            dateFrom = model.getStartDate();
+                            dateTo = model.getEndDate();
+                            timeFrom = model.getStartTime();
+                            timeTo = model.getEndTime();
+
+
+
+                        }
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
                     }

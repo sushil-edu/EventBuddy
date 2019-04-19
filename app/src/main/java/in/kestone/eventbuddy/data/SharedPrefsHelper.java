@@ -15,6 +15,7 @@ public class SharedPrefsHelper {
     private static final String DESIGNATION = "DESIGNATION";
     private static final String ORGANIZATION = "ORGANIZATION";
     private static final String MOBILE = "MOBILE";
+    private static final String PASSWORD = "PASSWORD";
 
     SharedPreferences mSharedPreferences;
 
@@ -88,5 +89,13 @@ public class SharedPrefsHelper {
 
     public void setLoggedInMode(boolean loggedIn) {
         mSharedPreferences.edit().putBoolean( "IS_LOGGED_IN", loggedIn ).apply();
+    }
+
+    public void putPassword(String password) {
+        mSharedPreferences.edit().putString( PASSWORD, password ).apply();
+    }
+
+    public String getPassword() {
+        return mSharedPreferences.getString( PASSWORD, null );
     }
 }

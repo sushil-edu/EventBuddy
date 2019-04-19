@@ -5,6 +5,9 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
+import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.model.ScheduleStatusResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.Stream;
@@ -45,8 +48,17 @@ public interface APIInterface {
     @POST("UserModule")
     Call<User> login(@Body Profile profile);
 
-    @GET("agenda/{id}")
-    Call<ModelAgenda> getAgenda(@Path("id") int id);
+    @POST("Userotp")
+    Call<User> getOtp(@Body Profile profile);
+
+    @GET("agenda/{id}/{userID}")
+    Call<ModelAgenda> getAgenda(@Path("id") int id, @Path("userID") long userID);
+
+    @POST("MyAgenda")
+    Call<JsonObject> addMyAgenda(@Body HashMap<String, Long> request);
+
+    @POST("MyAgenda/deleteMyAgenda")
+    Call<JsonObject> deleteMyAgenda(@Body HashMap<String, Long> request);
 
     @GET("UserModule/Getusers/speaker")
     Call<Speaker> getAllSpeaker();
@@ -73,8 +85,8 @@ public interface APIInterface {
     @GET("KnowledgebaseInventory/{id}")
     Call<Knowledge> getKnowledgeBase(@Path("id") long id);
 
-    @PUT("UserModule/{userID}")
-    Call<Profile> updateProfile(@Path("userID") long userId);
+    @POST("UserModule/{userID}")
+    Call<Profile> updateProfile(@Path("userID") int userId, Profile profile);
 
     @GET("HelpDesk/{id}")
     Call<MHelpDesk> helpDesk(@Path("id") long id);

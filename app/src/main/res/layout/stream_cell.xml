@@ -99,6 +99,7 @@
                     android:layout_gravity="right"
                     android:gravity="center"
                     android:text="5 Min\nago"
+                    android:maxLines="2"
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp" />
             </RelativeLayout>

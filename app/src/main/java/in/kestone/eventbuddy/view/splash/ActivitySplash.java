@@ -7,12 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
-
-import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +18,6 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -79,7 +75,6 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
         mSplashPresenter = new SplashPresenter( dataManager );
         mSplashPresenter.onAttach( this );
-        tv_eventName.setVisibility( View.GONE );
         tv_eventName.setText( acf.getEvent().getEventName() );
 
         new Handler().postDelayed( new Runnable() {
@@ -94,7 +89,10 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     public void openMainActivity() {
         SharedPreferences prefs = getSharedPreferences( CONSTANTS.CHECKIN, MODE_PRIVATE );
         Intent intent;
-        if (prefs.getBoolean( "status", false )) {
+
+        Log.e( "Login Status ", "" + prefs.getBoolean( "status", false ) );
+
+        if (prefs.getBoolean( "status", true )) {
             intent = MainActivity.getStartIntent( this );
         } else {
             intent = ActivityLogin.getStartIntent( this );
@@ -126,7 +124,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 //                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
 //                        setAppConf( appConf );
 //                    }else {
-                    LocalStorage.saveConfiguration( response.body(), ActivitySplash.this );
+//                    LocalStorage.saveConfiguration( response.body(), ActivitySplash.this );
                     setAppConf( response.body() );
 //                    }
                 } else {
@@ -137,7 +135,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 
             @Override
             public void onFailure(Call<AppConf> call, Throwable t) {
-                CustomDialog.invalidPopUp( ActivitySplash.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.invalidPopUp( ActivitySplash.this, CONSTANTS.ERROR, t.getMessage() );
                 Progress.closeProgress();
             }
         } );

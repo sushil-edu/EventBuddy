@@ -23,9 +23,13 @@ import android.widget.TextView;
 
 import com.github.badoualy.datepicker.DatePickerTimeline;
 
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,10 +80,38 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     String dayStr = "", monthStr = "", hoursStr = "", minutesStr = "", name = "";
     String speakerId = "";
     boolean flag = true;// true for schedule and false for reschedule
-    String emb_id;
+    Long emb_id;
     SpeakerDetail speakerDetail;
     ArrayList<Location> listLocation = new ArrayList<>();
     private ArrayList<SpeakerDetail> speakerList = new ArrayList<>();
+
+    DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss aa" );
+
+    String insertedDate = String.valueOf(dateFormat.format(  Calendar.getInstance().getTime()));
+
+    //for delegate
+    String activationDateForDelegateFrom;
+    String activationDateForDelegateTo;
+    String activationTimeForDelegateFrom;
+    String activationTimeForDelegateTo;
+
+    //for speaker
+    String activationDateForSpeakerFrom;
+    String activationDateForSpeakerTo;
+    String activationTimeForSpeakerFrom;
+    String activationTimeForSpeakerTo;
+
+    //current date and time
+    SimpleDateFormat dateFormatC = new SimpleDateFormat( "yyyy-MM-dd" );
+    //    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
+    SimpleDateFormat timeFormat = new SimpleDateFormat( "kk:mm" );
+    String strCurrentDate = dateFormatC.format( Calendar.getInstance().getTime() );
+    String strCurrentTime = timeFormat.format( new Date() );
+    String delegateErrorHeader, delegateErrorMsg, speakerErrorHeader, speakerErrorMsg;
+    int slot;
+    Date currentDate, currentTime;
+
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -90,8 +122,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
             nameTv.setText( name );
             typeTv.setText( intent.getStringExtra( "type" ) );
             labelTv.setText( intent.getStringExtra( "type" ) );
-            emb_id = intent.getStringExtra( "emb_id" );
+            emb_id = intent.getLongExtra( "emb_id" ,0);
             speakerId = intent.getStringExtra( "id" );
+            tvLocation.setText( intent.getStringExtra( "location" ) );
             nameRLl.setOnClickListener( null );
             speakerRLl.setOnClickListener( null );
             flag = false;
@@ -140,7 +173,32 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         speakerRLl.setOnClickListener( this );
         meetingRequestBtn.setOnClickListener( this );
 
+
+        activationDateForDelegateFrom = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateFrom();
+        activationDateForDelegateTo = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateTo();
+        activationTimeForDelegateFrom = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeFrom();
+        activationTimeForDelegateTo = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeTo();
+        delegateErrorHeader = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgHeaderWithinDelegates();
+        delegateErrorMsg = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithinDelegates();
+
+        //for speaker
+        activationDateForSpeakerFrom = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingDateFrom();
+        activationDateForSpeakerTo = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingDateTo();
+        activationTimeForSpeakerFrom = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingTimeFrom();
+        activationTimeForSpeakerTo = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingTimeTo();
+        speakerErrorHeader = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgHeaderWithinSpeaker();
+        speakerErrorMsg = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithSpeaker();
+
+        slot = Integer.parseInt( ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingRequestSlotDuration() );
 //        Log.e("Data ", getArguments().getString( "type" ));
+
+        try {
+            currentDate = dateFormatC.parse( strCurrentDate );
+            currentTime = timeFormat.parse( strCurrentTime );
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -182,8 +240,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
             hourList.add( i < 10 ? "0" + String.valueOf( i ) : String.valueOf( i ) );
         }
 
-        for (int i = 0; i < 4; i++) {
-            minuteList.add( i * 15 < 10 ? "0" + String.valueOf( i * 15 ) : String.valueOf( (i * 15) ) );
+
+        for (int i = 0; i < 60/slot; i++) {
+            minuteList.add( i * slot < 10 ? "0" + String.valueOf( i * slot ) : String.valueOf( (i * slot) ) );
         }
 
 
@@ -301,30 +360,120 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                 selectType();
                 break;
             case R.id.meetingRequestBtn:
-                if (nameTv.getText().length() > 5) {
+                if (typeTv.getText().length() > 5) {
                     if (!dayTv.getText().toString().contains( "Day" ) && !monthTv.getText().toString().contains( "Month" )
                             && !hourTv.getText().toString().contains( "Hrs" ) && !minuteTv.getText().toString().contains( "Min" )) {
-                        Progress.showProgress( getActivity() );
-                        NetworkingList mNetworking = new NetworkingList();
-                        mNetworking.setEventID( CONSTANTS.EVENTID );
-                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
-                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
-                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
-                        mNetworking.setEBMRID( (long) 1 );
-                        if (flag) {
-                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
-                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
-                            mNetworking.setIsApproved( "Pending" );
-                            mNetworking.setApprovedOn( "08-03-2019" );
-                            schedule( mNetworking );
-                        } else {
-                            mNetworking.setEBMRID( Long.valueOf( emb_id ) );
-                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
-                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
-//                            mNetworking.setIsApproved( "Approved" );
-                            mNetworking.setApprovedOn( String.valueOf( Calendar.getInstance().getTime() ) );
-                            reSchedule( mNetworking );
+
+//                        Progress.showProgress( getActivity() );
+//                        NetworkingList mNetworking = new NetworkingList();
+//                        mNetworking.setEventID( CONSTANTS.EVENTID );
+//                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
+//                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+//                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
+//                        mNetworking.setLocation( tvLocation.getText().toString() );
+////                        mNetworking.setEBMRID( (long) 1 );
+//                        if (flag) {
+//                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+//                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
+//                            mNetworking.setIsApproved( CONSTANTS.PENDING );
+//                            mNetworking.setApprovedOn( insertedDate );
+//                            schedule( mNetworking );
+//                        } else {
+//                            mNetworking.setEBMRID( emb_id );
+//                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+//                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
+//                            mNetworking.setIsApproved( CONSTANTS.RESCHEDULE );
+//                            mNetworking.setApprovedOn( insertedDate );
+//                            reSchedule( mNetworking );
+//                        }
+
+                        //compare date time for delegate/speaker
+                        if(typeTv.getText().toString().equalsIgnoreCase( "Delegate" )){
+                            try {
+
+                                Log.e( "Diff date", currentDate.compareTo( dateFormatC.parse( activationDateForDelegateFrom ) ) +" "+ currentDate.compareTo( dateFormatC.parse( activationDateForDelegateTo) ) );
+                                Log.e( "Diff time",currentTime.compareTo( timeFormat.parse( activationTimeForDelegateFrom ) ) +" "+ currentTime.compareTo( timeFormat.parse( activationTimeForDelegateTo ) ) );
+
+                                if (currentDate.compareTo( dateFormatC.parse( activationDateForDelegateFrom ) ) >= 0 && currentDate.compareTo( dateFormatC.parse( activationDateForDelegateTo ) ) <= 0) {
+                                    if (currentTime.compareTo( timeFormat.parse( activationTimeForDelegateFrom ) ) >= 0 && currentTime.compareTo( timeFormat.parse( activationTimeForDelegateTo ) ) <= 1) {
+                                      //send request
+
+                                        Progress.showProgress( getActivity() );
+                                        NetworkingList mNetworking = new NetworkingList();
+                                        mNetworking.setEventID( CONSTANTS.EVENTID );
+                                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
+                                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+                                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
+                                        mNetworking.setLocation( tvLocation.getText().toString() );
+//                        mNetworking.setEBMRID( (long) 1 );
+                                        if (flag) {
+                                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
+                                            mNetworking.setIsApproved( CONSTANTS.PENDING );
+                                            mNetworking.setApprovedOn( insertedDate );
+                                            schedule( mNetworking );
+                                        } else {
+                                            mNetworking.setEBMRID(  emb_id );
+                                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
+                                            mNetworking.setIsApproved( CONSTANTS.PENDING );
+                                            mNetworking.setApprovedOn( insertedDate );
+                                            reSchedule( mNetworking );
+                                        }
+
+                                    } else {
+                                        CustomDialog.showInvalidPopUp( getActivity(), delegateErrorHeader, delegateErrorHeader );
+                                    }
+
+                                } else {
+                                    CustomDialog.showInvalidPopUp( getActivity(), delegateErrorHeader, delegateErrorHeader );
+                                }
+                            }catch (Exception ex){
+                                Log.e( "Excep ", ex.getMessage() );
+                            }
+                        }else if(typeTv.getText().toString().equalsIgnoreCase( "Speaker" )){
+                            try {
+                                Log.e( "Diff date", currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerFrom ) ) +" "+ currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerTo) ) );
+                                Log.e( "Diff time",currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerFrom ) ) +" "+ currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerTo ) ) );
+
+                                if (currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerFrom ) ) >= 0 && currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerTo) ) <= 0) {
+                                    if (currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerFrom ) ) >= 0 && currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerTo ) ) <= 1) {
+                                        //send request
+                                        Progress.showProgress( getActivity() );
+                                        NetworkingList mNetworking = new NetworkingList();
+                                        mNetworking.setEventID( CONSTANTS.EVENTID );
+                                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
+                                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+                                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
+                                        mNetworking.setLocation( tvLocation.getText().toString() );
+              //                        mNetworking.setEBMRID( (long) 1 );
+                                        if (flag) {
+                                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
+                                            mNetworking.setIsApproved( CONSTANTS.PENDING );
+                                            mNetworking.setApprovedOn( insertedDate );
+                                            schedule( mNetworking );
+                                        } else {
+                                            mNetworking.setEBMRID(  emb_id );
+                                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
+                                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
+                                            mNetworking.setIsApproved( CONSTANTS.PENDING );
+                                            mNetworking.setApprovedOn( insertedDate );
+                                            reSchedule( mNetworking );
+                                        }
+                                    } else {
+                                        CustomDialog.showInvalidPopUp( getActivity(), speakerErrorHeader, speakerErrorMsg );
+                                    }
+
+                                } else {
+                                    CustomDialog.showInvalidPopUp( getActivity(), speakerErrorHeader, speakerErrorMsg );
+                                }
+                            }catch (Exception ex){
+                                Log.e( "Excep ", ex.getMessage() );
+                            }
                         }
+
+
                     } else {
                         CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please select date and time" );
                     }

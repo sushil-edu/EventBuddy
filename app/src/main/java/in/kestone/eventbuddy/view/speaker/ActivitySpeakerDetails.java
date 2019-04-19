@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -22,12 +23,10 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
-import in.kestone.eventbuddy.widgets.ToolbarTextView;
 
 public class ActivitySpeakerDetails extends AppCompatActivity implements View.OnClickListener {
 
@@ -50,8 +49,9 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
     @BindView(R.id.profileIv)
     CircularImageView profileIv;
     String tag, type;
-    @BindView(R.id.mTitleTv)
-    ToolbarTextView mTitleTv;
+
+    TextView mTitleTv;
+    TextView subTitleTv;
     SpeakerDetail speakerDetail;
     private ArrayList<SpeakerDetail> speakerList;
 
@@ -76,27 +76,24 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         setSupportActionBar( toolbar );
         getSupportActionBar().setDisplayHomeAsUpEnabled( true );
         mTitleTv = toolbar.findViewById( R.id.mTitleTv );
+        subTitleTv = toolbar.findViewById( R.id.subTitleTv );
         mTitleTv.setText( "Profile Details" );
+        subTitleTv.setVisibility( View.GONE );
 
         Bundle bundle = getIntent().getExtras();
         speakerDetail = (SpeakerDetail) bundle.getSerializable( "data" );
 
         ButterKnife.bind( this );
 
-//        detailsTv.setText( speakerDetail.getProfileDescription());
         type = speakerDetail.getUserType();
-        // mTitleTv.setText(getIntent().getStringExtra("Type") + " Details");
-
         organizationTv.setText( speakerDetail.getOrganization() );
         designationTv.setText( speakerDetail.getDesignation() );
-        nameTv.setText( speakerDetail.getFirstName() + " " + speakerDetail.getLastName() );
+        nameTv.setText( speakerDetail.getFirstName().concat( " " ).concat( speakerDetail.getLastName() ) );
         tag = speakerDetail.getUserType();
 
-//        if (getIntent().getStringExtra( "Image" )) {
-        Picasso.with( ActivitySpeakerDetails.this ).load( LocalStorage.getImagePath( ActivitySpeakerDetails.this )+""+speakerDetail.getImage() )
+        Picasso.with( ActivitySpeakerDetails.this ).load( speakerDetail.getImage() )
                 .resize( 100, 100 )
                 .placeholder( R.drawable.default_user_grey ).into( profileIv );
-//        }
 
         mScheduleBtn.setOnClickListener( this );
         tvReschedule.setOnClickListener( this );

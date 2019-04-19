@@ -1,9 +1,7 @@
 package in.kestone.eventbuddy.view.networking;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +31,12 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
     TextView mApproveTv;
     @BindView(R.id.mPendingTv)
     TextView mPendingTv;
-    ArrayList<NetworkingList> networkingLists;
-    MyScheduled myScheduled ;
-    Bundle bundle = new Bundle(  );
+    ArrayList<NetworkingList> networkingLists = new ArrayList<>();
+    ArrayList<NetworkingList> filterNetworkingLists = new ArrayList<>();
+    MyScheduled myScheduled;
+    Bundle bundle = new Bundle();
+    int userID;
+    MNetworking networkingResponse;
 
     public NetworkMeetingFragment() {
     }
@@ -47,13 +48,15 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
         View view = inflater.inflate( R.layout.fragment_my_meeting, container, false );
         ButterKnife.bind( this, view );
 
+        userID = new SharedPrefsHelper( getActivity() ).getUserId();
+
         mScheduledTv.setOnClickListener( this );
         mApproveTv.setOnClickListener( this );
         mPendingTv.setOnClickListener( this );
 
 
-
-
+//        myMeeting();
+        openFragment();
         return view;
     }
 
@@ -62,101 +65,138 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.mScheduledTv:
+                myMeeting(CONSTANTS.SCHEDULE);
+                Progress.showProgress( getActivity() );
                 mScheduledTv.setTextColor( getResources().getColor( R.color.colorPrimary ) );
                 mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
                 mPendingTv.setTextColor( getResources().getColor( R.color.grey ) );
 
-                myScheduled = new MyScheduled();
-                bundle.putString( "type","scheduled" );
-                bundle.putSerializable( "myMeeting",  networkingLists );
-                myScheduled.setArguments( bundle );
-                getChildFragmentManager().beginTransaction()
-                        .replace( R.id.container, myScheduled )
-                        .commit();
-                myMeeting();
                 break;
 
             case R.id.mApproveTv:
+                myMeeting( CONSTANTS.APPROVE );
+                Progress.showProgress( getActivity() );
                 mApproveTv.setTextColor( getResources().getColor( R.color.colorPrimary ) );
                 mPendingTv.setTextColor( getResources().getColor( R.color.grey ) );
                 mScheduledTv.setTextColor( getResources().getColor( R.color.grey ) );
 
-                myScheduled = new MyScheduled();
-                bundle.putString( "type","approved" );
-                bundle.putSerializable( "myMeeting",  networkingLists );
-                myScheduled.setArguments( bundle );
-                getChildFragmentManager().beginTransaction()
-                        .replace( R.id.container, myScheduled )
-                        .addToBackStack( null )
-                        .commit();
-                myMeeting();
                 break;
 
             case R.id.mPendingTv:
+                myMeeting( CONSTANTS.PENDING );
+                Progress.showProgress( getActivity() );
                 mPendingTv.setTextColor( getResources().getColor( R.color.colorPrimary ) );
                 mScheduledTv.setTextColor( getResources().getColor( R.color.grey ) );
                 mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
 
-                myScheduled = new MyScheduled();
-                bundle.putString( "type","Pending" );
-                bundle.putSerializable( "myMeeting",  networkingLists );
-                myScheduled.setArguments( bundle );
-                getChildFragmentManager().beginTransaction()
-                        .replace( R.id.container, myScheduled )
-                        .commit();
-                myMeeting();
 
                 break;
 
         }
 
     }
-    public void myMeeting(){
-        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MNetworking> call = apiInterface.networkingStatus( new SharedPrefsHelper( getContext() ).getUserId() );
-        call.enqueue( new Callback<MNetworking>() {
-            @Override
-            public void onResponse(Call<MNetworking> call, Response<MNetworking> response) {
-                if(response.code()==200) {
-                    if (response.body().getStatusCode() == 200 && response.body().getNetworkingList().size() > 0) {
-                        networkingLists = (ArrayList<NetworkingList>) response.body().getNetworkingList();
-//                    openFragment();
-                    } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
 
-                    }
-                }
-                else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
-                }
-            }
 
-            @Override
-            public void onFailure(Call<MNetworking> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
-            }
-        } );
-
-    }
     public void openFragment() //default fragment selected
     {
         mScheduledTv.setTextColor( getResources().getColor( R.color.colorPrimary ) );
         mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
         mPendingTv.setTextColor( getResources().getColor( R.color.grey ) );
-
-        myScheduled = new MyScheduled();
-        bundle.putString( "type","scheduled" );
-        bundle.putSerializable( "myMeeting",  networkingLists );
-        myScheduled.setArguments( bundle );
-        getChildFragmentManager().beginTransaction()
-                .replace( R.id.container, myScheduled )
-                .commit();
+        myMeeting( CONSTANTS.SCHEDULE );
+        Progress.showProgress( getActivity() );
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        myMeeting();
-        openFragment();
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        openFragment();
+//        myMeeting();
+//    }
+
+    public void myMeeting(String page) {
+        networkingLists.clear();
+        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
+        Call<MNetworking> call = apiInterface.networkingStatus( new SharedPrefsHelper( getContext() ).getUserId() );
+        call.enqueue( new Callback<MNetworking>() {
+            @Override
+            public void onResponse(Call<MNetworking> call, Response<MNetworking> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatusCode() == 200 && response.body().getNetworkingList().size() > 0) {
+                        networkingResponse = response.body();
+                        networkingLists.addAll( networkingResponse.getNetworkingList() );
+//                    openFragment();
+                        if(page.equalsIgnoreCase( CONSTANTS.SCHEDULE )){
+                            filterNetworkingLists.clear();
+                            //list filter for approve page
+                            for (int i = 0; i < networkingLists.size(); i++) {
+                                if (CONSTANTS.APPROVED.equalsIgnoreCase( networkingLists.get( i ).getIsApproved() ) &&
+                                        userID == Integer.parseInt( networkingLists.get( i ).getRequestToID() )) {
+                                    filterNetworkingLists.add( networkingLists.get( i ) );
+                                }
+                            }
+                            myScheduled = new MyScheduled();
+                            bundle.putString( "type", CONSTANTS.APPROVED );
+                            bundle.putString( "page", CONSTANTS.SCHEDULE );
+                            bundle.putSerializable( "myMeeting", filterNetworkingLists );
+                            myScheduled.setArguments( bundle );
+                            getChildFragmentManager().beginTransaction()
+                                    .replace( R.id.container, myScheduled )
+//                        .addToBackStack( null )
+                                    .commit();
+                        }else if(page.equalsIgnoreCase( CONSTANTS.APPROVE )){
+                            filterNetworkingLists.clear();
+                            //list filter for approve page
+                            for (int i = 0; i < networkingLists.size(); i++) {
+                                if (userID == Integer.parseInt( networkingLists.get( i ).getRequestToID() )) {
+                                    filterNetworkingLists.add( networkingLists.get( i ) );
+                                }
+                            }
+                            myScheduled = new MyScheduled();
+                            bundle.putString( "type", CONSTANTS.PENDING );
+                            bundle.putString( "page", CONSTANTS.APPROVE );
+                            bundle.putSerializable( "myMeeting", filterNetworkingLists );
+                            myScheduled.setArguments( bundle );
+                            getChildFragmentManager().beginTransaction()
+                                    .replace( R.id.container, myScheduled )
+//                        .addToBackStack( null )
+                                    .commit();
+
+                        }else if(page.equalsIgnoreCase( CONSTANTS.PENDING )){
+                            filterNetworkingLists.clear();
+                            //list filter for pending page
+                            for (int i = 0; i < networkingLists.size(); i++) {
+                                if (userID == Integer.parseInt( networkingLists.get( i ).getRequestFromID() )) {
+                                    filterNetworkingLists.add( networkingLists.get( i ) );
+                                }
+                            }
+
+                            myScheduled = new MyScheduled();
+                            bundle.putString( "type", CONSTANTS.PENDING );
+                            bundle.putString( "page", CONSTANTS.PENDING );
+                            bundle.putSerializable( "myMeeting", filterNetworkingLists );
+                            myScheduled.setArguments( bundle );
+                            getChildFragmentManager().beginTransaction()
+                                    .replace( R.id.container, myScheduled )
+//                        .addToBackStack( null )
+                                    .commit();
+
+                        }
+                    } else {
+//                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+
+                    }
+                } else {
+                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                }
+                Progress.closeProgress();
+            }
+
+            @Override
+            public void onFailure(Call<MNetworking> call, Throwable t) {
+                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                Progress.closeProgress();
+            }
+        } );
+
     }
 }

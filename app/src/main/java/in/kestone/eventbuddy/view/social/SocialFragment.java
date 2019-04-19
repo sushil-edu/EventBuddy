@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
-import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.social_model.MSocial;
-import in.kestone.eventbuddy.view.agenda.ViewPagerAdapter;
+import in.kestone.eventbuddy.view.adapter.SingleViewPagerAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +57,7 @@ public class SocialFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager() );
+        SingleViewPagerAdapter adapter = new SingleViewPagerAdapter( getFragmentManager() );
         for (int i = 0; i < tabList.size(); i++) {
             SocialListFragment partner = new SocialListFragment();
             Bundle bundle = new Bundle();
@@ -77,7 +76,7 @@ public class SocialFragment extends Fragment {
         call.enqueue( new Callback<MSocial>() {
             @Override
             public void onResponse(Call<MSocial> call, Response<MSocial> response) {
-                if(response.code()==200) {
+                if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && !response.body().getMData().isEmpty()) {
 
                         getSocials( response.body() );

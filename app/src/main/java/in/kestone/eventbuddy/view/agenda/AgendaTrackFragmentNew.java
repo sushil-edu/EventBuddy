@@ -20,6 +20,7 @@ import com.silencedut.expandablelayout.ExpandableLayout;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.model.agenda_model.Agenda;
 import in.kestone.eventbuddy.model.agenda_model.AgendaList;
 import in.kestone.eventbuddy.model.agenda_model.Detail;
 import in.kestone.eventbuddy.model.agenda_model.Track;
@@ -30,20 +31,21 @@ import in.kestone.eventbuddy.model.agenda_model.Track;
 public class AgendaTrackFragmentNew extends Fragment {
     RecyclerView recyclerViewTrack;
     View view;
-    int pos, size;
     ArrayList<Track> tracklArrayList = new ArrayList<>();
     TrackAdapter trackAdapter;
     ArrayList<Detail> detailArrayList = new ArrayList<>();
-
+    Agenda modelAgenda;
+    int pTabPos;
 
     public AgendaTrackFragmentNew() {
         // Required empty public constructor
     }
 
+
     @SuppressLint("ValidFragment")
-    public AgendaTrackFragmentNew(int i, int size) {
-        this.pos = i;
-        this.size = size;
+    public AgendaTrackFragmentNew(int position, Agenda agenda) {
+        pTabPos = position;
+        modelAgenda = agenda;
     }
 
 
@@ -55,9 +57,10 @@ public class AgendaTrackFragmentNew extends Fragment {
 
         recyclerViewTrack = view.findViewById( R.id.recyclerView_track );
 
-        if (pos < size - 1) {
+//        if (pos < size - 1) {
             tracklArrayList.clear();
-            tracklArrayList.addAll( AgendaList.getAgenda().getAgenda().get( pos ).getTrack() );
+//            tracklArrayList.addAll ( AgendaList.getAgenda().getAgenda().get( pos ).getTrack() );
+            tracklArrayList.addAll( modelAgenda.getTrack() );
 
             trackAdapter = new TrackAdapter( getActivity(), tracklArrayList );
 
@@ -69,7 +72,7 @@ public class AgendaTrackFragmentNew extends Fragment {
             trackAdapter.notifyDataSetChanged();
 
 
-        }
+//        }
 
         return view;
     }
@@ -98,7 +101,7 @@ public class AgendaTrackFragmentNew extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.title.setText( trackList.get( position ).getTrackName() );
             detailArrayList = (ArrayList<Detail>) tracklArrayList.get( position ).getDetails();
-            AgendaAdapter adapter = new AgendaAdapter( getActivity(), detailArrayList );
+            AgendaAdapter adapter = new AgendaAdapter( getActivity(), detailArrayList , AgendaList.getAgenda().getAgenda().get( pTabPos ).getDisplayLabel());
             holder.recyclerViewTrackDetails.setAdapter( adapter );
             adapter.notifyDataSetChanged();
 

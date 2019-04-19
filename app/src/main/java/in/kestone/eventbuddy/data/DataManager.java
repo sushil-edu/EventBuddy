@@ -12,7 +12,7 @@ public class DataManager {
     }
 
     public void saveDetail(int userId, String name, String email,  String designation, String imagePath,
-                           String organization, String mobile) {
+                           String organization, String mobile, String password) {
         mSharedPrefsHelper.putEmail(email);
         mSharedPrefsHelper.putUserId(userId);
         mSharedPrefsHelper.putName(name);
@@ -20,6 +20,7 @@ public class DataManager {
         mSharedPrefsHelper.putImagePath(imagePath);
         mSharedPrefsHelper.putOrganization(organization);
         mSharedPrefsHelper.putMobile(mobile);
+        mSharedPrefsHelper.putPassword(password);
     }
 
 
@@ -43,6 +44,9 @@ public class DataManager {
     }
     public String getMobile() {
         return mSharedPrefsHelper.getMobile();
+    }
+    public String getPassword() {
+        return mSharedPrefsHelper.getPassword();
     }
 
 

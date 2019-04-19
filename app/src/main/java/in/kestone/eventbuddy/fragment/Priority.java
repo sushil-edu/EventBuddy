@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,8 +25,9 @@ public class Priority extends Fragment {
     @BindView(R.id.layout_continue)
     LinearLayout layout_continue;
     @BindView( R.id.tv_welcome_text )
-    CustomTextView welcome_text;
-
+    TextView welcome_text;
+    @BindView( R.id.tvBtnLabel)
+    TextView tvBtnLabel;
     View view;
 
     public Priority() {
@@ -46,6 +48,7 @@ public class Priority extends Fragment {
         ButterKnife.bind( this, view );
 
         welcome_text.setText( ListEvent.getAppConf().getEvent().getPriority().getWelcomeText() );
+        tvBtnLabel.setText( ListEvent.getAppConf().getEvent().getPriority().getLabel() );
         layout_continue.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.ScheduleStatusResponse;
@@ -27,10 +28,11 @@ import retrofit2.Response;
 public class MyScheduled extends Fragment implements View.OnClickListener, MyMeetingAdapter.StatusUpdate {
     //    @BindView( R.id.btnReschedule )
 //    TextView btnReschedule;
-    ArrayList<NetworkingList> networkingLists;
+    ArrayList<NetworkingList> networkingLists = new ArrayList<>(  );
     ArrayList<NetworkingList> networkingListsStatus = new ArrayList<>();
     RecyclerView recyclerViewMyMeeting;
-    String type = "";
+    String type = "", page="";
+    int userID;
     private MyMeetingAdapter myMeetingAdapter;
 
     @Override
@@ -39,9 +41,14 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.my_scheduled, container, false );
         initialiseView( view );
+
+        userID = new SharedPrefsHelper( getActivity() ).getUserId();
+
         if (getArguments() != null) {
             networkingLists = (ArrayList<NetworkingList>) getArguments().getSerializable( "myMeeting" );
+            Log.e("Length ", ""+networkingLists.size());
             type = getArguments().getString( "type" );
+            page = getArguments().getString( "page" );
             networkingListsStatus.clear();
             if (networkingLists != null) {
                 for (int i = 0; i < networkingLists.size(); i++) {
@@ -54,7 +61,7 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
             recyclerViewMyMeeting = view.findViewById( R.id.recyclerViewMyMeeting );
             recyclerViewMyMeeting.setLayoutManager( new LinearLayoutManager( getContext() ) );
             recyclerViewMyMeeting.setHasFixedSize( true );
-            myMeetingAdapter = new MyMeetingAdapter( getContext(), networkingListsStatus, type, this );
+            myMeetingAdapter = new MyMeetingAdapter( getContext(), networkingListsStatus, type, this, userID , page);
             recyclerViewMyMeeting.setAdapter( myMeetingAdapter );
             myMeetingAdapter.notifyDataSetChanged();
         }
@@ -95,7 +102,7 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
 
     @Override
     public void onStatusUpdate(String type, long id, int pos) {
-        if (type.equalsIgnoreCase( "approve" )) {
+        if (type.equalsIgnoreCase( CONSTANTS.APPROVE )) {
             approve( id, pos );
         } else {
             rejectRequest( id, pos );

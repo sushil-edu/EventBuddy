@@ -31,6 +31,7 @@
         android:gravity="center">
 
         <in.kestone.eventbuddy.widgets.CustomTextView
+            android:id="@+id/tvBtnLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Continue"

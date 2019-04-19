@@ -6,19 +6,32 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingLeft="-70dp">
 
         <in.kestone.eventbuddy.widgets.ToolbarTextView
             android:id="@+id/mTitleTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:layout_marginLeft="-80dp"
-            android:text=""
+            android:text="Header"
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:textSize="@dimen/dimen_18sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"/>
+        <in.kestone.eventbuddy.widgets.CustomTextView
+            android:id="@+id/subTitleTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center_horizontal"
+            android:text="Sub Header"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+    </LinearLayout>
 </android.support.v7.widget.Toolbar>

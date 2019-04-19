@@ -22,6 +22,6 @@ import in.kestone.eventbuddy.view.base.MvpPresenter;
 public interface LoginMvpPresenter<V extends LoginMvpView> extends MvpPresenter<V> {
 
     void startLogin(String emailId, int id, String name, String designation, String imagePath,
-                    String organization, String mobile);
+                    String organization, String mobile, String password);
 
 }

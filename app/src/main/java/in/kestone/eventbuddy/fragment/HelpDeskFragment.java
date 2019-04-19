@@ -135,7 +135,8 @@ public class HelpDeskFragment extends Fragment {
 //            } );
 
             Datum helpDesk = listHelpDesk.get( position );
-            holder.title.setText( helpDesk.getName() );
+            holder.title.setText( helpDesk.getCategory() );
+            holder.name.setText( helpDesk.getName() );
             holder.email.setText( helpDesk.getEmailID() );
             holder.phone.setText( helpDesk.getPhoneno() );
         }
