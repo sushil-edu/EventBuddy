@@ -144,9 +144,9 @@ public class FragmentSpeaker extends Fragment {
         apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Speaker> call;
         if (type.equalsIgnoreCase( "speaker" )) {
-            call = apiInterface.getAllSpeaker();
+            call = apiInterface.getAllSpeaker((int)CONSTANTS.EVENTID);
         } else {
-            call = apiInterface.getAllDelegates();
+            call = apiInterface.getAllDelegates((int)CONSTANTS.EVENTID);
         }
         CallUtils.enqueueWithRetry( call, 3, new Callback<Speaker>() {
             @Override

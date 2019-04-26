@@ -34,11 +34,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -61,6 +57,7 @@ import in.kestone.eventbuddy.fragment.PollFragment;
 import in.kestone.eventbuddy.fragment.WebViewFragment;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Menu;
+import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 import in.kestone.eventbuddy.view.agenda.AgendaFragment;
 import in.kestone.eventbuddy.view.knowledgeBase.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.view.networking.Networking;
@@ -122,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     DataManager dataManager;
     String appTitle;
     Bundle bundle = new Bundle();
+    int flag = 0;
 
     public static Intent getStartIntent(Context context) {
         return new Intent( context, MainActivity.class );
@@ -135,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         initialiseView();
     }
 
-
     private void initialiseView() {
         ButterKnife.bind( this );
         ButterKnife.bind( this, drawerLayout );
@@ -148,7 +145,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         mainPresenter = new MainPresenter( dataManager );
         mainPresenter.onAttach( this );
 
-        drawerLayoutToggle = new ActionBarDrawerToggle( this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close ) {
+        drawerLayoutToggle = new ActionBarDrawerToggle( this, drawerLayout, toolbar,
+                R.string.drawer_open, R.string.drawer_close ) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed( view );
                 invalidateOptionsMenu();
@@ -177,9 +175,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
         count = ListEvent.getAppConf().getEvent().getMenu().size();
         for (int i = 0; i < count; i++) {
-//            if (ListEvent.getAppConf().getEvent().getMenu().get( i ).getStatus() == 1) {
             list.add( ListEvent.getAppConf().getEvent().getMenu().get( i ) );
-//            }
         }
         Menu m = new Menu();
         m.setDisplayTitle( CONSTANTS.LOGOUT );
@@ -187,17 +183,9 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         m.setMenutitle( CONSTANTS.LOGOUT );
         list.add( m );
 
-//        //set user details in nave header
-//        tvName.setText( dataManager.getName() );
-//        tvEmail.setText( dataManager.getEmailId() );
-//        tvDesignation.setText( dataManager.getDesignation() );
-//        Picasso.with( this ).load( dataManager.getImagePath() )
-//                .resize( 80, 80 )
-//                .placeholder( R.mipmap.ic_launcher_round )
-//                .into( profileImage );
-
         //load default fragment
-        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(), list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(),
+                list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
 
 
         // menu list adapter
@@ -207,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         //app version
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo( getPackageName(), 0 );
-            tv_version_code.setText( "App Version V" + pInfo.versionName );
+            tv_version_code.setText( "App Version V".concat( pInfo.versionName ) );
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -236,25 +224,26 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     }
 
     private void openFragment(String dTitle, String mTitle, String header, String subHeader) {
-        if(subHeader.length()>0){
-            subTitle.setVisibility( View.VISIBLE );
-        }else {
-            subTitle.setVisibility( View.GONE );
+        try {
+            if (subHeader.length() > 0) {
+                subTitle.setVisibility( View.VISIBLE );
+            } else {
+                subTitle.setVisibility( View.GONE );
+            }
+            if (header.length() > 0) {
+                appTitle = header;
+            } else {
+                appTitle = dTitle;
+            }
+        } catch (NullPointerException ex) {
         }
 
-        if(header.length()>0){
-            appTitle = header;
-        }else {
-            appTitle = dTitle;
-        }
 
-//        if (!dTitle.equals( CONSTANTS.LOGOUT )) {
-//            mTitleTv.setText( appTitle );
-//        }
         Fragment fragment;
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
-        ft.setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right );
+        ft.setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right,
+                R.anim.enter_from_right, R.anim.exit_to_right );
         ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
 
         switch (mTitle) {
@@ -301,18 +290,11 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.commit();
                 break;
             case CONSTANTS.NETWORKING:
-//                String date = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateFrom();
-//                String time = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeFrom();
-//                String errorStr = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithinDelegates();
-//                if (onCompareDate( date, time )) {
-                    mTitleTv.setText( appTitle );
-                    subTitle.setText( subHeader );
-                    ft.replace( R.id.container, new Networking(), CONSTANTS.NETWORKING );
-                    ft.addToBackStack( null );
-                    ft.commit();
-//                } else {
-//                    CustomDialog.showInvalidPopUp( MainActivity.this, CONSTANTS.ERROR, errorStr );
-//                }
+                mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
+                ft.replace( R.id.container, new Networking(), CONSTANTS.NETWORKING );
+                ft.addToBackStack( null );
+                ft.commit();
                 break;
             case CONSTANTS.POLLING:
                 mTitleTv.setText( appTitle );
@@ -349,11 +331,6 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-//            case "Gallery":
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace( R.id.container, new GalleryFragment() )
-//                        .commit();
-//                break;
             case CONSTANTS.VENUE:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
@@ -453,13 +430,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( CONSTANTS.RESCHEDULE )) {
             mTitleTv.setText( CONSTANTS.NETWORKING );
             Networking networking = new Networking();
+            SpeakerDetail speakerDetail = (SpeakerDetail) getIntent().getExtras().getSerializable( "Data" );
             Bundle bundle = new Bundle();
-            bundle.putString( "name", getIntent().getStringExtra( "Name" ) );
-            bundle.putString( "type", getIntent().getStringExtra( "Type" ) );
-            bundle.putSerializable( "data", getIntent().getExtras().getSerializable( "Data" ) );
+            bundle.putSerializable( "data", speakerDetail );
             networking.setArguments( bundle );
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right )
+                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right,
+                            R.anim.enter_from_right, R.anim.exit_to_right )
                     .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                     .replace( R.id.container, networking )
                     .commit();
@@ -468,7 +445,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
             mTitleTv.setText( CONSTANTS.SPEAKER );
 
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right )
+                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right,
+                            R.anim.enter_from_right, R.anim.exit_to_right )
                     .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                     .replace( R.id.container, new FragmentSpeaker() )
                     .commit();
@@ -477,7 +455,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
             mTitleTv.setText( CONSTANTS.AGENDA );
 
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right )
+                    .setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_right,
+                            R.anim.enter_from_right, R.anim.exit_to_right )
                     .setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                     .replace( R.id.container, new AgendaFragment() )
                     .commit();
@@ -487,13 +466,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
 
-        Picasso.with( this ).load( LocalStorage.getImagePath( MainActivity.this ).concat(dataManager.getImagePath() ))
+        Picasso.with( this ).load( LocalStorage.getImagePath( MainActivity.this )
+                .concat( dataManager.getImagePath() ) )
                 .resize( 80, 80 )
                 .placeholder( R.drawable.default_user_grey )
                 .into( profileImage );
     }
 
-    int flag=0;
     @Override
     public void onBackPressed() {
 
@@ -505,7 +484,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 showPopUpExitFromApp();
             }
             //call default fragment
-//            openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle() );
+            openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(),
+                    list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
             this.doubleBackToExitPressedOnce = true;
 
             new Handler().postDelayed( new Runnable() {
@@ -603,33 +583,5 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(), list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
     }
 
-    public boolean onCompareDate(String date, String time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
-        SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
-        Date cDate = Calendar.getInstance().getTime();
-        String strDate = dateFormat.format( cDate );
-        String strTime = timeFormat.format( cDate );
-        Date dtDate, dtTime;
 
-        try {
-            dtDate = dateFormat.parse( strDate );
-            dtTime = timeFormat.parse( strTime );
-            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( date ) ) );
-            Log.e( "Compare time", "" + dtTime.compareTo( timeFormat.parse( time ) ) );
-            if (dtDate.compareTo( dateFormat.parse( date ) ) >= 0) {
-                if (dtTime.compareTo( timeFormat.parse( time ) ) >= 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-
-            } else {
-                return false;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 }

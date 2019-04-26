@@ -3,7 +3,9 @@ package in.kestone.eventbuddy.model.app_config_model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Password {
+import java.io.Serializable;
+
+public class Password implements Serializable {
 
     @SerializedName("ErrorHeader")
     private String mErrorHeader;

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/app_background_image"
+    android:background="@drawable/background"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
@@ -133,6 +133,21 @@
                         android:text="Log In"
                         android:textAllCaps="false"
                         android:textColor="@color/white" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/tv_forgot_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@null"
+                    android:hint="Forgot Password"
+                    android:singleLine="true"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grey"
+                    android:textSize="15sp"
+                    android:gravity="center_vertical"
+                    />
 
 
             </LinearLayout>

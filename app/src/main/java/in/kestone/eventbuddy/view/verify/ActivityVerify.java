@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.HashMap;
+
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
@@ -104,9 +106,16 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
         } else if (status.equalsIgnoreCase( "verified" ) && !otp.isEmpty()) {
 
             //verifying OTP
-            Profile profile = new Profile();
-            profile.setEmailID( EMAIL );
-            profile.setPassword( otp );
+//            Profile profile = new Profile();
+//            profile.setEmailID( EMAIL );
+//            profile.setPassword( otp );
+//            profile.setEventID( CONSTANTS.EVENTID );
+//            login( profile );
+
+            HashMap<String, String > profile = new HashMap<>(  );
+            profile.put( "EmailID",EMAIL );
+            profile.put( "Password",    otp );
+            profile.put( "EventID", String.valueOf( CONSTANTS.EVENTID ) );
             login( profile );
 
         }
@@ -129,9 +138,9 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
         finish();
     }
 
-    private void login(Profile profile) {
+    private void login(HashMap<String, String> profile) {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<User> call = apiInterface.login( profile );
+        Call<User> call = apiInterface.login( profile);
         CallUtils.enqueueWithRetry( call, 2, new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

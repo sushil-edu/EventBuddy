@@ -65,6 +65,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 //                        Log.e( "Config ", config );
 //                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
 //                        setAppConf( appConf );
+
         getConfig();
         Progress.showProgress( this );
     }

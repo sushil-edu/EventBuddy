@@ -37,9 +37,12 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.CompareDateTime;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
+import in.kestone.eventbuddy.model.app_config_model.ConfNetworking;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Location;
 import in.kestone.eventbuddy.model.networking_model.MNetworking;
@@ -83,24 +86,18 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     Long emb_id;
     SpeakerDetail speakerDetail;
     ArrayList<Location> listLocation = new ArrayList<>();
-    private ArrayList<SpeakerDetail> speakerList = new ArrayList<>();
-
     DateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss aa" );
-
-    String insertedDate = String.valueOf(dateFormat.format(  Calendar.getInstance().getTime()));
-
+    String insertedDate = String.valueOf( dateFormat.format( Calendar.getInstance().getTime() ) );
     //for delegate
     String activationDateForDelegateFrom;
     String activationDateForDelegateTo;
     String activationTimeForDelegateFrom;
     String activationTimeForDelegateTo;
-
     //for speaker
     String activationDateForSpeakerFrom;
     String activationDateForSpeakerTo;
     String activationTimeForSpeakerFrom;
     String activationTimeForSpeakerTo;
-
     //current date and time
     SimpleDateFormat dateFormatC = new SimpleDateFormat( "yyyy-MM-dd" );
     //    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
@@ -110,8 +107,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     String delegateErrorHeader, delegateErrorMsg, speakerErrorHeader, speakerErrorMsg;
     int slot;
     Date currentDate, currentTime;
-
-
+    private ArrayList<SpeakerDetail> speakerList = new ArrayList<>();
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -122,7 +118,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
             nameTv.setText( name );
             typeTv.setText( intent.getStringExtra( "type" ) );
             labelTv.setText( intent.getStringExtra( "type" ) );
-            emb_id = intent.getLongExtra( "emb_id" ,0);
+            emb_id = intent.getLongExtra( "emb_id", 0 );
             speakerId = intent.getStringExtra( "id" );
             tvLocation.setText( intent.getStringExtra( "location" ) );
             nameRLl.setOnClickListener( null );
@@ -149,10 +145,10 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         listLocation.addAll( ListEvent.getAppConf().getEvent().getnNetworking().getLocation() );
 
         if (getArguments() != null) {
-            Log.e( "Name type ", getArguments().getString( "name" ) + " and " + getArguments().getString( "type" ) );
             speakerDetail = (SpeakerDetail) getArguments().getSerializable( "data" );
-            if (speakerDetail != null) {
-                nameTv.setText( speakerDetail.getFirstName() + " " + speakerDetail.getLastName() );
+            if(speakerDetail!=null) {
+//            Log.e( "Name type ", speakerDetail.getFirstName()+"--"+getArguments().getString( "name" ) + " and " + getArguments().getString( "type" ) );
+                nameTv.setText( speakerDetail.getFirstName().concat( " ".concat( speakerDetail.getLastName() ) ) );
                 typeTv.setText( speakerDetail.getUserType() );
                 speakerId = String.valueOf( speakerDetail.getUserID() );
             }
@@ -173,23 +169,23 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         speakerRLl.setOnClickListener( this );
         meetingRequestBtn.setOnClickListener( this );
 
-
-        activationDateForDelegateFrom = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateFrom();
-        activationDateForDelegateTo = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingDateTo();
-        activationTimeForDelegateFrom = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeFrom();
-        activationTimeForDelegateTo = ListEvent.getAppConf().getEvent().getnNetworking().getDelegateNetworkingTimeTo();
-        delegateErrorHeader = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgHeaderWithinDelegates();
-        delegateErrorMsg = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithinDelegates();
+        ConfNetworking networkingList = ListEvent.getAppConf().getEvent().getnNetworking();
+        activationDateForDelegateFrom = networkingList.getDelegateNetworkingDateFrom();
+        activationDateForDelegateTo = networkingList.getDelegateNetworkingDateTo();
+        activationTimeForDelegateFrom = networkingList.getDelegateNetworkingTimeFrom();
+        activationTimeForDelegateTo = networkingList.getDelegateNetworkingTimeTo();
+        delegateErrorHeader = networkingList.getNetworkingAlertMsgHeaderWithinDelegates();
+        delegateErrorMsg = networkingList.getNetworkingAlertMsgWithinDelegates();
 
         //for speaker
-        activationDateForSpeakerFrom = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingDateFrom();
-        activationDateForSpeakerTo = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingDateTo();
-        activationTimeForSpeakerFrom = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingTimeFrom();
-        activationTimeForSpeakerTo = ListEvent.getAppConf().getEvent().getnNetworking().getSpeakerNetworkingTimeTo();
-        speakerErrorHeader = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgHeaderWithinSpeaker();
-        speakerErrorMsg = ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingAlertMsgWithSpeaker();
+        activationDateForSpeakerFrom = networkingList.getSpeakerNetworkingDateFrom();
+        activationDateForSpeakerTo = networkingList.getSpeakerNetworkingDateTo();
+        activationTimeForSpeakerFrom = networkingList.getSpeakerNetworkingTimeFrom();
+        activationTimeForSpeakerTo = networkingList.getSpeakerNetworkingTimeTo();
+        speakerErrorHeader = networkingList.getNetworkingAlertMsgHeaderWithinSpeaker();
+        speakerErrorMsg = networkingList.getNetworkingAlertMsgWithSpeaker();
 
-        slot = Integer.parseInt( ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingRequestSlotDuration() );
+        slot=30;// = Integer.parseInt( ListEvent.getAppConf().getEvent().getnNetworking().getNetworkingRequestSlotDuration() );
 //        Log.e("Data ", getArguments().getString( "type" ));
 
         try {
@@ -203,15 +199,25 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
 
     public void populateCalendar() {
-
+        String []dt,dtEnd;
         final Dialog dialog = new Dialog( getContext() );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.alert_date_time );
         dialog.setCancelable( true );
         DatePickerTimeline datePicker = dialog.findViewById( R.id.datePicker );
         Log.e( "Year ", "" + datePicker.getSelectedMonth() );
-        datePicker.setFirstVisibleDate( 2019, 02, 01 );
-        datePicker.setLastVisibleDate( 2019, 02, 10 );
+        if(typeTv.getText().toString().equalsIgnoreCase( "Speaker" )){
+            dt = activationDateForSpeakerFrom.split( "-" );
+            dtEnd = activationDateForSpeakerTo.split( "-" );
+            datePicker.setFirstVisibleDate( Integer.parseInt( dt[0] ), Integer.parseInt( dt[1] )-1, Integer.parseInt( dt[2] ) );
+            datePicker.setLastVisibleDate( Integer.parseInt( dtEnd[0] ), Integer.parseInt( dtEnd[1] )-1, Integer.parseInt( dtEnd[2] ) );
+        }else if(typeTv.getText().toString().equalsIgnoreCase( "Delegate" )){
+            dt = activationDateForDelegateFrom.split( "-" );
+            dtEnd = activationDateForDelegateTo.split( "-" );
+            datePicker.setFirstVisibleDate( Integer.parseInt( dt[0] ), Integer.parseInt( dt[1] )-1, Integer.parseInt( dt[2] ) );
+            datePicker.setLastVisibleDate( Integer.parseInt( dtEnd[0] ), Integer.parseInt( dtEnd[1] )-1, Integer.parseInt( dtEnd[2] ) );
+        }
+
         datePicker.setSelectedDate( 0, 0, 0 );
         datePicker.setOnDateSelectedListener( new DatePickerTimeline.OnDateSelectedListener() {
             @Override
@@ -241,7 +247,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         }
 
 
-        for (int i = 0; i < 60/slot; i++) {
+        for (int i = 0; i < 60 / slot; i++) {
             minuteList.add( i * slot < 10 ? "0" + String.valueOf( i * slot ) : String.valueOf( (i * slot) ) );
         }
 
@@ -345,7 +351,10 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
             case R.id.dayTv:
             case R.id.monthTv:
-                populateCalendar();
+                if(typeTv.getText().toString().equalsIgnoreCase( "Speaker" ) ||
+                        typeTv.getText().toString().equalsIgnoreCase( "Delegate" )) {
+                    populateCalendar();
+                }
                 break;
 
             case R.id.minuteTv:
@@ -364,45 +373,21 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                     if (!dayTv.getText().toString().contains( "Day" ) && !monthTv.getText().toString().contains( "Month" )
                             && !hourTv.getText().toString().contains( "Hrs" ) && !minuteTv.getText().toString().contains( "Min" )) {
 
-//                        Progress.showProgress( getActivity() );
-//                        NetworkingList mNetworking = new NetworkingList();
-//                        mNetworking.setEventID( CONSTANTS.EVENTID );
-//                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
-//                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
-//                        mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
-//                        mNetworking.setLocation( tvLocation.getText().toString() );
-////                        mNetworking.setEBMRID( (long) 1 );
-//                        if (flag) {
-//                            mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
-//                            mNetworking.setRequestToID( String.valueOf( speakerId ) );
-//                            mNetworking.setIsApproved( CONSTANTS.PENDING );
-//                            mNetworking.setApprovedOn( insertedDate );
-//                            schedule( mNetworking );
-//                        } else {
-//                            mNetworking.setEBMRID( emb_id );
-//                            mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
-//                            mNetworking.setRequestFromID( String.valueOf( speakerId ) );
-//                            mNetworking.setIsApproved( CONSTANTS.RESCHEDULE );
-//                            mNetworking.setApprovedOn( insertedDate );
-//                            reSchedule( mNetworking );
-//                        }
-
+                        String requestTime = hourTv.getText().toString().concat( ":" ).concat( minuteTv.getText().toString() );
+                        String requestDate = dayTv.getText().toString().concat( ":" ).concat( monthTv.getText().toString() );
                         //compare date time for delegate/speaker
-                        if(typeTv.getText().toString().equalsIgnoreCase( "Delegate" )){
+                        if (typeTv.getText().toString().equalsIgnoreCase( "Delegate" )) {
                             try {
 
-                                Log.e( "Diff date", currentDate.compareTo( dateFormatC.parse( activationDateForDelegateFrom ) ) +" "+ currentDate.compareTo( dateFormatC.parse( activationDateForDelegateTo) ) );
-                                Log.e( "Diff time",currentTime.compareTo( timeFormat.parse( activationTimeForDelegateFrom ) ) +" "+ currentTime.compareTo( timeFormat.parse( activationTimeForDelegateTo ) ) );
-
-                                if (currentDate.compareTo( dateFormatC.parse( activationDateForDelegateFrom ) ) >= 0 && currentDate.compareTo( dateFormatC.parse( activationDateForDelegateTo ) ) <= 0) {
-                                    if (currentTime.compareTo( timeFormat.parse( activationTimeForDelegateFrom ) ) >= 0 && currentTime.compareTo( timeFormat.parse( activationTimeForDelegateTo ) ) <= 1) {
-                                      //send request
+                                if (CompareDateTime.compareDate( activationDateForDelegateFrom, activationDateForDelegateTo )) {
+                                    if (CompareDateTime.compareTime( activationTimeForDelegateFrom, activationTimeForDelegateTo ) &&
+                                            CompareDateTime.compareTime( requestTime, requestTime )) {
 
                                         Progress.showProgress( getActivity() );
                                         NetworkingList mNetworking = new NetworkingList();
                                         mNetworking.setEventID( CONSTANTS.EVENTID );
-                                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
-                                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+                                        mNetworking.setNetworkingRequestDate( requestDate );
+                                        mNetworking.setNetworingRequestTime(requestTime );
                                         mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
                                         mNetworking.setLocation( tvLocation.getText().toString() );
 //                        mNetworking.setEBMRID( (long) 1 );
@@ -413,7 +398,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                                             mNetworking.setApprovedOn( insertedDate );
                                             schedule( mNetworking );
                                         } else {
-                                            mNetworking.setEBMRID(  emb_id );
+                                            mNetworking.setEBMRID( emb_id );
                                             mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
                                             mNetworking.setRequestFromID( String.valueOf( speakerId ) );
                                             mNetworking.setIsApproved( CONSTANTS.PENDING );
@@ -428,25 +413,23 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                                 } else {
                                     CustomDialog.showInvalidPopUp( getActivity(), delegateErrorHeader, delegateErrorHeader );
                                 }
-                            }catch (Exception ex){
+                            } catch (Exception ex) {
                                 Log.e( "Excep ", ex.getMessage() );
                             }
-                        }else if(typeTv.getText().toString().equalsIgnoreCase( "Speaker" )){
+                        } else if (typeTv.getText().toString().equalsIgnoreCase( "Speaker" )) {
                             try {
-                                Log.e( "Diff date", currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerFrom ) ) +" "+ currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerTo) ) );
-                                Log.e( "Diff time",currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerFrom ) ) +" "+ currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerTo ) ) );
+                                if (CompareDateTime.compareDate( activationDateForSpeakerFrom, activationDateForSpeakerTo )) {
+                                    if (CompareDateTime.compareTime( activationTimeForSpeakerFrom, activationTimeForSpeakerTo ) &&
+                                            CompareDateTime.compareTime( requestTime, requestTime )) {
 
-                                if (currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerFrom ) ) >= 0 && currentDate.compareTo( dateFormatC.parse( activationDateForSpeakerTo) ) <= 0) {
-                                    if (currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerFrom ) ) >= 0 && currentTime.compareTo( timeFormat.parse( activationTimeForSpeakerTo ) ) <= 1) {
-                                        //send request
                                         Progress.showProgress( getActivity() );
                                         NetworkingList mNetworking = new NetworkingList();
                                         mNetworking.setEventID( CONSTANTS.EVENTID );
-                                        mNetworking.setNetworkingRequestDate( dayTv.getText().toString() + " " + monthTv.getText().toString() );
-                                        mNetworking.setNetworingRequestTime( hourTv.getText().toString() + ":" + minuteTv.getText().toString() );
+                                        mNetworking.setNetworkingRequestDate( requestDate );
+                                        mNetworking.setNetworingRequestTime( requestTime );
                                         mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
                                         mNetworking.setLocation( tvLocation.getText().toString() );
-              //                        mNetworking.setEBMRID( (long) 1 );
+                                        //                        mNetworking.setEBMRID( (long) 1 );
                                         if (flag) {
                                             mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
                                             mNetworking.setRequestToID( String.valueOf( speakerId ) );
@@ -454,7 +437,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                                             mNetworking.setApprovedOn( insertedDate );
                                             schedule( mNetworking );
                                         } else {
-                                            mNetworking.setEBMRID(  emb_id );
+                                            mNetworking.setEBMRID( emb_id );
                                             mNetworking.setRequestToID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
                                             mNetworking.setRequestFromID( String.valueOf( speakerId ) );
                                             mNetworking.setIsApproved( CONSTANTS.PENDING );
@@ -468,7 +451,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                                 } else {
                                     CustomDialog.showInvalidPopUp( getActivity(), speakerErrorHeader, speakerErrorMsg );
                                 }
-                            }catch (Exception ex){
+                            } catch (Exception ex) {
                                 Log.e( "Excep ", ex.getMessage() );
                             }
                         }
@@ -500,14 +483,14 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Speaker> call;
         if (type.equalsIgnoreCase( "Speaker" )) {
-            call = apiInterface.getAllSpeaker();
+            call = apiInterface.getAllSpeaker((int)CONSTANTS.EVENTID);
         } else {
-            call = apiInterface.getAllDelegates();
+            call = apiInterface.getAllDelegates((int)CONSTANTS.EVENTID);
         }
         call.enqueue( new Callback<Speaker>() {
             @Override
             public void onResponse(Call<Speaker> call, Response<Speaker> response) {
-                if (response.code()==200) {
+                if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
                         speakerList.clear();
                         for (int i = 0; i < response.body().getData().size(); i++) {
@@ -537,7 +520,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         } );
     }
 
-    public void schedule(NetworkingList mNetworking) {
+    public void schedule(NetworkingList mNetworking)  {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<MNetworking> call = apiInterface.schedule( mNetworking );
         call.enqueue( new Callback<MNetworking>() {
@@ -546,8 +529,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
                 if (response.code() == 200) {
                     CustomDialog.showValidPopUp( getActivity(), "", response.body().getMessage() );
-                }
-                else {
+                } else {
                     CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
                 Progress.closeProgress();

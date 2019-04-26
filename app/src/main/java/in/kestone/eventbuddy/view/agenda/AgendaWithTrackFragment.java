@@ -68,7 +68,9 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
         view = inflater.inflate( R.layout.fragment_agenda_with_track, container, false );
         super.onCreate( savedInstanceState );
         recycler_child = view.findViewById( R.id.recycler_child_tab );
-        trackArrayList.addAll( AgendaList.getAgenda().getAgenda().get( pos ).getTrack() );
+        try {
+            trackArrayList.addAll( AgendaList.getAgenda().getAgenda().get( pos ).getTrack() );
+        }catch (NullPointerException ex){}
 
         childTabAdapter = new ChildTabAdapter( getActivity(), trackArrayList, this, pos );
         recycler_details = view.findViewById( R.id.recycler_details );
@@ -93,16 +95,19 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
     public void loadTrackDetail(int parentPos, int childPos){
 
         trackDetailList.clear();
-        if(AgendaList.getAgenda().getAgenda().get( parentPos ).getTrack().size()>0) {
-            trackDetailList.addAll( AgendaList.getAgenda().getAgenda().get( parentPos ).getTrack().get( childPos ).getDetails() );
-            agendaAdapter = new AgendaAdapter( getActivity(), trackDetailList, AgendaList.getAgenda().getAgenda().get( parentPos ).getDisplayLabel() );
-            LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
-            mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );
-            recycler_details.setLayoutManager( mLayoutManager );
-            recycler_details.setHasFixedSize( true );
-            recycler_details.setAdapter( agendaAdapter );
-            agendaAdapter.notifyDataSetChanged();
-        }
+        try {
+            if (AgendaList.getAgenda().getAgenda().get( parentPos ).getTrack().size() > 0) {
+                trackDetailList.addAll( AgendaList.getAgenda().getAgenda().get( parentPos ).getTrack().get( childPos ).getDetails() );
+                agendaAdapter = new AgendaAdapter( getActivity(), trackDetailList, AgendaList.getAgenda().getAgenda().get( parentPos ).getDisplayLabel(),
+                        AgendaList.getAgenda().getAgenda().get( parentPos ).getID());
+                LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
+                mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );
+                recycler_details.setLayoutManager( mLayoutManager );
+                recycler_details.setHasFixedSize( true );
+                recycler_details.setAdapter( agendaAdapter );
+                agendaAdapter.notifyDataSetChanged();
+            }
+        }catch (NullPointerException er){}
     }
 
 }

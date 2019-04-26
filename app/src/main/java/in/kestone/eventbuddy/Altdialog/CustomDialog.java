@@ -30,7 +30,18 @@ public class CustomDialog {
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.dialog_incorrect_credentials );
         TextView titleTv = dialog.findViewById( R.id.titleTv );
-        titleTv.setText( title );
+        try {
+            if (title.length() == 0) {
+                titleTv.setVisibility( View.GONE );
+            }else{
+                titleTv.setVisibility( View.VISIBLE );
+                titleTv.setText( title );
+            }
+        }catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
+
+
 
         TextView bodyTv = dialog.findViewById( R.id.bodyTv );
         bodyTv.setText( body );
@@ -111,7 +122,6 @@ public class CustomDialog {
     }
 
 
-
     @SuppressLint("JavascriptInterface")
     public static void imagePreview(final Context context, String url) {
         final Dialog dialog = new Dialog( context );
@@ -124,7 +134,7 @@ public class CustomDialog {
         closeIV = dialog.findViewById( R.id.closeIV );
         Glide.with( context )
                 .load( url )
-                .placeholder( R.drawable.def_image )
+                .placeholder( R.drawable.gallery_grey )
                 .into( imagePreviewIV );
         closeIV.setOnClickListener( new View.OnClickListener() {
             @Override

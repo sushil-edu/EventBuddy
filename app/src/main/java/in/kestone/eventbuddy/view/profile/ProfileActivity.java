@@ -55,7 +55,9 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.common.ImageFilePath;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
@@ -170,8 +172,13 @@ public class ProfileActivity extends AppCompatActivity implements MvpView {
         organizationTv.setText( dataManager.getOrganization() );
         designationTv.setText( dataManager.getDesignation() );
 
-        if (dataManager.getImagePath() != null && !dataManager.getImagePath().isEmpty()) {
+        if (CommonUtils.isValidUrl( dataManager.getImagePath())) {
             Picasso.with( this ).load( dataManager.getImagePath() )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileIv );
+        }else {
+            Picasso.with( this ).load( LocalStorage.getImagePath( ProfileActivity.this).concat( dataManager.getImagePath() ))
                     .resize( 80, 80 )
                     .placeholder( R.drawable.default_user_grey )
                     .into( profileIv );

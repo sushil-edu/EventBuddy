@@ -66,7 +66,8 @@ public class AgendaListFragment extends Fragment {
         detailArrayList.clear();
 //        detailArrayList.addAll( track.getDetails() );
         detailArrayList.addAll( AgendaList.getAgenda().getAgenda().get( pTabPoss ).getTrack().get( cTabPoss ).getDetails() );
-        adapter = new AgendaAdapter( getActivity(), detailArrayList , AgendaList.getAgenda().getAgenda().get( pTabPoss ).getDisplayLabel());
+        adapter = new AgendaAdapter( getActivity(), detailArrayList , AgendaList.getAgenda().getAgenda().get( pTabPoss ).getDisplayLabel(),
+                AgendaList.getAgenda().getAgenda().get( pTabPoss ).getID());
         recyclerView = view.findViewById( R.id.recyclerView );
         LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
         mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );

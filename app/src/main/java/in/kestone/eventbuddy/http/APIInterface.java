@@ -13,6 +13,7 @@ import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.Stream;
 import in.kestone.eventbuddy.model.activity_stream_model.StreamDatum;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
+import in.kestone.eventbuddy.model.agenda_model.RatingRequest;
 import in.kestone.eventbuddy.model.app_config_model.AppConf;
 import in.kestone.eventbuddy.model.faq_model.MFAQ;
 import in.kestone.eventbuddy.model.helpdesk_model.MHelpDesk;
@@ -46,7 +47,16 @@ public interface APIInterface {
     Call<AppConf> getAppConfiguration(@Path("id") int id);
 
     @POST("UserModule")
-    Call<User> login(@Body Profile profile);
+//    Call<User> login(@Body Profile profile);
+    Call<User> login(@Body HashMap<String, String> profile);
+
+    //send reset password OTP
+    @POST("UserOTP/FogotPassword")
+    Call<User> sendOtpToResetPassword(@Body HashMap<String, String> user);
+
+    //update password
+    @POST("UserOTP/changepassword")
+    Call<JsonObject> updatePassword(@Body HashMap<String, String> user);
 
     @POST("Userotp")
     Call<User> getOtp(@Body Profile profile);
@@ -60,11 +70,11 @@ public interface APIInterface {
     @POST("MyAgenda/deleteMyAgenda")
     Call<JsonObject> deleteMyAgenda(@Body HashMap<String, Long> request);
 
-    @GET("UserModule/Getusers/speaker")
-    Call<Speaker> getAllSpeaker();
+    @GET("UserModule/Getusers/speaker/{EventID}")
+    Call<Speaker> getAllSpeaker(@Path( "EventID" ) int eventID);
 
-    @GET("UserModule/Getusers/delegate")
-    Call<Speaker> getAllDelegates();
+    @GET("UserModule/Getusers/delegate/{EventID}")
+    Call<Speaker> getAllDelegates(@Path( "EventID" ) int eventID);
 
     @GET("PartnerInventory/{id}")
     Call<PartnerDetail> getPartners(@Path("id") long id);
@@ -134,6 +144,10 @@ public interface APIInterface {
 
     @GET("TnCModuleConfiguration/{id}")
     Call<JsonObject> termsAndCondition(@Path("id") long eventId);
+
+    //session rating
+    @POST("SessionRating")
+    Call<JsonObject> rateSession(@Body RatingRequest rate);
 
 
 }

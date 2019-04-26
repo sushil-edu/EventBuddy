@@ -65,7 +65,7 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.mScheduledTv:
-                myMeeting(CONSTANTS.SCHEDULE);
+                myMeeting( CONSTANTS.SCHEDULE );
                 Progress.showProgress( getActivity() );
                 mScheduledTv.setTextColor( getResources().getColor( R.color.colorPrimary ) );
                 mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
@@ -89,7 +89,6 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
                 mScheduledTv.setTextColor( getResources().getColor( R.color.grey ) );
                 mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
 
-
                 break;
 
         }
@@ -103,7 +102,7 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
         mApproveTv.setTextColor( getResources().getColor( R.color.grey ) );
         mPendingTv.setTextColor( getResources().getColor( R.color.grey ) );
         myMeeting( CONSTANTS.SCHEDULE );
-        Progress.showProgress( getActivity() );
+//        Progress.showProgress( getActivity() );
     }
 
 //    @Override
@@ -120,17 +119,20 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
         call.enqueue( new Callback<MNetworking>() {
             @Override
             public void onResponse(Call<MNetworking> call, Response<MNetworking> response) {
+                Progress.closeProgress();
                 if (response.code() == 200) {
+
                     if (response.body().getStatusCode() == 200 && response.body().getNetworkingList().size() > 0) {
                         networkingResponse = response.body();
                         networkingLists.addAll( networkingResponse.getNetworkingList() );
 //                    openFragment();
-                        if(page.equalsIgnoreCase( CONSTANTS.SCHEDULE )){
+                        if (page.equalsIgnoreCase( CONSTANTS.SCHEDULE )) {
                             filterNetworkingLists.clear();
                             //list filter for approve page
                             for (int i = 0; i < networkingLists.size(); i++) {
                                 if (CONSTANTS.APPROVED.equalsIgnoreCase( networkingLists.get( i ).getIsApproved() ) &&
-                                        userID == Integer.parseInt( networkingLists.get( i ).getRequestToID() )) {
+                                        userID == Integer.parseInt( networkingLists.get( i ).getRequestToID() ) ||
+                                        userID == Integer.parseInt( networkingLists.get( i ).getRequestFromID() )) {
                                     filterNetworkingLists.add( networkingLists.get( i ) );
                                 }
                             }
@@ -143,11 +145,11 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
                                     .replace( R.id.container, myScheduled )
 //                        .addToBackStack( null )
                                     .commit();
-                        }else if(page.equalsIgnoreCase( CONSTANTS.APPROVE )){
+                        } else if (page.equalsIgnoreCase( CONSTANTS.APPROVE )) {
                             filterNetworkingLists.clear();
                             //list filter for approve page
                             for (int i = 0; i < networkingLists.size(); i++) {
-                                if (userID == Integer.parseInt( networkingLists.get( i ).getRequestToID() )) {
+                                if (userID == Integer.parseInt( networkingLists.get( i ).getRequestToID()) ) {
                                     filterNetworkingLists.add( networkingLists.get( i ) );
                                 }
                             }
@@ -161,7 +163,7 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
 //                        .addToBackStack( null )
                                     .commit();
 
-                        }else if(page.equalsIgnoreCase( CONSTANTS.PENDING )){
+                        } else if (page.equalsIgnoreCase( CONSTANTS.PENDING )) {
                             filterNetworkingLists.clear();
                             //list filter for pending page
                             for (int i = 0; i < networkingLists.size(); i++) {
@@ -188,7 +190,7 @@ public class NetworkMeetingFragment extends Fragment implements View.OnClickList
                 } else {
                     CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
-                Progress.closeProgress();
+
             }
 
             @Override

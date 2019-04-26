@@ -138,7 +138,7 @@
                     android:id="@+id/mActivityIv"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:src="@drawable/def_image"
+                    android:src="@drawable/gallery_grey"
                     android:visibility="visible" />
 
             </RelativeLayout>

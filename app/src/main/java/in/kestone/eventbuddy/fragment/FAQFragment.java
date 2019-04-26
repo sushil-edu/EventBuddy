@@ -55,27 +55,6 @@ public class FAQFragment extends Fragment {
         return view;
     }
 
-//    private void getFAQ() {
-//        mfaq = new Gson().fromJson( ReadJson.loadJSONFromAsset( getActivity(), "faq.json" ),
-//                MFaq.class );
-//        if (mfaq.getStatusCode().equals( 200 )) {
-////            title.setText( mfaq.getFAQ().get( 0 ).getHeader() );
-////            title.setVisibility( View.GONE );
-//            faqList.addAll( mfaq.getData() );
-//            faqAdapter = new FAQAdapter( getActivity(), faqList );
-//            LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
-//            mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );
-//            faqRV.setLayoutManager( mLayoutManager );
-////        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
-//            faqRV.setHasFixedSize( true );
-//            faqRV.setAdapter( faqAdapter );
-//            faqAdapter.notifyDataSetChanged();
-//
-//        } else {
-//            Log.e( "Status", String.valueOf( mfaq.getStatusCode() ) );
-//        }
-//    }
-
     public void getFAQ() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<MFAQ> call = apiInterface.getFAQ( CONSTANTS.EVENTID );

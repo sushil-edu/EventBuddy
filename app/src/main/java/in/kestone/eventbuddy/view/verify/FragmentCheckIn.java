@@ -176,6 +176,7 @@ public class FragmentCheckIn extends Fragment {
         tv_checkIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                startLocation();
 
                 if (mCurrentLocation != null) {
 

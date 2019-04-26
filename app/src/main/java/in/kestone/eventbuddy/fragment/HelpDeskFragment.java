@@ -126,14 +126,6 @@ public class HelpDeskFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-//            holder.partnerName.setText( detailArrayList.get( position ).getName() );
-//            holder.rootLayout.setOnClickListener( new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    detailsCallback.onDetailClickCallback( detailArrayList.get( position ) );
-//                }
-//            } );
-
             Datum helpDesk = listHelpDesk.get( position );
             holder.title.setText( helpDesk.getCategory() );
             holder.name.setText( helpDesk.getName() );

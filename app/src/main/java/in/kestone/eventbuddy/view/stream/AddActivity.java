@@ -94,6 +94,7 @@ public class AddActivity extends AppCompatActivity {
         mTitleTv = toolbar.findViewById( R.id.mTitleTv );
         mTitleTv.setText( getIntent().getStringExtra( "title" ) );
         apiInterface = APIClient.getClient().create( APIInterface.class );
+        toolbar.findViewById( R.id.subTitleTv ).setVisibility( View.GONE );
 
 //        RadioButton imgRadioButton = (RadioButton) findViewById(R.id.imgRadioBtn);
 //        RadioButton txtRadioButton = (RadioButton) findViewById(R.id.textRadioBtn);
@@ -108,7 +109,7 @@ public class AddActivity extends AppCompatActivity {
         addImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String filename = Environment.getExternalStorageDirectory().getPath() + "/stream/stream.jpg";
+                String filename = Environment.getExternalStorageDirectory().getPath().concat( "/stream/stream.jpg");
                 imageUri = Uri.fromFile(new File(filename));
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
@@ -194,41 +195,6 @@ public class AddActivity extends AppCompatActivity {
                 }else {
                     CustomDialog.showInvalidPopUp( AddActivity.this, CONSTANTS.ERROR, "Write your comment." );
                 }
-
-//                if (addImageView.getDrawable() == null && checkInIv.getText().length() == 0 && txtFeedback.getText().length() == 0) {
-//
-//                    Toast.makeText(AddActivity.this, "All fields can't be empty", Toast.LENGTH_SHORT).show();
-//
-//                } else {
-//                    JSONObject jsonObject = new JSONObject();
-//                    try {
-//                        Progress.showProgress(AddActivity.this);
-//
-//                        jsonObject.put("RefEmailID", UserDetails.EmailID);
-//                        jsonObject.put("PostedText", txtFeedback.getText().toString());
-//                        jsonObject.put("BoothCheckIn", checkInIv.getText().toString());
-//                        if (addImageView.getDrawable() != null) {
-//                            jsonObject.put("PostedImage", str);
-//                        } else {
-//                            jsonObject.put("PostedImage", "");
-//                        }
-//
-//                        Log.d("Add Activity Params", jsonObject.toString());
-//
-//                        if (ConnectionCheck.connectionStatus(AddActivity.this)) {
-//                            new PostActivity(ApiUrl.ActivityStream, jsonObject.toString());
-//                        } else {
-//                            Progress.closeProgress();
-//                            Toast.makeText(AddActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                        Progress.closeProgress();
-//                    }
-//
-//                }
-//
             }
         } );
 

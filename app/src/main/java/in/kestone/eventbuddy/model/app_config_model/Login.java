@@ -3,7 +3,9 @@ package in.kestone.eventbuddy.model.app_config_model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Login {
+import java.io.Serializable;
+
+public class Login implements Serializable {
 
     @SerializedName("Button")
     private Button mButton;

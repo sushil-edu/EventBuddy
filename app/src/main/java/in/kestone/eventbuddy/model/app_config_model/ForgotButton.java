@@ -3,8 +3,10 @@ package in.kestone.eventbuddy.model.app_config_model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class ForgotButton {
+
+public class ForgotButton implements Serializable {
 
     @SerializedName("Label")
     private String mLabel;

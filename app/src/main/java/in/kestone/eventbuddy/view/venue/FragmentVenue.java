@@ -43,13 +43,6 @@ public class FragmentVenue extends Fragment {
     String Venue_Name, Venue_Latitude, Venue_Longitude;
     private GoogleMap mMap;
 
-//    public static FragmentVenue newInstance() {
-//        FragmentVenue fragment = new FragmentVenue();
-//        return fragment;
-//    }
-
-//[{"ID":"1","VenueName":"Hotel Fairmont","Address":"Monte Carlo, Monaco Fairmont Monte Carlo\r\n12 Avenue des Spélugues, 98000 Monaco\r\n","Latitude":"43.7409642","Longitude":"7.4290689","ImageURL":""}]
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,7 +87,7 @@ public class FragmentVenue extends Fragment {
 
             @Override
             public void onResponse(Call<MVenue> call, Response<MVenue> response) {
-                if(response.code()==200) {
+                if(response.code()== 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getVenueData().size() > 0) {
                         Venue_Name = response.body().getVenueData().get( 0 ).getVenueName();
                         Venue_Latitude = response.body().getVenueData().get( 0 ).getVenueLatitude();

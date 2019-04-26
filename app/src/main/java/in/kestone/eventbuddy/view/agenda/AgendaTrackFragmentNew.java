@@ -101,7 +101,8 @@ public class AgendaTrackFragmentNew extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.title.setText( trackList.get( position ).getTrackName() );
             detailArrayList = (ArrayList<Detail>) tracklArrayList.get( position ).getDetails();
-            AgendaAdapter adapter = new AgendaAdapter( getActivity(), detailArrayList , AgendaList.getAgenda().getAgenda().get( pTabPos ).getDisplayLabel());
+            AgendaAdapter adapter = new AgendaAdapter( getActivity(), detailArrayList , AgendaList.getAgenda().getAgenda().get( pTabPos ).getDisplayLabel(),
+                    AgendaList.getAgenda().getAgenda().get( pTabPos ).getID());
             holder.recyclerViewTrackDetails.setAdapter( adapter );
             adapter.notifyDataSetChanged();
 

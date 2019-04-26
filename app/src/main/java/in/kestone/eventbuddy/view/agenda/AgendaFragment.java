@@ -84,10 +84,11 @@ public class AgendaFragment extends Fragment {
         viewPager = view.findViewById( R.id.viewpager );
         tabLayout.setVisibility( View.GONE );
 
-        if (tabCount <= 4)
+        if (tabCount <= 4) {
             tabLayout.setTabMode( TabLayout.MODE_FIXED );
-        else
+        }else {
             tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
+        }
 
         LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
                 new IntentFilter( "event-buddy" ) );

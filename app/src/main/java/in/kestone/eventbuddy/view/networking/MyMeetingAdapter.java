@@ -1,5 +1,6 @@
 package in.kestone.eventbuddy.view.networking;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.pkmmte.view.CircularImageView;
@@ -21,10 +24,10 @@ import in.kestone.eventbuddy.model.networking_model.NetworkingList;
 public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHolder> {
 
     StatusUpdate statusUpdate;
+    int userID;
     private Context context;
     private ArrayList<NetworkingList> networkingLists;
     private String status, page;
-    int userID;
 
     MyMeetingAdapter(Context context, ArrayList<NetworkingList> networkingLists, String type, StatusUpdate statusUpdate, int userID, String page) {
 
@@ -32,8 +35,9 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
         this.context = context;
         this.status = type;
         this.statusUpdate = statusUpdate;
-        this.userID =userID;
+        this.userID = userID;
         this.page = page;
+
 
     }
 
@@ -47,7 +51,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
     public void onBindViewHolder(MyHolder holder, int position) {
         final NetworkingList networkingList = networkingLists.get( position );
 
-        if(page.equalsIgnoreCase( CONSTANTS.APPROVE )){
+        if (page.equalsIgnoreCase( CONSTANTS.APPROVE )) {
             //for approve page
             holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
             holder.designationTv.setText( networkingList.getDesignation() );
@@ -56,7 +60,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.timeTv.setText( networkingList.getNetworingRequestTime() );
             holder.btnReschedule.setText( CONSTANTS.APPROVE );
 
-        }else if(page.equalsIgnoreCase( CONSTANTS.PENDING )){
+        } else if (page.equalsIgnoreCase( CONSTANTS.PENDING )) {
             //for pending page
             holder.nameTv.setText( networkingList.getToFname() + " " + networkingList.getToLname() );
             holder.designationTv.setText( networkingList.getToDes() );
@@ -64,24 +68,31 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
             holder.timeTv.setText( networkingList.getNetworingRequestTime() );
 
-        }else if(page.equalsIgnoreCase( CONSTANTS.SCHEDULE )){
-            holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
-            holder.designationTv.setText( networkingList.getDesignation() );
-            holder.organizationTv.setText( networkingList.getOrganization() );
-            holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
-            holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+        } else if (page.equalsIgnoreCase( CONSTANTS.SCHEDULE )) {
+            if (userID == Integer.parseInt( networkingList.getRequestFromID() )) {
+                holder.nameTv.setText( networkingList.getToFname().concat( networkingList.getToLname() ) );
+                holder.designationTv.setText( networkingList.getToDes() );
+                holder.organizationTv.setText( networkingList.getToORG() );
+                holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
+                holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+            } else if (userID == Integer.parseInt( networkingList.getRequestToID() )) {
+                holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
+                holder.designationTv.setText( networkingList.getDesignation() );
+                holder.organizationTv.setText( networkingList.getOrganization() );
+                holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
+                holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+            }
         }
 
         holder.btnReschedule.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("ID ", ""+networkingList.getEBMRID());
-                if (!page.equalsIgnoreCase( CONSTANTS.APPROVE ) ) {
+                Log.e( "ID ", "" + networkingList.getEBMRID() );
+                if (!page.equalsIgnoreCase( CONSTANTS.APPROVE )) {
                     callSchedule( holder.nameTv.getText().toString(), networkingList.getToUsertype(),
-                            networkingList.getEBMRID(), networkingList.getRequestToID(), networkingList.getNetworkingLocation() , status );
+                            networkingList.getEBMRID(), networkingList.getRequestToID(), networkingList.getNetworkingLocation(), status );
                 } else {
                     statusUpdate.onStatusUpdate( CONSTANTS.APPROVE, networkingList.getEBMRID(), position );
-//                        approve(speakerData.getEBMRID());
                 }
             }
         } );
@@ -89,12 +100,9 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
         holder.btnCancel.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                statusUpdate.onStatusUpdate( CONSTANTS.REJECT, networkingList.getEBMRID(), position );
-//                    rejectRequest(speakerData.getEBMRID());
+                statusUpdatedDialog( CONSTANTS.REJECT, networkingList.getEBMRID(), position, "Do you want to cancel meeting request." );
             }
         } );
-
-//        }
 
     }
 
@@ -105,17 +113,52 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
 
     // Send an Intent with an action named "custom-event-name". The Intent sent should
 // be received by the ReceiverActivity.
-    private void callSchedule(String name, String type, long emb_id, String userId,String location, String status) {
+    private void callSchedule(String name, String type, long emb_id, String userId, String location, String status) {
         Intent intent = new Intent( CONSTANTS.SCHEDULE );
         // You can also include some extra data.
         intent.putExtra( "message", CONSTANTS.SCHEDULE );
         intent.putExtra( "name", name );
         intent.putExtra( "type", type );
-        intent.putExtra( "emb_id",  emb_id );
+        intent.putExtra( "emb_id", emb_id );
         intent.putExtra( "id", userId );
         intent.putExtra( "location", location );
         intent.putExtra( "status", status );
         LocalBroadcastManager.getInstance( context ).sendBroadcast( intent );
+    }
+
+    private void statusUpdatedDialog(String status, Long meetingID, int position, String message) {
+        final Dialog dialog = new Dialog( context );
+        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
+        dialog.setContentView( R.layout.dialog_correct_credentials );
+        dialog.findViewById( R.id.icon ).setVisibility( View.GONE );
+        dialog.findViewById( R.id.titleTv ).setVisibility( View.GONE );
+//        titleTv.setText( title );
+        TextView bodyTv = dialog.findViewById( R.id.bodyTv );
+        bodyTv.setText( message );
+        TextView yesTv = dialog.findViewById( R.id.yes );
+        yesTv.setText( "Yes" );
+        TextView noTv = dialog.findViewById( R.id.no );
+        noTv.setVisibility( View.VISIBLE );
+        noTv.setText( "No" );
+
+        yesTv.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                statusUpdate.onStatusUpdate( status, meetingID, position );
+            }
+        } );
+        noTv.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        } );
+
+
+        dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT );
+        dialog.show();
     }
 
     public interface StatusUpdate {

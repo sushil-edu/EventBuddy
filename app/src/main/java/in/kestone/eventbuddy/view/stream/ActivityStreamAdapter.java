@@ -57,7 +57,7 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
         holder.designationTv.setText( streamData.getDesignation() );
         String[] st = streamData.getDt().split( "ago" );
         String str = streamData.getDt();
-        holder.timeTv.setText( st[0] + "\n" + streamData.getDt().substring( str.length()-3, str.length() ) );
+        holder.timeTv.setText( st[0].concat( "\n" ).concat(  streamData.getDt().substring( str.length()-3, str.length() ) ));
 
 
         holder.layout_profile.setOnClickListener( new View.OnClickListener() {
@@ -70,6 +70,7 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
                 speakerDetail.setLastName( streamData.getLastName() );
                 speakerDetail.setDesignation( streamData.getDesignation() );
                 speakerDetail.setOrganization( streamData.getOrganization() );
+                speakerDetail.setUserType( streamData.getUserType() );
                 speakerDetail.setImage( LocalStorage.getImagePath( mContext ).concat( streamData.getImage()));
                 Bundle bundle = new Bundle();
                 bundle.putSerializable( "data", speakerDetail );

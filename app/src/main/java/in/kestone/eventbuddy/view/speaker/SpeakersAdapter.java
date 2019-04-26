@@ -43,21 +43,15 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         final SpeakerDetail speakerData = speakerList.get( position );
-        holder.nameTv.setText( speakerData.getFirstName() +" "+speakerData.getLastName() );
+        holder.nameTv.setText( speakerData.getFirstName()+" "+speakerData.getLastName() );
         holder.designationTv.setText( speakerData.getDesignation() );
         holder.organizationTv.setText( speakerData.getOrganization() );
         holder.item.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent( context, ActivitySpeakerDetails.class );
-//                intent.putExtra( "Name", speakerData.getFirstName() +" "+speakerData.getLastName() );
-//                intent.putExtra( "Designation", speakerData.getDesignation() );
-//                intent.putExtra( "Organization", speakerData.getOrganization() );
-//                intent.putExtra( "Email", speakerData.getEmailID() );
-//                intent.putExtra( "Image", speakerData.getImage() );
                 intent.putExtra( "Type", "Speaker" );
                 intent.putExtra( "Tag", "Speaker" );
-//                intent.putExtra( "details", speakerData.getProfileDescription() );
                 bundle = new Bundle(  );
                 bundle.putSerializable( "data", speakerData );
                 intent.putExtras(  bundle );
@@ -65,7 +59,7 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
 
             }
         } );
-        Picasso.with( context ).load( LocalStorage.getImagePath( context )+""+speakerData.getImage() )
+        Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat(speakerData.getImage() ))
                 .resize( 80, 80 )
                 .placeholder( R.drawable.default_user_grey )
                 .into( holder.profileIv );

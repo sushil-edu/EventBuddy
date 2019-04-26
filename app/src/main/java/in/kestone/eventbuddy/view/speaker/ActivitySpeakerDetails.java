@@ -23,7 +23,10 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
+import in.kestone.eventbuddy.model.app_config_model.ListEvent;
+import in.kestone.eventbuddy.model.app_config_model.Menu;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -91,12 +94,15 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         nameTv.setText( speakerDetail.getFirstName().concat( " " ).concat( speakerDetail.getLastName() ) );
         tag = speakerDetail.getUserType();
 
-        Picasso.with( ActivitySpeakerDetails.this ).load( speakerDetail.getImage() )
+        Picasso.with( ActivitySpeakerDetails.this ).load( LocalStorage.getImagePath( ActivitySpeakerDetails.this )
+                .concat( speakerDetail.getImage() ) )
                 .resize( 100, 100 )
-                .placeholder( R.drawable.default_user_grey ).into( profileIv );
+                .placeholder( R.drawable.default_user_grey )
+                .into( profileIv );
 
         mScheduleBtn.setOnClickListener( this );
         tvReschedule.setOnClickListener( this );
+        tvCancel.setOnClickListener( this );
 
     }
 
@@ -115,22 +121,37 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
     public void onClick(View view) {
         if (speakerDetail.getUserID() != new SharedPrefsHelper( getApplicationContext() ).getUserId()) {
             Intent intent = new Intent( this, MainActivity.class );
-            Bundle bundle = new Bundle();
+
             switch (view.getId()) {
                 case R.id.mScheduleBtn:
-                    intent.putExtra( "Name", nameTv.getText().toString() );
-                    intent.putExtra( "Type", type );
-                    bundle.putSerializable( "Data", speakerDetail );
-                    intent.putExtra( "Tag", CONSTANTS.SCHEDULE );
-                    intent.putExtras( bundle );
-                    startActivity( intent );
+                    if (isNetworkingEnable()) {
+                        Bundle bundle = new Bundle();
+                        intent.putExtra( "Name", nameTv.getText().toString() );
+                        intent.putExtra( "Type", type );
+                        bundle.putSerializable( "Data", speakerDetail );
+                        intent.putExtra( "Tag", CONSTANTS.SCHEDULE );
+                        intent.putExtras( bundle );
+                        startActivity( intent );
+                    } else {
+                        CustomDialog.showInvalidPopUp( ActivitySpeakerDetails.this, "", "Networking temporary disable " );
+                    }
+
                     break;
                 case R.id.tvReschedule:
-                    intent.putExtra( "Name", nameTv.getText().toString() );
-                    intent.putExtra( "Type", type );
-                    intent.putExtra( "Tag", CONSTANTS.RESCHEDULE );
-                    bundle.putSerializable( "Data", speakerDetail );
-                    startActivity( intent );
+                    if (isNetworkingEnable()) {
+                        Bundle bundles = new Bundle();
+                        intent.putExtra( "Name", nameTv.getText().toString() );
+                        intent.putExtra( "Type", type );
+                        intent.putExtra( "Tag", CONSTANTS.RESCHEDULE );
+                        bundles.putSerializable( "Data", speakerDetail );
+                        intent.putExtras( bundles );
+                        startActivity( intent );
+                    } else {
+                        CustomDialog.showInvalidPopUp( ActivitySpeakerDetails.this, "", "Networking temporary disable " );
+                    }
+                    break;
+                case R.id.tvCancel:
+                    onBackPressed();
                     break;
             }
         } else {
@@ -138,5 +159,17 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         }
 
 //        finish();
+    }
+
+    private boolean isNetworkingEnable() {
+        ArrayList<Menu> menuList = new ArrayList<>();
+        menuList.addAll( ListEvent.getAppConf().getEvent().getMenu() );
+        for (int i = 0; i < menuList.size(); i++) {
+            if (menuList.get( i ).getMenutitle().equalsIgnoreCase( CONSTANTS.NETWORKING ))
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 }
