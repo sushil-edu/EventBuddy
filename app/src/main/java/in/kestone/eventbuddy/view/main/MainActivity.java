@@ -67,7 +67,6 @@ import in.kestone.eventbuddy.view.social.SocialFragment;
 import in.kestone.eventbuddy.view.speaker.FragmentSpeaker;
 import in.kestone.eventbuddy.view.splash.ActivitySplash;
 import in.kestone.eventbuddy.view.stream.ActivityStream;
-import in.kestone.eventbuddy.view.venue.FragmentVenue;
 import in.kestone.eventbuddy.widgets.CustomTextView;
 import in.kestone.eventbuddy.widgets.ToolbarTextView;
 
@@ -95,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
     @BindView(R.id.subTitleTv)
     TextView subTitle;
+    @BindView(R.id.image_background)
+    ImageView imageBackGround;
 
     //nav header
     @BindView(R.id.imageEdit)
@@ -130,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
+
+
         initialiseView();
     }
 
@@ -138,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         ButterKnife.bind( this, drawerLayout );
         ButterKnife.bind( drawerLayout, navigationView );
 
-//        toolbar = drawerLayout.findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
 
         dataManager = ((MvpApp) getApplication()).getDataManager();
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
 
         // menu list adapter
-        adapter = new NavMenuAdapter( this, list );
+        adapter = new NavMenuAdapter( MainActivity.this, list );
         listView.setAdapter( adapter );
 
         //app version
@@ -218,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
     @Override
     public void onClick(int mId, final String dTitle, String mTitle, String header, String subHeader) {
-        Log.e( "Menu ID ", String.valueOf( mId ) + " title " + mTitle );
+        Log.d( "Menu ID ", String.valueOf( mId ) + " title " + mTitle );
         openFragment( dTitle, mTitle, header, subHeader );
         drawerLayout.closeDrawers();
     }
@@ -296,21 +298,10 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-            case CONSTANTS.POLLING:
+            case CONSTANTS.HELPDESK:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
-                fragment = new PollFragment();
-                bundle.putString( "type", CONSTANTS.POLLING );
-                fragment.setArguments( bundle );
-                ft.replace( R.id.container, fragment, CONSTANTS.POLLING );
-                ft.addToBackStack( null );
-                ft.commit();
-                break;
-            case CONSTANTS.ASKAQUESTION:
-                mTitleTv.setText( appTitle );
-                subTitle.setText( subHeader );
-                fragment = new AskQuestionFragment();
-                ft.replace( R.id.container, fragment, CONSTANTS.ASKAQUESTION );
+                ft.replace( R.id.container, new HelpDeskFragment(), CONSTANTS.SPEAKER );
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
@@ -324,6 +315,15 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
+            //Q&A module
+            case CONSTANTS.ASKAQUESTION:
+                mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
+                fragment = new AskQuestionFragment();
+                ft.replace( R.id.container, fragment, CONSTANTS.ASKAQUESTION );
+                ft.addToBackStack( null );
+                ft.commit();
+                break;
             case CONSTANTS.SOCIAL:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
@@ -331,24 +331,10 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-            case CONSTANTS.VENUE:
-                mTitleTv.setText( appTitle );
-                subTitle.setText( subHeader );
-                ft.replace( R.id.container, new FragmentVenue(), CONSTANTS.VENUE );
-                ft.addToBackStack( null );
-                ft.commit();
-                break;
             case CONSTANTS.FEEDBACK:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
                 ft.replace( R.id.container, new FeedbackFragment(), CONSTANTS.FEEDBACK );
-                ft.addToBackStack( null );
-                ft.commit();
-                break;
-            case CONSTANTS.HELPDESK:
-                mTitleTv.setText( appTitle );
-                subTitle.setText( subHeader );
-                ft.replace( R.id.container, new HelpDeskFragment(), CONSTANTS.SPEAKER );
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
@@ -362,7 +348,24 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-
+            case CONSTANTS.POLLING:
+                mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
+                fragment = new PollFragment();
+                bundle.putString( "type", CONSTANTS.POLLING );
+                fragment.setArguments( bundle );
+                ft.replace( R.id.container, fragment, CONSTANTS.POLLING );
+                ft.addToBackStack( null );
+                ft.commit();
+                break;
+            case CONSTANTS.NOTIFICATION:
+                mTitleTv.setText( appTitle );
+                subTitle.setText( subHeader );
+                fragment = new NotificationFragment();
+                ft.replace( R.id.container, fragment, CONSTANTS.NOTIFICATION );
+                ft.addToBackStack( null );
+                ft.commit();
+                break;
             case CONSTANTS.FAQS:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
@@ -370,7 +373,6 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-
             case CONSTANTS.PARTNERS:
                 mTitleTv.setText( appTitle );
                 subTitle.setText( subHeader );
@@ -391,15 +393,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                 ft.addToBackStack( null );
                 ft.commit();
                 break;
-
-            case CONSTANTS.NOTIFICATION:
-                mTitleTv.setText( appTitle );
-                subTitle.setText( subHeader );
-                fragment = new NotificationFragment();
-                ft.replace( R.id.container, fragment, CONSTANTS.NOTIFICATION );
-                ft.addToBackStack( null );
-                ft.commit();
-                break;
+//            case CONSTANTS.VENUE:
+//                mTitleTv.setText( appTitle );
+//                subTitle.setText( subHeader );
+//                ft.replace( R.id.container, new FragmentVenue(), CONSTANTS.VENUE );
+//                ft.addToBackStack( null );
+//                ft.commit();
+//                break;
             default:
                 CustomDialog.showInvalidPopUp( MainActivity.this, CONSTANTS.ERROR, "Module not found" );
                 break;
@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                     .replace( R.id.container, new FragmentSpeaker() )
                     .commit();
 
-        } else if ((getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( "Agenda" ))) {
+        } else if ((getIntent().getStringExtra( "Tag" ).equalsIgnoreCase( CONSTANTS.AGENDA ))) {
             mTitleTv.setText( CONSTANTS.AGENDA );
 
             getSupportFragmentManager().beginTransaction()
@@ -465,12 +465,25 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         tvName.setText( dataManager.getName() );
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
+        if (LocalStorage.getEventID( MainActivity.this ) != 0) {
+            Picasso.with( MainActivity.this ).load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getMasterHead( MainActivity.this ) ) )
+                    .fit().into( imageBackGround );
+        }
 
-        Picasso.with( this ).load( LocalStorage.getImagePath( MainActivity.this )
-                .concat( dataManager.getImagePath() ) )
-                .resize( 80, 80 )
-                .placeholder( R.drawable.default_user_grey )
-                .into( profileImage );
+        if (dataManager.getImage().contains( LocalStorage.getImagePath( MainActivity.this ) )) {
+
+            Picasso.with( MainActivity.this ).load( (dataManager.getImage()) )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileImage );
+        } else {
+            Picasso.with( MainActivity.this ).load( LocalStorage.getImagePath( MainActivity.this ).concat( dataManager.getImage() ) )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileImage );
+        }
+
+
     }
 
     @Override
@@ -513,9 +526,9 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
             @Override
             public void onClick(View v) {
                 clearAll.dismiss();
-//                SharedPreferences.Editor sp = getSharedPreferences( CommonUtils.AppConfigurationPrev, MODE_PRIVATE ).edit();
-//                sp.clear();
+//                LocalStorage.clearData( MainActivity.this );
                 mainPresenter.setUserLoggedOut();
+
             }
         } );
         no.setOnClickListener( new View.OnClickListener() {
@@ -528,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         clearAll.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         clearAll.show();
         Vibrator v = (Vibrator) getSystemService( Context.VIBRATOR_SERVICE );
-        // Vibrate for 500 milliseconds
+        // Vibrate for 50 milliseconds
         v.vibrate( 150 );
         Animation shake = AnimationUtils.loadAnimation( this, R.anim.shake );
         root.setAnimation( shake );

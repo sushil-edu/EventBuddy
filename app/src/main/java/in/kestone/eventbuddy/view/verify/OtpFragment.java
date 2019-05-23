@@ -10,12 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomEditText;
@@ -35,6 +39,9 @@ public class OtpFragment extends Fragment {
 
     @BindView(R.id.tv_verify)
     CustomButton tv_verify;
+
+    @BindView( R.id.image_background )
+    ImageView imageBackGround;
 
     String err_msg = "", err_header = "";
 
@@ -56,6 +63,11 @@ public class OtpFragment extends Fragment {
         ButterKnife.bind( this, v );
 
         initialiseView();
+
+        if(LocalStorage.getEventID( getActivity() )!=0){
+            Picasso.with( getActivity() ).load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( getActivity() ) ))
+                    .into( imageBackGround );
+        }
         return v;
     }
 

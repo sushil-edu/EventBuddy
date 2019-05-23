@@ -20,6 +20,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.partners_model.PartnerDetail;
@@ -91,9 +92,9 @@ public class PartnerFragment extends Fragment {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<PartnerDetail> call;
         if(type.contains( CONSTANTS.PARTNERS )) {
-            call = apiInterface.getPartners( CONSTANTS.EVENTID );
+            call = apiInterface.getPartners( LocalStorage.getEventID( getActivity() ) );
         }else {
-            call = apiInterface.getSponsors( CONSTANTS.EVENTID );
+            call = apiInterface.getSponsors( LocalStorage.getEventID( getActivity() ) );
         }
         call.enqueue( new Callback<PartnerDetail>() {
             @Override

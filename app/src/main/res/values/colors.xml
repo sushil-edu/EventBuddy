@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#007cb8</color>
-    <color name="colorPrimaryDark">#01608e</color>
+    <!--<color name="colorPrimary">#007cb8</color>-->
+    <!--<color name="colorPrimaryDark">#01608e</color>-->
+    <color name="colorPrimary">#141414</color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#878686</color>
 
     <color name="error">#E11323</color>
@@ -17,5 +19,7 @@
     <color name="bg_grey">#e5e7e7</color>
 
     <color name="actionbar_color">#0C1F2C</color>
+    <color name="buttonBackground">@color/colorPrimary</color>
+    <color name="parentTabColor">#262525</color>
 
 </resources>

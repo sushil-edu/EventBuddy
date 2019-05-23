@@ -40,4 +40,57 @@ public class LocalStorage {
         SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
         return sharedPreferences.getString("Path", "");
     }
+
+    public static int getEventID(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        return (int) sharedPreferences.getLong("EventID", 0);
+    }
+
+    public static void saveEventID(Long eventID, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong( "EventID",  eventID );
+        editor.apply();
+    }
+
+    public static String getSplashBackground(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("ImageURL", "");
+    }
+
+    public static void saveSplashBackground(String imageURL, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString( "ImageURL",  imageURL );
+        editor.apply();
+    }
+
+    public static String getBackground(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("ImageURL", "");
+    }
+
+    public static void saveBackground(String imageURL, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString( "ImageURL",  imageURL );
+        editor.apply();
+    }
+
+    public static String getMasterHead(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        return sharedPreferences.getString("ImageURL", "");
+    }
+
+    public static void saveMasterHead(String imageURL, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString( "ImageURL",  imageURL );
+        editor.apply();
+    }
+
+    public static void clearData(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(CommonUtils.AppConfigurationPrev, Context.MODE_PRIVATE);
+        sharedPreferences.edit().clear().apply();
+    }
 }

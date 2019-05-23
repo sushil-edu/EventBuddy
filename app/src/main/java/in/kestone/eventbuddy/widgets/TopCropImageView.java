@@ -1,5 +1,6 @@
 package in.kestone.eventbuddy.widgets;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 /**
  * Created by chris on 7/27/16.
  */
+
 public class TopCropImageView extends ImageView {
 
     public TopCropImageView(Context context) {

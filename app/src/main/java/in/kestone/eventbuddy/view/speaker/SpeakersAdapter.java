@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -23,9 +21,9 @@ import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 
 public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHolder> {
 
+    Bundle bundle;
     private Context context;
     private ArrayList<SpeakerDetail> speakerList;
-    Bundle bundle;
 
     public SpeakersAdapter(Context context, ArrayList<SpeakerDetail> speakerList) {
 
@@ -43,7 +41,7 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         final SpeakerDetail speakerData = speakerList.get( position );
-        holder.nameTv.setText( speakerData.getFirstName()+" "+speakerData.getLastName() );
+        holder.nameTv.setText( speakerData.getFirstName() + " " + speakerData.getLastName() );
         holder.designationTv.setText( speakerData.getDesignation() );
         holder.organizationTv.setText( speakerData.getOrganization() );
         holder.item.setOnClickListener( new View.OnClickListener() {
@@ -52,17 +50,22 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
                 Intent intent = new Intent( context, ActivitySpeakerDetails.class );
                 intent.putExtra( "Type", "Speaker" );
                 intent.putExtra( "Tag", "Speaker" );
-                bundle = new Bundle(  );
+                bundle = new Bundle();
                 bundle.putSerializable( "data", speakerData );
-                intent.putExtras(  bundle );
+                intent.putExtras( bundle );
                 context.startActivity( intent );
 
             }
         } );
-        Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat(speakerData.getImage() ))
-                .resize( 80, 80 )
-                .placeholder( R.drawable.default_user_grey )
-                .into( holder.profileIv );
+        if (speakerData.getImage().contains( LocalStorage.getImagePath( context ) )) {
+            Picasso.with( context ).load( speakerData.getImage() )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( holder.profileIv );
+        } else {
+            Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( speakerData.getImage() ) )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( holder.profileIv );
+        }
     }
 
     @Override

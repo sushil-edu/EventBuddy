@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -27,6 +29,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.master.permissionhelper.PermissionHelper;
 
 import org.json.JSONArray;
@@ -41,6 +49,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +59,8 @@ import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.common.ImageFilePath;
+import in.kestone.eventbuddy.common.ImagePickerActivity;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -71,6 +82,8 @@ public class AddActivity extends AppCompatActivity {
     private static final int SELECT_PHOTO = 0x01;
     private static final int SELECT_QR_CODE = 102;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
+    private static final String TAG = AddActivity.class.getSimpleName() ;
+    private static final int REQUEST_IMAGE = 100;
     public static String status;
     @BindView(R.id.cameraImage)
     ImageView addImageView;
@@ -96,81 +109,27 @@ public class AddActivity extends AppCompatActivity {
         apiInterface = APIClient.getClient().create( APIInterface.class );
         toolbar.findViewById( R.id.subTitleTv ).setVisibility( View.GONE );
 
-//        RadioButton imgRadioButton = (RadioButton) findViewById(R.id.imgRadioBtn);
-//        RadioButton txtRadioButton = (RadioButton) findViewById(R.id.textRadioBtn);
         final CardView textCard = (CardView) findViewById( R.id.textCard );
         final RelativeLayout imageCard = (RelativeLayout) findViewById( R.id.imageCard );
         checkInIv = (TextView) findViewById( R.id.checkInIv );
         txtFeedback = (CustomEditText) findViewById( R.id.txtFeedback );
         checkinIcon = (ImageView) findViewById( R.id.checkinIcon );
 
+        // Clearing older images from cache directory
+        // don't call this line if you want to choose multiple images in the same activity
+        // call this once the bitmap(s) usage is over
+        ImagePickerActivity.clearCache(this);
+
 
         addImageView = (ImageView) findViewById( R.id.cameraImage );
         addImageView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String filename = Environment.getExternalStorageDirectory().getPath().concat( "/stream/stream.jpg");
-                imageUri = Uri.fromFile(new File(filename));
-                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                StrictMode.setVmPolicy(builder.build());
-
-                PermissionHelper permissionHelper = new PermissionHelper( AddActivity.this, new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100 );
-                permissionHelper.request( new PermissionHelper.PermissionCallback() {
-                    @Override
-                    public void onPermissionGranted() {
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder( AddActivity.this );
-                        builder.setMessage( "Select Source" );
-//                        builder.setPositiveButton( "Gallery", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                Intent photoPickerIntent = new Intent(  );
-//                                photoPickerIntent.setType( "image/*" );
-//                                photoPickerIntent.setAction(Intent.ACTION_GET_CONTENT);
-//                                startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), SELECT_PHOTO);
-//                            }
-//                        } );
-
-                        builder.setNegativeButton( "Camera", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri);
-//                                if (takePictureIntent.resolveActivity( getPackageManager() ) != null) {
-                                    startActivityForResult( takePictureIntent, REQUEST_IMAGE_CAPTURE );
-//                                }
-
-                            }
-                        } );
-                        builder.show();
-
-
-                    }
-
-                    @Override
-                    public void onPermissionDenied() {
-                        Log.d( "Permission", "onPermissionDenied() called" );
-                    }
-
-                    @Override
-                    public void onPermissionDeniedBySystem() {
-                        Log.d( "Permission", "onPermissionDeniedBySystem() called" );
-                    }
-                } );
+                browseImage();
             }
         } );
 
-        checkInIv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(AddActivity.this, CheckIn.class);
-//                startActivityForResult(intent, SELECT_QR_CODE);
 
-            }
-        } );
 
         findViewById( R.id.btnSubmit ).setOnClickListener( new View.OnClickListener() {
             @Override
@@ -182,7 +141,7 @@ public class AddActivity extends AppCompatActivity {
                 if (txtFeedback.getText().length() > 0) {
                     StreamDatum streamDatum = new StreamDatum();
                     streamDatum.setComment( txtFeedback.getText().toString() );
-                    streamDatum.setEventID( CONSTANTS.EVENTID );
+                    streamDatum.setEventID( (long) LocalStorage.getEventID( AddActivity.this ) );
                     streamDatum.setImageURL( uploadedImagePath );
                     streamDatum.setInsertedOn( insertedDate );
                     streamDatum.setUserID( (long) new SharedPrefsHelper( AddActivity.this ).getUserId() );
@@ -200,6 +159,15 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
+    private void loadProfile(String url) {
+        Log.d(TAG, "Image cache path: " + url);
+
+        postImage( new File( url) );
+        Glide.with(this).load(url)
+                .into(addImageView);
+        addImageView.setColorFilter( ContextCompat.getColor(this, android.R.color.transparent));
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
@@ -209,41 +177,19 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode == RESULT_OK && requestCode == SELECT_PHOTO) {
-            final Uri resultUri = data.getData();
-            try {
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri uri = data.getParcelableExtra("path");
+                try {
+                    // You can update this bitmap to your server
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
 
-                Bitmap photo = MediaStore.Images.Media.getBitmap( this.getContentResolver(), resultUri );
-                addImageView.setImageBitmap( photo );
-//                addImageView.setImageURI( imageUri);
-                String picturePath = ImageFilePath.getPath(AddActivity.this, data.getData());
-                Log.d("Picture Path", picturePath);
-                postImage( new File( picturePath) );
-                Progress.showProgress( AddActivity.this );
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                    // loading profile image from local cache
+                    loadProfile(uri.getPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
-        } else if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
-            addImageView.setImageURI( imageUri);
-            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-//            Uri tempUri = getImageUri(getApplicationContext(), imageUri);
-            String picturePath =  imageUri.getPath() ;// getPath( AddActivity.this, imageUri );
-            Log.e("Image Path ", String.valueOf( picturePath ) );
-            postImage( new File( picturePath ) );
-            Progress.showProgress( AddActivity.this );
-
-        } else if (resultCode == RESULT_OK && requestCode == SELECT_QR_CODE) {
-            String boothStr = data.getStringExtra( "boothStr" );
-
-            if (boothStr.length() > 0) {
-                checkInIv.setText( boothStr );
-                checkinIcon.setVisibility( View.GONE );
-            } else {
-                checkinIcon.setVisibility( View.VISIBLE );
-            }
-
         }
 
 
@@ -268,7 +214,7 @@ public class AddActivity extends AppCompatActivity {
 
     public void postStream(StreamDatum streamData) {
 
-        retrofit2.Call<Stream> call = apiInterface.postStream( CONSTANTS.EVENTID, streamData );
+        retrofit2.Call<Stream> call = apiInterface.postStream( LocalStorage.getEventID(AddActivity.this ), streamData );
         call.enqueue( new retrofit2.Callback<Stream>() {
             @Override
             public void onResponse(retrofit2.Call<Stream> call, retrofit2.Response<Stream> response) {
@@ -322,28 +268,91 @@ public class AddActivity extends AppCompatActivity {
 
 
     }
-    public static String getPath(Context context, Uri uri ) {
-        String result = null;
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver( ).query( uri, proj, null, null, null );
-        if(cursor != null){
-            if ( cursor.moveToFirst( ) ) {
-                int column_index = cursor.getColumnIndexOrThrow( proj[0] );
-                result = cursor.getString( column_index );
+    private void browseImage(){
+        Dexter.withActivity(this)
+                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            showImagePickerOptions();
+                        }
+
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+    private void showImagePickerOptions() {
+        ImagePickerActivity.showImagePickerOptions(this, new ImagePickerActivity.PickerOptionListener() {
+            @Override
+            public void onTakeCameraSelected() {
+                launchCameraIntent();
             }
-            cursor.close( );
-        }
-        if(result == null) {
-            result = "Not found";
-        }
-        return result;
+
+            @Override
+            public void onChooseGallerySelected() {
+                launchGalleryIntent();
+            }
+        });
+    }
+    private void launchCameraIntent() {
+        Intent intent = new Intent(AddActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+
+        // setting maximum bitmap width and height
+        intent.putExtra(ImagePickerActivity.INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, true);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 1000);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 1000);
+
+        startActivityForResult(intent, REQUEST_IMAGE);
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+    private void launchGalleryIntent() {
+        Intent intent = new Intent(AddActivity.this, ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and message depending on your app
+     */
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+        builder.setTitle(getString(R.string.dialog_permission_title));
+        builder.setMessage(getString(R.string.dialog_permission_message));
+        builder.setPositiveButton(getString(R.string.go_to_settings), (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent( Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
 }

@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.social_model.MSocial;
@@ -72,7 +73,7 @@ public class SocialFragment extends Fragment {
 
     public void social() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MSocial> call = apiInterface.social( CONSTANTS.EVENTID );
+        Call<MSocial> call = apiInterface.social( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<MSocial>() {
             @Override
             public void onResponse(Call<MSocial> call, Response<MSocial> response) {

@@ -15,7 +15,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public ViewPagerAdapter(FragmentManager fragmentManager, List<Agenda> mAgenda) {
         super( fragmentManager );
-        this.mAgenda = mAgenda;
+        ViewPagerAdapter.mAgenda = mAgenda;
 
     }
 

@@ -6,66 +6,80 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@drawable/app_masthead_image"
-        android:padding="@dimen/dimen_10dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_imageview"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/default_user_grey"
-            app:civ_circle_background_color="#C4FFFFFF"
-            android:tint="@color/white"/>
-
-        <LinearLayout
-            android:id="@+id/layout_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/dimen_10dp"
-            android:layout_toRightOf="@id/profile_imageview"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <in.kestone.eventbuddy.widgets.CustomTextView
-                android:id="@+id/tvName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sushil Kumar"
-                android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="16sp" />
-
-            <in.kestone.eventbuddy.widgets.CustomTextView
-                android:id="@+id/tvEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="sushil.k@kestone.in"
-                android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="14sp" />
-
-            <in.kestone.eventbuddy.widgets.CustomTextView
-                android:id="@+id/tvDesignation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Android Developer"
-                android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="14sp" />
-        </LinearLayout>
+        android:layout_height="150dp">
 
         <ImageView
-            android:id="@+id/imageEdit"
-            android:layout_width="@dimen/dimen_25dp"
-            android:layout_height="@dimen/dimen_25dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/edit_grey"
-            android:tint="@color/white"/>
+            android:id="@+id/image_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/app_masthead_image" />
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#8F000000" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/profile_imageview"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/default_user_grey"
+                android:tint="@color/white"
+                app:civ_circle_background_color="#C4FFFFFF" />
+
+            <LinearLayout
+                android:id="@+id/layout_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dimen_10dp"
+                android:layout_toRightOf="@id/profile_imageview"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/tvName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sushil Kumar"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="sushil.k@kestone.in"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grey"
+                    android:textSize="14sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/tvDesignation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android Developer"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grey"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imageEdit"
+                android:layout_width="@dimen/dimen_25dp"
+                android:layout_height="@dimen/dimen_25dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/edit_grey"
+                android:tint="@color/white" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <in.kestone.eventbuddy.widgets.CustomTextView
@@ -74,8 +88,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/profile_imageview"
         android:layout_gravity="end"
-        android:paddingBottom="1dp"
         android:paddingRight="@dimen/dimen_4dp"
+        android:paddingBottom="1dp"
         android:text="Version "
         android:textSize="10sp"
         android:visibility="gone" />

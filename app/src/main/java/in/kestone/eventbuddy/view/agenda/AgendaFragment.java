@@ -16,11 +16,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -31,10 +33,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AgendaFragment extends Fragment {
 
     View view;
@@ -42,6 +40,8 @@ public class AgendaFragment extends Fragment {
     ViewPager viewPager;
     int parentTabPos, tabCount = 0;
     APIInterface apiInterface;
+    AgendaWithTrackFragment agendaWithTrackFragment;
+    ViewPagerAdapter adapter;
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -84,11 +84,6 @@ public class AgendaFragment extends Fragment {
         viewPager = view.findViewById( R.id.viewpager );
         tabLayout.setVisibility( View.GONE );
 
-        if (tabCount <= 4) {
-            tabLayout.setTabMode( TabLayout.MODE_FIXED );
-        }else {
-            tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
-        }
 
         LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
                 new IntentFilter( "event-buddy" ) );
@@ -99,20 +94,19 @@ public class AgendaFragment extends Fragment {
                 viewPager.setCurrentItem( tab.getPosition() );
                 Bundle bundle = new Bundle();
                 bundle.putInt( "pos", tab.getPosition() );
-                AgendaWithTrackFragment agendaWithTrackFragment = new AgendaWithTrackFragment();
+                agendaWithTrackFragment = new AgendaWithTrackFragment();
                 agendaWithTrackFragment.setArguments( bundle );
                 parentTabPos = tab.getPosition();
+//                adapter.notifyDataSetChanged();
 
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-//                AgendaTrackFragment.newInstance( tab.getPosition() );
             }
         } );
 
@@ -120,9 +114,9 @@ public class AgendaFragment extends Fragment {
         return view;
     }
 
-    private void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
+     void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter( getFragmentManager(), modelAgenda.getAgenda() );
+        adapter = new ViewPagerAdapter( getFragmentManager(), modelAgenda.getAgenda() );
         viewPager.setAdapter( adapter );
         adapter.notifyDataSetChanged();
     }
@@ -143,6 +137,15 @@ public class AgendaFragment extends Fragment {
             }
         }, 500 );
 
+        tabCount = modelAgenda.getAgenda().size();
+        if (tabCount < 4) {
+            tabLayout.setTabMode( TabLayout.MODE_FIXED );
+            tabLayout.setTabGravity( TabLayout.GRAVITY_CENTER );
+        }else {
+            tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
+            tabLayout.setTabGravity( TabLayout.GRAVITY_CENTER );
+        }
+
     }
 
     @Override
@@ -155,14 +158,13 @@ public class AgendaFragment extends Fragment {
     public void getAgenda() {
 
         apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<ModelAgenda> call = apiInterface.getAgenda( (int) CONSTANTS.EVENTID, new SharedPrefsHelper( getActivity() ).getUserId() );
+        Call<ModelAgenda> call = apiInterface.getAgenda( LocalStorage.getEventID( getActivity() ), new SharedPrefsHelper( getActivity() ).getUserId() );
         CallUtils.enqueueWithRetry( call, 3, new Callback<ModelAgenda>() {
             @Override
             public void onResponse(Call<ModelAgenda> call, Response<ModelAgenda> response) {
                 if (response.code() == 200) {
                     AgendaList.setAgenda( response.body() );
                     setAgenda( response.body() );
-                    tabCount = AgendaList.getAgenda().getAgenda().size();
 //                    MasterAgenda.setModelAgenda( response.body() );
                 } else {
                     CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
@@ -173,7 +175,6 @@ public class AgendaFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ModelAgenda> call, Throwable t) {
-                Log.e( "Error ", t.getMessage() );
                 CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }

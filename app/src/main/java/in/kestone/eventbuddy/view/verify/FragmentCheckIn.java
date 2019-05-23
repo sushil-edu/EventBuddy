@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -45,6 +46,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,10 +56,12 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
-import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CompareDateTime;
+import in.kestone.eventbuddy.common.LocalStorage;
+import in.kestone.eventbuddy.model.app_config_model.GeoTag;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.widgets.CustomButton;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -79,8 +83,8 @@ public class FragmentCheckIn extends Fragment {
     double logA = 77.2933742;
     double latB = 0.0;
     double logB = 0.0;
-    double radius=0.0;
-    String err_msg = "", err_header="";
+    double radius = 0.0;
+    String err_msg = "", err_header = "";
     View view;
     @BindView(R.id.tv_checkin_title)
     CustomTextView checkIn_title;
@@ -88,6 +92,8 @@ public class FragmentCheckIn extends Fragment {
     CustomButton tv_checkIn;
     @BindView(R.id.tv_skip)
     CustomTextView tv_skip;
+    @BindView( R.id.image_background )
+    ImageView imageBackGround;
     CustomDialog dialog;
     OnVerifiedListener onVerifiedListener;
     //event activation date and time
@@ -95,7 +101,7 @@ public class FragmentCheckIn extends Fragment {
     String activationDateTo = null, activationTimeTo = null;
     //current date and time
     SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
-//    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
+    //    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
     SimpleDateFormat timeFormat = new SimpleDateFormat( "kk:mm" );
     Date date = Calendar.getInstance().getTime();
     String strDate = dateFormat.format( date );
@@ -110,9 +116,7 @@ public class FragmentCheckIn extends Fragment {
     // boolean flag to toggle the ui
     private Location mCurrentLocation;
     private Boolean mRequestingLocationUpdates = false;
-
-
-
+    private GeoTag geoTag;
 
     public FragmentCheckIn() {
         // Required empty public constructor
@@ -126,18 +130,25 @@ public class FragmentCheckIn extends Fragment {
         view = inflater.inflate( R.layout.fragment_check_in, container, false );
         ButterKnife.bind( this, view );
 
-        latA = ListEvent.getAppConf().getEvent().getGeoTag().getLatitude();
-        logA = ListEvent.getAppConf().getEvent().getGeoTag().getLongitude();
-        radius = ListEvent.getAppConf().getEvent().getGeoTag().getRadius();
+        geoTag = ListEvent.getAppConf().getEvent().getGeoTag();
+
+        latA = geoTag.getLatitude();
+        logA = geoTag.getLongitude();
+        radius = geoTag.getRadius();
+
+        if(LocalStorage.getEventID( getActivity() )!=0){
+            Picasso.with( getActivity() ).load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( getActivity() ) ))
+                    .into( imageBackGround );
+        }
 
         dialog = new CustomDialog();
         onVerifiedListener = (OnVerifiedListener) getActivity();
 
-        activationDateFrom = ListEvent.getAppConf().getEvent().getGeoTag().getActivationDateFrom();
-        activationTimeFrom = ListEvent.getAppConf().getEvent().getGeoTag().getActivationTimeFrom();
+        activationDateFrom = geoTag.getActivationDateFrom();
+        activationTimeFrom = geoTag.getActivationTimeFrom();
 
-        activationDateTo = ListEvent.getAppConf().getEvent().getGeoTag().getActivationDateTo();
-        activationTimeTo = ListEvent.getAppConf().getEvent().getGeoTag().getActivationTimeTo();
+        activationDateTo = geoTag.getActivationDateTo();
+        activationTimeTo = geoTag.getActivationTimeTo();
 
         //fetch location
         init();
@@ -150,29 +161,19 @@ public class FragmentCheckIn extends Fragment {
             e.printStackTrace();
         }
 
-        try {
-            Log.e( "Compare ", "" + dtDate.compareTo( dateFormat.parse( activationDateFrom ) ) + " to " + dtDate.compareTo( dateFormat.parse( activationDateTo ) ) );
-            Log.e( "Compare time", "" + dtTime.compareTo( timeFormat.parse( activationTimeFrom ) ) + " to " + dtTime.compareTo( timeFormat.parse( activationTimeTo ) ) );
-            if (dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
-                if (dtTime.compareTo( timeFormat.parse( activationTimeFrom ) )>=0 && dtTime.compareTo( timeFormat.parse( activationTimeTo ) )<=1) {
-                    tv_checkIn.setEnabled( true );
-                }else {
-                    tv_checkIn.setEnabled( false );
-                    tv_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
-                }
 
-            } else {
-                tv_checkIn.setEnabled( false );
-                tv_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if (CompareDateTime.funCompareDateTime( activationDateFrom, activationDateTo, activationTimeFrom, activationTimeTo )) {//dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
+            tv_checkIn.setEnabled( true );
+        } else {
+            tv_checkIn.setEnabled( false );
+            tv_checkIn.setBackgroundColor( getResources().getColor( R.color.grey ) );
         }
 
-        checkIn_title.setText( ListEvent.getAppConf().getEvent().getGeoTag().getWelcomeText() );
-        tv_checkIn.setText( ListEvent.getAppConf().getEvent().getGeoTag().getLabel() );
-        err_msg = ListEvent.getAppConf().getEvent().getGeoTag().getErrorMessage();
-        err_header= ListEvent.getAppConf().getEvent().getGeoTag().getErrorHeader();
+
+        checkIn_title.setText( geoTag.getWelcomeText() );
+        tv_checkIn.setText( geoTag.getLabel() );
+        err_msg = geoTag.getErrorMessage();
+        err_header = geoTag.getErrorHeader();
         tv_checkIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,7 +188,7 @@ public class FragmentCheckIn extends Fragment {
                     Log.d( "Get Difference ", "" + getDifference( latB, logB ) + " error " + err_msg );
                     if (getDifference( latB, logB ) <= radius) {
 
-                        onVerifiedListener.onVerified( "check-in","" );
+                        onVerifiedListener.onVerified( "check-in", "" );
                     } else {
                         dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                     }
@@ -201,7 +202,7 @@ public class FragmentCheckIn extends Fragment {
         tv_skip.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onVerifiedListener.onVerified( "check-in" ,"");
+                onVerifiedListener.onVerified( "check-in", "" );
             }
         } );
         return view;
@@ -416,7 +417,7 @@ public class FragmentCheckIn extends Fragment {
         locationB.setLatitude( latB );
         locationB.setLongitude( logB );
 
-        Log.e("LatLong ", ""+locationA+" B "+locationB);
+        Log.e( "LatLong ", "" + locationA + " B " + locationB );
 
         return locationA.distanceTo( locationB );
     }

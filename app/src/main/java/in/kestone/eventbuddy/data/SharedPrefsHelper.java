@@ -11,7 +11,7 @@ public class SharedPrefsHelper {
     private static final String EMAIL = "EMAIL";
     private static final String USERID = "USERID";
     private static final String NAME = "NAME";
-    private static final String IMAGEPATH = "IMAGEPATH";
+    private static final String IMAGE = "IMAGE";
     private static final String DESIGNATION = "DESIGNATION";
     private static final String ORGANIZATION = "ORGANIZATION";
     private static final String MOBILE = "MOBILE";
@@ -51,12 +51,12 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getString( NAME, null );
     }
 
-    public void putImagePath(String path) {
-        mSharedPreferences.edit().putString( IMAGEPATH, path ).apply();
+    public void putImage(String path) {
+        mSharedPreferences.edit().putString( IMAGE, path ).apply();
     }
 
-    public String getImagePath() {
-        return mSharedPreferences.getString( IMAGEPATH, null );
+    public String getImage() {
+        return mSharedPreferences.getString( IMAGE, null );
     }
 
     public void putDesignation(String path) {

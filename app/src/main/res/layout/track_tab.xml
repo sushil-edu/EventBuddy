@@ -4,21 +4,25 @@
     android:layout_width="100dp"
     android:layout_height="@dimen/dimen_40dp"
     android:layout_gravity="center_horizontal"
-    android:background="@drawable/layout_selector"
     android:clickable="true"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/transparent">
+    <View
+        android:id="@+id/viewIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@color/white"/>
 
     <in.kestone.eventbuddy.widgets.ToolbarNormalTextView
         android:id="@+id/tv_tab_title"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dimen_40dp"
         android:gravity="center"
-        android:text="Track Name" />
+        android:text="Track Name"
 
-    <View
-        android:id="@+id/viewIndicator"
-        android:layout_width="match_parent"
-        android:layout_height="4dp" />
+        />
+
+
 
 </LinearLayout>

@@ -24,6 +24,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.venue_model.MVenue;
@@ -82,7 +83,7 @@ public class FragmentVenue extends Fragment {
 
     public void getVenue() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MVenue> call = apiInterface.venue( CONSTANTS.EVENTID );
+        Call<MVenue> call = apiInterface.venue( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<MVenue>() {
 
             @Override

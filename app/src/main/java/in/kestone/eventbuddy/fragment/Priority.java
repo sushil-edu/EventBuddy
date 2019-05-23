@@ -7,12 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -28,6 +32,8 @@ public class Priority extends Fragment {
     TextView welcome_text;
     @BindView( R.id.tvBtnLabel)
     TextView tvBtnLabel;
+    @BindView( R.id.image_background )
+    ImageView imageBackGround;
     View view;
 
     public Priority() {
@@ -47,6 +53,10 @@ public class Priority extends Fragment {
     private void initialiseView() {
         ButterKnife.bind( this, view );
 
+        if(LocalStorage.getEventID( getActivity() )!=0){
+            Picasso.with( getActivity() ).load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( getActivity() ) ))
+                    .into( imageBackGround );
+        }
         welcome_text.setText( ListEvent.getAppConf().getEvent().getPriority().getWelcomeText() );
         tvBtnLabel.setText( ListEvent.getAppConf().getEvent().getPriority().getLabel() );
         layout_continue.setOnClickListener( new View.OnClickListener() {

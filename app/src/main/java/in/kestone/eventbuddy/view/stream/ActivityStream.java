@@ -4,6 +4,7 @@ package in.kestone.eventbuddy.view.stream;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,6 +15,8 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import java.util.ArrayList;
 
@@ -21,6 +24,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.http.CallUtils;
@@ -31,9 +35,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ActivityStream extends Fragment {
     FloatingActionButton fab;
     ArrayList<StreamDatum> streamDataList;
@@ -47,7 +48,7 @@ public class ActivityStream extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.fragment_activity_stream, container, false );
@@ -79,49 +80,52 @@ public class ActivityStream extends Fragment {
         Progress.showProgress( getActivity() );
 
         fab = view.findViewById( R.id.fab );
-        fab.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent( getContext(), AddActivity.class );
-                intent.putExtra( "title", getArguments().getString( "title" ) );
-                startActivityForResult( intent, 100 );
-            }
+        fab.setOnClickListener( v -> {
+            Intent intent = new Intent( getContext(), AddActivity.class );
+            intent.putExtra( "title", getArguments().getString( "title" ) );
+            startActivityForResult( intent, 100 );
+
         } );
 
 
         swipeRefreshLayout = view.findViewById( R.id.swipeRefreshLayout );
-        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                getStream();
-                Progress.showProgress( getContext() );
-                swipeRefreshLayout.setRefreshing( false );
-            }
+        swipeRefreshLayout.setOnRefreshListener( () -> {
+            getStream();
+            Progress.showProgress( getContext() );
+            swipeRefreshLayout.setRefreshing( false );
         } );
         return view;
     }
 
     public void getStream() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<Stream> call = apiInterface.activityStream( CONSTANTS.EVENTID );
+        Call<Stream> call = apiInterface.activityStream( LocalStorage.getEventID( getActivity() ) );
 
         CallUtils.enqueueWithRetry( call, 3, new Callback<Stream>() {
             @Override
             public void onResponse(Call<Stream> call, Response<Stream> response) {
-                if (response.code() == 200 ) {
-                    if (response.body().getStatusCode() == 200 && response.body().getStreamData().size() > 0) {
-                        streamDataList = (ArrayList<StreamDatum>) response.body().getStreamData();
-                        activityStreamAdapter = new ActivityStreamAdapter( getContext(), streamDataList );
-                        recyclerView.setHasFixedSize( true );
-                        recyclerView.setAdapter( activityStreamAdapter );
-                        activityStreamAdapter.notifyDataSetChanged();
-                    } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                if (response.code() == 200) {
+                    if (response.body() != null) {
+                        if (response.body().getStatusCode() == 200 && response.body().getStreamData().size() > 0) {
+
+                            streamDataList.addAll( response.body().getStreamData() );
+                            activityStreamAdapter = new ActivityStreamAdapter( getActivity(), streamDataList );
+                            recyclerView.setHasFixedSize( true );
+                            recyclerView.setAdapter( activityStreamAdapter );
+                            activityStreamAdapter.notifyDataSetChanged();
+                            int resId = R.anim.layout_animation_fall_down;
+                            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation( getActivity(), resId );
+                            recyclerView.setLayoutAnimation( animation );
+
+                        } else {
+                            CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                        }
                     }
-                }else {
+                } else {
                     CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
                 }
+
+
                 Progress.closeProgress();
             }
 
@@ -131,6 +135,8 @@ public class ActivityStream extends Fragment {
                 Progress.closeProgress();
             }
         } );
+
+
     }
 
     @Override
@@ -148,9 +154,7 @@ public class ActivityStream extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        if (CommonUtils.isNetworkConnected( getContext() )) {
-//            getStream();
-//            Progress.showProgress( getContext() );
-//        }
     }
+
+
 }

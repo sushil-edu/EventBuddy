@@ -1,6 +1,5 @@
 package in.kestone.eventbuddy.Altdialog;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,14 +32,13 @@ public class CustomDialog {
         try {
             if (title.length() == 0) {
                 titleTv.setVisibility( View.GONE );
-            }else{
+            } else {
                 titleTv.setVisibility( View.VISIBLE );
                 titleTv.setText( title );
             }
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             ex.printStackTrace();
         }
-
 
 
         TextView bodyTv = dialog.findViewById( R.id.bodyTv );
@@ -121,8 +119,6 @@ public class CustomDialog {
         dialog.show();
     }
 
-
-    @SuppressLint("JavascriptInterface")
     public static void imagePreview(final Context context, String url) {
         final Dialog dialog = new Dialog( context );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );

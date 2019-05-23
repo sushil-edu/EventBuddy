@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import in.kestone.eventbuddy.Altdialog.Progress;
+import in.kestone.eventbuddy.model.ActiveEventModel;
 import in.kestone.eventbuddy.model.ScheduleStatusResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.Stream;
@@ -43,11 +44,15 @@ import retrofit2.http.Path;
 
 public interface APIInterface {
 
+
+
     @GET("appconfig/{id}")
     Call<AppConf> getAppConfiguration(@Path("id") int id);
 
+    @GET("eventconfig")
+    Call<ActiveEventModel> activeEventList();
+
     @POST("UserModule")
-//    Call<User> login(@Body Profile profile);
     Call<User> login(@Body HashMap<String, String> profile);
 
     //send reset password OTP
@@ -60,6 +65,7 @@ public interface APIInterface {
 
     @POST("Userotp")
     Call<User> getOtp(@Body Profile profile);
+
 
     @GET("agenda/{id}/{userID}")
     Call<ModelAgenda> getAgenda(@Path("id") int id, @Path("userID") long userID);
@@ -96,7 +102,14 @@ public interface APIInterface {
     Call<Knowledge> getKnowledgeBase(@Path("id") long id);
 
     @POST("UserModule/{userID}")
-    Call<Profile> updateProfile(@Path("userID") int userId, Profile profile);
+    Call<Profile> updateProfile(@Path("userID") int userId, @Body Profile profile);
+
+    @POST("UserModule/registration")
+    Call<JsonObject> registration(@Body Profile profile);
+
+    @Multipart
+    @POST("UserModule/post")
+    Call<PostImageResponse> postProfileImage(@Part MultipartBody.Part imageFile);
 
     @GET("HelpDesk/{id}")
     Call<MHelpDesk> helpDesk(@Path("id") long id);

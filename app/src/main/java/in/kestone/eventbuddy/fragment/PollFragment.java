@@ -27,6 +27,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -128,7 +129,7 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
                     postRequest.setResponse( option );
                     postRequest.setSessionID( sessionId );
                     postRequest.setDelegateID( (long) new SharedPrefsHelper( getContext() ).getUserId() );
-                    postRequest.setEventID( CONSTANTS.EVENTID );
+                    postRequest.setEventID( (long) LocalStorage.getEventID( getActivity() ) );
                     postRequest.setTrackID( trackId );
                     postPolling( postRequest );
                     Progress.showProgress( getContext() );
@@ -217,7 +218,7 @@ public class PollFragment extends Fragment implements PollingAdapter.Selected, K
 
     public void getPolling() {
 
-        Call<Polling> call = apiInterface.getPolling( CONSTANTS.EVENTID );
+        Call<Polling> call = apiInterface.getPolling( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<Polling>() {
             @Override
             public void onResponse(Call<Polling> call, Response<Polling> response) {

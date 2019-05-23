@@ -29,6 +29,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CompareDateTime;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -141,7 +142,7 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 
                 if (CompareDateTime.compareDate( dateFrom, dateTo )) {
                     if (CompareDateTime.compareTime( timeFrom, timeTo )) {
-                        postRequest.setEventID( CONSTANTS.EVENTID );
+                        postRequest.setEventID( Long.valueOf( LocalStorage.getEventID( getActivity() ) ) );
                         postRequest.setDelegateID( (long) new SharedPrefsHelper( getContext() ).getUserId() );
                         postRequest.setResponse( txtFeedback.getText().toString() );
                         postQA( postRequest );
@@ -176,7 +177,7 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
     }
 
     public void getAskQuestion() {
-        Call<QandA> call = apiInterface.getQandA( CONSTANTS.EVENTID );
+        Call<QandA> call = apiInterface.getQandA( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<QandA>() {
             @Override
             public void onResponse(Call<QandA> call, Response<QandA> response) {
@@ -215,7 +216,7 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 
 
     private void postQA(PostRequest postRequest) {
-        Call<JSONObject> call = apiInterface.postQandA( CONSTANTS.EVENTID, postRequest );
+        Call<JSONObject> call = apiInterface.postQandA(LocalStorage.getEventID( getActivity() ), postRequest );
         call.enqueue( new Callback<JSONObject>() {
             @Override
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {

@@ -39,6 +39,7 @@ import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.common.CompareDateTime;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -103,7 +104,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     //    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
     SimpleDateFormat timeFormat = new SimpleDateFormat( "kk:mm" );
     String strCurrentDate = dateFormatC.format( Calendar.getInstance().getTime() );
-    String strCurrentTime = timeFormat.format( new Date() );
+    String strCurrentTime = timeFormat.format( new Date() ), selectedDate;
     String delegateErrorHeader, delegateErrorMsg, speakerErrorHeader, speakerErrorMsg;
     int slot;
     Date currentDate, currentTime;
@@ -230,6 +231,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
 
                 String monthStr = new DateFormatSymbols().getMonths()[month];
                 monthTv.setText( monthStr.substring( 0, Math.min( monthStr.length(), 3 ) ) );
+
+                selectedDate = ""+year+"-"+(month+1)+"-"+day;
+                Log.e("Selected date ", selectedDate);
                 dialog.dismiss();
             }
         } );
@@ -252,7 +256,7 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         }
 
 
-        final Dialog dialog = new Dialog( getContext() );
+        final Dialog dialog = new Dialog( getActivity() );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.alert_time_spinner );
         dialog.setCancelable( true );
@@ -374,23 +378,22 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                             && !hourTv.getText().toString().contains( "Hrs" ) && !minuteTv.getText().toString().contains( "Min" )) {
 
                         String requestTime = hourTv.getText().toString().concat( ":" ).concat( minuteTv.getText().toString() );
-                        String requestDate = dayTv.getText().toString().concat( ":" ).concat( monthTv.getText().toString() );
+                        String requestDate = dayTv.getText().toString().concat( " " ).concat( monthTv.getText().toString() );
                         //compare date time for delegate/speaker
                         if (typeTv.getText().toString().equalsIgnoreCase( "Delegate" )) {
                             try {
 
-                                if (CompareDateTime.compareDate( activationDateForDelegateFrom, activationDateForDelegateTo )) {
-                                    if (CompareDateTime.compareTime( activationTimeForDelegateFrom, activationTimeForDelegateTo ) &&
-                                            CompareDateTime.compareTime( requestTime, requestTime )) {
+                                if (CompareDateTime.compareDate( activationDateForDelegateFrom, activationDateForDelegateTo)) {
+                                    if (CompareDateTime.compareTime( activationTimeForDelegateFrom, activationTimeForDelegateTo, requestTime )) {
 
                                         Progress.showProgress( getActivity() );
                                         NetworkingList mNetworking = new NetworkingList();
-                                        mNetworking.setEventID( CONSTANTS.EVENTID );
+                                        mNetworking.setEventID( Long.valueOf( LocalStorage.getEventID( getActivity() ) ) );
                                         mNetworking.setNetworkingRequestDate( requestDate );
                                         mNetworking.setNetworingRequestTime(requestTime );
                                         mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
                                         mNetworking.setLocation( tvLocation.getText().toString() );
-//                        mNetworking.setEBMRID( (long) 1 );
+//                                      mNetworking.setEBMRID( (long) 1 );
                                         if (flag) {
                                             mNetworking.setRequestFromID( String.valueOf( new SharedPrefsHelper( getContext() ).getUserId() ) );
                                             mNetworking.setRequestToID( String.valueOf( speakerId ) );
@@ -419,12 +422,10 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                         } else if (typeTv.getText().toString().equalsIgnoreCase( "Speaker" )) {
                             try {
                                 if (CompareDateTime.compareDate( activationDateForSpeakerFrom, activationDateForSpeakerTo )) {
-                                    if (CompareDateTime.compareTime( activationTimeForSpeakerFrom, activationTimeForSpeakerTo ) &&
-                                            CompareDateTime.compareTime( requestTime, requestTime )) {
-
-                                        Progress.showProgress( getActivity() );
+                                    if (CompareDateTime.compareTime(activationTimeForSpeakerFrom, activationTimeForSpeakerTo, requestTime)) {
+//                                        Progress.showProgress( getActivity() );
                                         NetworkingList mNetworking = new NetworkingList();
-                                        mNetworking.setEventID( CONSTANTS.EVENTID );
+                                        mNetworking.setEventID( (long) LocalStorage.getEventID( getActivity() ) );
                                         mNetworking.setNetworkingRequestDate( requestDate );
                                         mNetworking.setNetworingRequestTime( requestTime );
                                         mNetworking.setNetworkingLocation( tvLocation.getText().toString() );
@@ -483,9 +484,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Speaker> call;
         if (type.equalsIgnoreCase( "Speaker" )) {
-            call = apiInterface.getAllSpeaker((int)CONSTANTS.EVENTID);
+            call = apiInterface.getAllSpeaker(LocalStorage.getEventID( getActivity() ));
         } else {
-            call = apiInterface.getAllDelegates((int)CONSTANTS.EVENTID);
+            call = apiInterface.getAllDelegates(LocalStorage.getEventID( getActivity() ));
         }
         call.enqueue( new Callback<Speaker>() {
             @Override

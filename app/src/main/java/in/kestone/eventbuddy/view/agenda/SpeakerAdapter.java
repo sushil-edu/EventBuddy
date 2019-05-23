@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -20,7 +21,6 @@ import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 import in.kestone.eventbuddy.view.speaker.ActivitySpeakerDetails;
-import in.kestone.eventbuddy.widgets.CustomTextView;
 
 public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHolder> {
 
@@ -53,24 +53,31 @@ public class SpeakerAdapter extends RecyclerView.Adapter<SpeakerAdapter.ViewHold
         holder.cardView.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (speakerData.getFirstName().equalsIgnoreCase( "Add" )) {
-                    context.startActivity( new Intent( context, AddSpeaker.class ) );
-                    ((Activity) context).finish();
-                } else {
+//                if (speakerData.getFirstName().equalsIgnoreCase( "Add" )) {
+//                    context.startActivity( new Intent( context, AddSpeaker.class ) );
+//                    ((Activity) context).finish();
+//                } else {
                     Intent intent = new Intent( context, ActivitySpeakerDetails.class );
                     Bundle bundle = new Bundle();
                     bundle.putSerializable( "data", speakerData );
                     intent.putExtras( bundle );
                     context.startActivity( intent );
 //                    ((Activity)context).finish();
-                }
+//                }
             }
         } );
 
-        Picasso.with( context ).load( LocalStorage.getImagePath( context )+""+speakerData.getImage() )
-                .resize( 80, 80 )
-                .placeholder( R.drawable.default_user_grey )
-                .into( holder.profileIv );
+        if (!speakerData.getImage().contains( LocalStorage.getImagePath( context ) )) {
+            Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( speakerData.getImage() ) )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( holder.profileIv );
+        } else {
+            Picasso.with( context ).load( speakerData.getImage() )
+                    .resize( 80, 80 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( holder.profileIv );
+        }
 
     }
 

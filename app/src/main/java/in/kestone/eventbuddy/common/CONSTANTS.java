@@ -3,7 +3,7 @@ package in.kestone.eventbuddy.common;
 public class CONSTANTS {
 
 
-    public static final long EVENTID = 16;
+    public static final long EVENTID = 1;
     //Menu Title
     public static final String ACTIVITYSTREAM = "Activity Stream";
     public static final String ACTIVITYSTREAM2 = "ActivityStream";

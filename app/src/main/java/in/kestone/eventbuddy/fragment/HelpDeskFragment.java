@@ -24,6 +24,7 @@ import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.helpdesk_model.Datum;
@@ -74,7 +75,7 @@ public class HelpDeskFragment extends Fragment {
 
     public void getHelpDesk() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MHelpDesk> call = apiInterface.helpDesk( CONSTANTS.EVENTID );
+        Call<MHelpDesk> call = apiInterface.helpDesk( LocalStorage.getEventID( getActivity() ));
         call.enqueue( new Callback<MHelpDesk>() {
             @Override
             public void onResponse(Call<MHelpDesk> call, Response<MHelpDesk> response) {

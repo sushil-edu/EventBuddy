@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+
+import com.bumptech.glide.Glide;
 
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.LocalStorage;
@@ -47,7 +48,7 @@ public class PartnerDetails extends AppCompatActivity {
         window.addFlags( WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS );
 
         // finally change the color
-        window.setStatusBarColor( ContextCompat.getColor( this, R.color.actionbar_color ) );
+        window.setStatusBarColor( ContextCompat.getColor( this, R.color.colorPrimaryDark ) );
 
         setContentView( R.layout.fragment_partner_details );
         Bundle bundle = getIntent().getExtras();
@@ -73,7 +74,7 @@ public class PartnerDetails extends AppCompatActivity {
         mailTv.setText(partnersList.getEmail());
         ImageView image = findViewById(R.id.image);
 
-        Picasso.with( this )
+        Glide.with( this )
                 .load( LocalStorage.getImagePath( PartnerDetails.this )+""+partnersList.getLogo())
                 .placeholder(R.drawable.default_user_grey)
                 .error(R.drawable.default_user_grey)

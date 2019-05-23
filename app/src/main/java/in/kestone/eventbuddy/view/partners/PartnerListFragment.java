@@ -1,6 +1,7 @@
 package in.kestone.eventbuddy.view.partners;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +48,9 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
         recyclerView.setLayoutManager( new GridLayoutManager( getContext(), 2 ) );
 //        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
         recyclerView.setHasFixedSize( true );
+        int resId = R.anim.layout_animation_fall_down;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getActivity(), resId);
+        recyclerView.setLayoutAnimation(animation);
         recyclerView.setAdapter( adapter );
         adapter.notifyDataSetChanged();
 
@@ -61,4 +67,5 @@ public class PartnerListFragment extends Fragment implements PartnerDetailsCallb
         intent.putExtras(  bundle );
         startActivity( intent );
     }
+
 }

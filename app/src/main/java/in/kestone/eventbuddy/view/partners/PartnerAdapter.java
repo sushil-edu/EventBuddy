@@ -11,7 +11,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -43,8 +44,8 @@ public class PartnerAdapter extends RecyclerView.Adapter<PartnerAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Detail detail = detailArrayList.get( position );
-        Picasso.with( activity ).load( LocalStorage.getImagePath( activity )+""+ detail.getLogo() )
-                .resize( 80, 80 )
+        Glide.with( activity ).load( LocalStorage.getImagePath( activity )+""+ detail.getLogo() )
+//                .resize( 80, 80 )
                 .placeholder( R.drawable.default_user_grey )
                 .into( holder.partnerLogo );
         holder.partnerName.setText( detail.getName() );

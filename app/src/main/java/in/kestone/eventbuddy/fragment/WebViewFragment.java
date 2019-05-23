@@ -24,6 +24,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.Eventlistener.FragmentErrorListener;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import retrofit2.Call;
@@ -87,7 +88,7 @@ public class WebViewFragment extends Fragment {
     }
 
     private void getTANDC() {
-        Call<JsonObject> call = apiInterface.termsAndCondition( CONSTANTS.EVENTID );
+        Call<JsonObject> call = apiInterface.termsAndCondition( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

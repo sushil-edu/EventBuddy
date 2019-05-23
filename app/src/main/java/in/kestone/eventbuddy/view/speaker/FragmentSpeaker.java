@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -25,6 +27,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.SharedPrefsHelper;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -75,6 +78,9 @@ public class FragmentSpeaker extends Fragment {
         searchEt.setTextSize( 12f );
         recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
         recyclerView.setHasFixedSize( true );
+        int resId = R.anim.layout_animation_fall_down;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getActivity(), resId);
+        recyclerView.setLayoutAnimation(animation);
         speakerList = new ArrayList<>();
         customDialog = new CustomDialog();
 
@@ -144,9 +150,9 @@ public class FragmentSpeaker extends Fragment {
         apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Speaker> call;
         if (type.equalsIgnoreCase( "speaker" )) {
-            call = apiInterface.getAllSpeaker((int)CONSTANTS.EVENTID);
+            call = apiInterface.getAllSpeaker( LocalStorage.getEventID( getActivity() ));
         } else {
-            call = apiInterface.getAllDelegates((int)CONSTANTS.EVENTID);
+            call = apiInterface.getAllDelegates(LocalStorage.getEventID( getActivity() ));
         }
         CallUtils.enqueueWithRetry( call, 3, new Callback<Speaker>() {
             @Override
@@ -182,5 +188,4 @@ public class FragmentSpeaker extends Fragment {
             }
         } );
     }
-
 }

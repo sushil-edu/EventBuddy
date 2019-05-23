@@ -16,6 +16,7 @@ import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.fragment.Priority;
 import in.kestone.eventbuddy.http.APIClient;
@@ -80,8 +81,7 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
 
     @Override
     public void onVerified(String status, String otp) {
-
-
+        
         if (status.equalsIgnoreCase( "verified" ) &&
                 ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase( "true" )) {
             getSupportFragmentManager().beginTransaction()
@@ -115,7 +115,7 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
             HashMap<String, String > profile = new HashMap<>(  );
             profile.put( "EmailID",EMAIL );
             profile.put( "Password",    otp );
-            profile.put( "EventID", String.valueOf( CONSTANTS.EVENTID ) );
+            profile.put( "EventID", String.valueOf( LocalStorage.getEventID( ActivityVerify.this ) ) );
             login( profile );
 
         }

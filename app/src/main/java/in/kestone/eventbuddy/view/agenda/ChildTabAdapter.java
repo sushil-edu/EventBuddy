@@ -2,11 +2,9 @@ package in.kestone.eventbuddy.view.agenda;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +22,19 @@ public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHo
     private Context context;
     private Activity activity;
     private ArrayList<Track> trackList;
-    private int parentTabPos, selectedPos=0;
+    private int  selectedPos=-1;
 
-    ChildTabAdapter(Activity context, ArrayList<Track> trackList, TabClick tabClick, int parentTabPos) {
+
+    ChildTabAdapter(Activity context, ArrayList<Track> trackList, TabClick tabClick, boolean commonSessionFlag) {
         this.context = context;
         this.trackList = trackList;
         this.activity = context;
         this.tabClick = tabClick;
-        this.parentTabPos = parentTabPos;
+
+        if(commonSessionFlag){
+            selectedPos=0;
+        }else
+            selectedPos=-1;
     }
 
     @NonNull
@@ -47,11 +50,13 @@ public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHo
         holder.title.setText( trackList.get( position ).getTrackName() );
 
         if(selectedPos==position){
-            holder.title.setTextColor( context.getResources().getColor( R.color.colorPrimaryDark ) );
-            holder.viewIndicator.setBackgroundColor( context.getResources().getColor( R.color.colorPrimaryDark ) );
-            holder.viewIndicator.setVisibility( View.VISIBLE );
+            holder.title.setTextColor( context.getResources().getColor( R.color.white ) );
+            holder.title.setTypeface( Typeface.defaultFromStyle( Typeface.BOLD ) );
+            holder.viewIndicator.setBackgroundColor( context.getResources().getColor( R.color.white ) );
+            holder.viewIndicator.setVisibility( View.VISIBLE                             );
         } else {
-            holder.title.setTextColor( context.getResources().getColor( android.R.color.black ) );
+            holder.title.setTextColor( context.getResources().getColor( R.color.colorAccent ) );
+            holder.title.setTypeface( Typeface.defaultFromStyle( Typeface.NORMAL ) );
             holder.viewIndicator.setVisibility( View.GONE );
         }
 

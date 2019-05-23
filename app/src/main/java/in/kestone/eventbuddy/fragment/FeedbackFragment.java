@@ -19,6 +19,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CompareDateTime;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import retrofit2.Call;
@@ -54,7 +55,7 @@ public class FeedbackFragment extends Fragment {
     public void feedback() {
 
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<JsonObject> call = apiInterface.feedBack( CONSTANTS.EVENTID );
+        Call<JsonObject> call = apiInterface.feedBack( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

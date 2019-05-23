@@ -56,7 +56,6 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
     TextView mTitleTv;
     TextView subTitleTv;
     SpeakerDetail speakerDetail;
-    private ArrayList<SpeakerDetail> speakerList;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -71,7 +70,7 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         window.addFlags( WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS );
 
         // finally change the color
-        window.setStatusBarColor( ContextCompat.getColor( this, R.color.actionbar_color ) );
+        window.setStatusBarColor( ContextCompat.getColor( this, R.color.colorPrimaryDark ) );
 
         setContentView( R.layout.activity_speater_details );
 
@@ -94,11 +93,19 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         nameTv.setText( speakerDetail.getFirstName().concat( " " ).concat( speakerDetail.getLastName() ) );
         tag = speakerDetail.getUserType();
 
-        Picasso.with( ActivitySpeakerDetails.this ).load( LocalStorage.getImagePath( ActivitySpeakerDetails.this )
-                .concat( speakerDetail.getImage() ) )
-                .resize( 100, 100 )
-                .placeholder( R.drawable.default_user_grey )
-                .into( profileIv );
+        if (speakerDetail.getImage().contains( LocalStorage.getImagePath( ActivitySpeakerDetails.this ) )) {
+            Picasso.with( ActivitySpeakerDetails.this ).load( speakerDetail.getImage() )
+                    .resize( 100, 100 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileIv );
+        } else {
+            Picasso.with( ActivitySpeakerDetails.this ).load( LocalStorage.getImagePath( ActivitySpeakerDetails.this )
+                    .concat( speakerDetail.getImage() ) )
+                    .resize( 100, 100 )
+                    .placeholder( R.drawable.default_user_grey )
+                    .into( profileIv );
+
+        }
 
         mScheduleBtn.setOnClickListener( this );
         tvReschedule.setOnClickListener( this );
@@ -165,7 +172,7 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         ArrayList<Menu> menuList = new ArrayList<>();
         menuList.addAll( ListEvent.getAppConf().getEvent().getMenu() );
         for (int i = 0; i < menuList.size(); i++) {
-            if (menuList.get( i ).getMenutitle().equalsIgnoreCase( CONSTANTS.NETWORKING ))
+            if (CONSTANTS.NETWORKING.equalsIgnoreCase( menuList.get( i ).getMenutitle() ))
                 return true;
             else
                 return false;

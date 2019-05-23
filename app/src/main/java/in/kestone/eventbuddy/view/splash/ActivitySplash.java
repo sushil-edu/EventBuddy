@@ -7,9 +7,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,11 +22,13 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.MvpApp;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.data.DataManager;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.app_config_model.AppConf;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
+import in.kestone.eventbuddy.view.SelectEventActivity;
 import in.kestone.eventbuddy.view.login.ActivityLogin;
 import in.kestone.eventbuddy.view.main.MainActivity;
 import in.kestone.eventbuddy.widgets.CustomTextView;
@@ -39,6 +45,8 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     CustomTextView tv_error;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView( R.id.imageSplashBackground )
+    ImageView splashBackground;
     SplashPresenter mSplashPresenter;
 
     public static Intent getStartIntent(Context context) {
@@ -66,8 +74,18 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 //                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
 //                        setAppConf( appConf );
 
-        getConfig();
-        Progress.showProgress( this );
+        Log.e( "Event ID ", ""+LocalStorage.getEventID( ActivitySplash.this ) );
+        if (LocalStorage.getEventID( ActivitySplash.this ) !=0) {
+
+            getConfig( LocalStorage.getEventID( ActivitySplash.this ) );
+            Progress.showProgress( this );
+            tv_eventName.setVisibility( View.GONE );
+            Picasso.with( this )
+                    .load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getSplashBackground( this ) ))
+                    .into( splashBackground );
+        } else {
+            startActivity( new Intent( ActivitySplash.this, SelectEventActivity.class ) );
+        }
     }
 
     private void setAppConf(AppConf acf) {
@@ -76,6 +94,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         DataManager dataManager = ((MvpApp) getApplication()).getDataManager();
         mSplashPresenter = new SplashPresenter( dataManager );
         mSplashPresenter.onAttach( this );
+        tv_eventName.setVisibility( View.VISIBLE );
         tv_eventName.setText( acf.getEvent().getEventName() );
 
         new Handler().postDelayed( new Runnable() {
@@ -91,9 +110,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         SharedPreferences prefs = getSharedPreferences( CONSTANTS.CHECKIN, MODE_PRIVATE );
         Intent intent;
 
-        Log.e( "Login Status ", "" + prefs.getBoolean( "status", false ) );
-
-        if (prefs.getBoolean( "status", true )) {
+        if (prefs.getBoolean( "status", false )) {
             intent = MainActivity.getStartIntent( this );
         } else {
             intent = ActivityLogin.getStartIntent( this );
@@ -104,14 +121,15 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 
     @Override
     public void openLoginActivity() {
+
         Intent intent = ActivityLogin.getStartIntent( this );
         startActivity( intent );
         finish();
     }
 
-    public void getConfig() {
+    public void getConfig(int eventID) {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<AppConf> call = apiInterface.getAppConfiguration( (int) CONSTANTS.EVENTID );
+        Call<AppConf> call = apiInterface.getAppConfiguration(eventID );
         call.enqueue( new Callback<AppConf>() {
             @Override
             public void onResponse(Call<AppConf> call, Response<AppConf> response) {

@@ -18,6 +18,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.model.faq_model.FAQList;
@@ -57,7 +58,7 @@ public class FAQFragment extends Fragment {
 
     public void getFAQ() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MFAQ> call = apiInterface.getFAQ( CONSTANTS.EVENTID );
+        Call<MFAQ> call = apiInterface.getFAQ( LocalStorage.getEventID( getActivity() ) );
         call.enqueue( new Callback<MFAQ>() {
             @Override
             public void onResponse(Call<MFAQ> call, Response<MFAQ> response) {

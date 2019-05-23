@@ -11,10 +11,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -26,6 +28,7 @@ import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.CommonUtils;
+import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.http.CallUtils;
@@ -55,6 +58,8 @@ public class Forgot_Password extends AppCompatActivity {
     EditText et_password;
     @BindView(R.id.et_confirm_password)
     EditText et_confirm_password;
+    @BindView( R.id.image_background )
+    ImageView imageBackgound;
     long OTP = 999999;
     APIInterface apiInterface;
 
@@ -72,6 +77,12 @@ public class Forgot_Password extends AppCompatActivity {
         setContentView( R.layout.activity_forgot__password );
 
         ButterKnife.bind( this );
+
+        if (LocalStorage.getEventID( Forgot_Password.this ) !=0) {
+            Picasso.with( this )
+                    .load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( this ) ) )
+                    .into( imageBackgound );
+        }
 
         apiInterface = APIClient.getClient().create( APIInterface.class );
 
@@ -98,7 +109,7 @@ public class Forgot_Password extends AppCompatActivity {
             if (CommonUtils.isEmailValid( email.getText().toString() )) {
                 //call send otp API
                 userSet.put( "EmailID", email.getText().toString() );
-                userSet.put( "Event_ID", String.valueOf( CONSTANTS.EVENTID ) );
+                userSet.put( "Event_ID", String.valueOf( LocalStorage.getEventID( Forgot_Password.this ) ) );
                 sendOTP( userSet );
                 Progress.showProgress( Forgot_Password.this );
             } else {
@@ -113,7 +124,7 @@ public class Forgot_Password extends AppCompatActivity {
                         if (et_password.getText().toString().equals( et_confirm_password.getText().toString() )) {
                             //call reset password API
                             userSet.put( "EmailID", email.getText().toString() );
-                            userSet.put( "Event_ID", String.valueOf( CONSTANTS.EVENTID ) );
+                            userSet.put( "Event_ID", String.valueOf( LocalStorage.getEventID( Forgot_Password.this )) );
                             userSet.put( "Password", et_password.getText().toString() );
                             updatePassword( userSet );
                             Progress.showProgress( Forgot_Password.this );

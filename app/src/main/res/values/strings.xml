@@ -11,11 +11,22 @@
     <string name="approve">Approve</string>
     <string name="pending">Pending</string>
     <string name="selectsd">Select Speaker or Delegate</string>
+    <string name="toast_image_intent_null">Image picker option is missing!</string>
+    <string name="lbl_set_profile_photo">Set profile image</string>
+    <string name="lbl_take_camera_picture">Take a picture</string>
+    <string name="lbl_choose_from_gallery">Choose from gallery</string>
+    <string name="dialog_permission_title">Grant Permissions</string>
+    <string name="dialog_permission_message">This app needs permission to use this feature. You can grant them in app settings.</string>
+    <string name="go_to_settings">GOTO SETTINGS</string>
 
     <drawable name="app_icon">@drawable/app_logo</drawable>
-    <drawable name="app_icon_circular" >@drawable/app_icon_circular</drawable>
+    <drawable name="app_icon_circular">@drawable/app_icon_circular</drawable>
     <drawable name="splash_background">@drawable/app_background_image</drawable>
     <drawable name="background">@drawable/app_background_image</drawable>
+
+    <string name="icon_heart">&#xf004;</string>
+    <string name="icon_eye">&#xf06e;</string>
+    <string name="icon_eye_slash">&#xf070;</string>
 
 
 </resources>

@@ -16,8 +16,8 @@ public class Progress {
             progress.show();
         } catch (WindowManager.BadTokenException e) {
         }
-//        progress.setMessage("");
-//        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        /*progress.setMessage("");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);*/
         progress.setCancelable( false );
         progress.getWindow()
                 .setBackgroundDrawable( new ColorDrawable( android.graphics.Color.TRANSPARENT ) );

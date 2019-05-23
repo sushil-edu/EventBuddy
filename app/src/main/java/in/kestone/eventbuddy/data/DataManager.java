@@ -11,13 +11,13 @@ public class DataManager {
         mSharedPrefsHelper.clear();
     }
 
-    public void saveDetail(int userId, String name, String email,  String designation, String imagePath,
+    public void saveDetail(int userId, String name, String email,  String designation, String image,
                            String organization, String mobile, String password) {
         mSharedPrefsHelper.putEmail(email);
         mSharedPrefsHelper.putUserId(userId);
         mSharedPrefsHelper.putName(name);
         mSharedPrefsHelper.putDesignation(designation);
-        mSharedPrefsHelper.putImagePath(imagePath);
+        mSharedPrefsHelper.putImage(image);
         mSharedPrefsHelper.putOrganization(organization);
         mSharedPrefsHelper.putMobile(mobile);
         mSharedPrefsHelper.putPassword(password);
@@ -33,8 +33,8 @@ public class DataManager {
     public String getName() {
         return mSharedPrefsHelper.getName();
     }
-    public String getImagePath() {
-        return mSharedPrefsHelper.getImagePath();
+    public String getImage() {
+        return mSharedPrefsHelper.getImage();
     }
     public String getDesignation() {
         return mSharedPrefsHelper.getDesignation();
