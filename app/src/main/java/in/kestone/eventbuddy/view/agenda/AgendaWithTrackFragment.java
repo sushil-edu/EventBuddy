@@ -151,7 +151,7 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
                 recycler_child.setAdapter( childTabAdapter );
                 childTabAdapter.notifyDataSetChanged();
 
-            } else if (modelAgenda.getTrack().size() > 0 && modelAgenda.getCommonAgendaModel().size() == 0) {
+            } else if (modelAgenda.getTrack().size() > 0 && modelAgenda.getCommonAgendaModel().size() == 0 ) {
                 //only for track wise agenda
                 recycler_details_without_track.setVisibility( View.GONE );
                 layout_with_track.setVisibility( View.VISIBLE );
@@ -163,6 +163,17 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
                 childTabAdapter.notifyDataSetChanged();
 
                 loadTrackDetail( 0 );
+            }else if (modelAgenda.getTrack().size() == 0 && modelAgenda.getCommonAgendaModel().size()> 0 ||
+                        ! modelAgenda.getCommonAgendaModel().equals(null)) {
+                //only for track wise agenda
+                layout_with_track.setVisibility( View.GONE );
+                recycler_details.setVisibility( View.GONE );
+                trackDetailList.addAll( modelAgenda.getCommonAgendaModel() );
+                agendaAdapterWithoutTrack = new AgendaAdapterWithoutTrack( getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
+                        modelAgenda.getID() );
+
+                recycler_details_without_track.setAdapter( agendaAdapterWithoutTrack );
+                agendaAdapterWithoutTrack.notifyDataSetChanged();
             } else {
                 //if no track and no session available
                 recycler_details_without_track.setVisibility( View.GONE );

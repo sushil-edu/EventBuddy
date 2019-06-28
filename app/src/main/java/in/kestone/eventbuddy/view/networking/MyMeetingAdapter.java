@@ -58,6 +58,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.organizationTv.setText( networkingList.getOrganization() );
             holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
             holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+            holder.locationTv.setText(networkingList.getNetworkingLocation());
             holder.btnReschedule.setText( CONSTANTS.APPROVE );
 
         } else if (page.equalsIgnoreCase( CONSTANTS.PENDING )) {
@@ -67,6 +68,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.organizationTv.setText( networkingList.getToORG() );
             holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
             holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+            holder.locationTv.setText(networkingList.getNetworkingLocation());
 
         } else if (page.equalsIgnoreCase( CONSTANTS.SCHEDULE )) {
             if (userID == Integer.parseInt( networkingList.getRequestFromID() )) {
@@ -75,34 +77,29 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
                 holder.organizationTv.setText( networkingList.getToORG() );
                 holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
                 holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+                holder.locationTv.setText(networkingList.getNetworkingLocation());
             } else if (userID == Integer.parseInt( networkingList.getRequestToID() )) {
                 holder.nameTv.setText( networkingList.getFirstName() + " " + networkingList.getLastName() );
                 holder.designationTv.setText( networkingList.getDesignation() );
                 holder.organizationTv.setText( networkingList.getOrganization() );
                 holder.dateTv.setText( networkingList.getNetworkingRequestDate() );
                 holder.timeTv.setText( networkingList.getNetworingRequestTime() );
+                holder.locationTv.setText(networkingList.getNetworkingLocation());
             }
         }
 
-        holder.btnReschedule.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e( "ID ", "" + networkingList.getEBMRID() );
-                if (!page.equalsIgnoreCase( CONSTANTS.APPROVE )) {
-                    callSchedule( holder.nameTv.getText().toString(), networkingList.getToUsertype(),
-                            networkingList.getEBMRID(), networkingList.getRequestToID(), networkingList.getNetworkingLocation(), status );
-                } else {
-                    statusUpdate.onStatusUpdate( CONSTANTS.APPROVE, networkingList.getEBMRID(), position );
-                }
+        holder.btnReschedule.setOnClickListener(view -> {
+            Log.e( "ID ", "" + networkingList.getEBMRID() );
+            if (!page.equalsIgnoreCase( CONSTANTS.APPROVE )) {
+                callSchedule( holder.nameTv.getText().toString(), networkingList.getToUsertype(),
+                        networkingList.getEBMRID(), networkingList.getRequestToID(), networkingList.getNetworkingLocation(), status );
+            } else {
+                statusUpdate.onStatusUpdate( CONSTANTS.APPROVE, networkingList.getEBMRID(), position );
             }
-        } );
+        });
 
-        holder.btnCancel.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                statusUpdatedDialog( CONSTANTS.REJECT, networkingList.getEBMRID(), position, "Do you want to cancel meeting request." );
-            }
-        } );
+        holder.btnCancel.setOnClickListener(view -> statusUpdatedDialog(
+                CONSTANTS.REJECT, networkingList.getEBMRID(), position, "Do you want to cancel meeting request." ));
 
     }
 
@@ -141,19 +138,11 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
         noTv.setVisibility( View.VISIBLE );
         noTv.setText( "No" );
 
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                statusUpdate.onStatusUpdate( status, meetingID, position );
-            }
-        } );
-        noTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        } );
+        yesTv.setOnClickListener(view -> {
+            dialog.dismiss();
+            statusUpdate.onStatusUpdate( status, meetingID, position );
+        });
+        noTv.setOnClickListener(view -> dialog.dismiss());
 
 
         dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
@@ -167,7 +156,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView nameTv, organizationTv, designationTv, dateTv, timeTv, btnCancel, btnReschedule;
+        TextView nameTv, organizationTv, designationTv, dateTv, timeTv, btnCancel, btnReschedule, locationTv;
         CircularImageView profileIv;
 
         private MyHolder(View itemView) {
@@ -181,6 +170,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             timeTv = itemView.findViewById( R.id.timeTv );
             btnCancel = itemView.findViewById( R.id.btnCancel );
             btnReschedule = itemView.findViewById( R.id.btnReschedule );
+            locationTv = itemView.findViewById(R.id.locationTv);
         }
     }
 }

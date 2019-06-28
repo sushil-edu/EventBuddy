@@ -82,7 +82,7 @@
                 android:layout_width="200dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/solid_button_effect"
                 android:text="Schedule Meeting"
                 android:textColor="@color/white"
                 android:textAllCaps="false"

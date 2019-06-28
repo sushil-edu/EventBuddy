@@ -72,6 +72,7 @@
                     android:src="@drawable/help_desk_grey"
                     android:text="Pankaj@gmail.com"
                     android:textColor="@color/black"
+                    android:background="@drawable/textview_click_effect"
                     android:textSize="12sp" />
 
 
@@ -93,6 +94,7 @@
                     android:autoLink="phone"
                     android:src="@drawable/help_desk_grey"
                     android:text="+91-9501234560"
+                    android:background="@drawable/textview_click_effect"
                     android:textColor="@color/black"
                     android:textSize="12sp" />
 

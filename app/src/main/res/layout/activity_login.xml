@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="@dimen/dimen_20dp"
-                android:background="@drawable/btn_design_solid"
+                android:background="@drawable/solid_button_effect"
                 android:text="Log In"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
@@ -150,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dimen_40dp"
                 android:layout_marginTop="10dp"
-                android:background="@null"
+                android:background="@drawable/textview_click_effect"
                 android:gravity="center_vertical"
                 android:hint="Forgot Password"
                 android:singleLine="true"
@@ -171,7 +171,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/dimen_20dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/textview_click_effect">
 
         <in.kestone.eventbuddy.widgets.CustomTextView
             android:layout_width="wrap_content"

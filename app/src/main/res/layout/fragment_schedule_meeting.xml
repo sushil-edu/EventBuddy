@@ -169,6 +169,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="Day"
+                                android:background="@drawable/solid_button_effect"
                                 android:textColor="@color/white"
                                 android:textSize="15sp" />
 
@@ -187,6 +188,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="Month"
+                                android:background="@drawable/solid_button_effect"
                                 android:textColor="@color/white"
                                 android:textSize="15sp" />
 
@@ -213,6 +215,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="Hrs"
+                                android:background="@drawable/solid_button_effect"
                                 android:textColor="@color/white"
                                 android:textSize="15sp" />
 
@@ -231,6 +234,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="Min"
+                                android:background="@drawable/solid_button_effect"
                                 android:textColor="@color/white"
                                 android:textSize="15sp" />
 
@@ -258,7 +262,7 @@
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:layout_marginTop="30dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/solid_button_effect"
             android:gravity="center"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"

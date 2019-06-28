@@ -68,6 +68,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static in.kestone.eventbuddy.Altdialog.CustomDialog.*;
+import static in.kestone.eventbuddy.common.CONSTANTS.ERROR;
+
 public class RegistrationActivity extends AppCompatActivity {
 
     public static final int REQUEST_IMAGE = 100;
@@ -124,12 +127,10 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         apiInterface = APIClient.getClient().create( APIInterface.class );
 
-        mPassIv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mPassIv.setOnClickListener( v -> {
 //                browsePhoto();
                 setProfileImage();
-            }
+
         } );
         agreementURL();
         // this is the text we'll be operating on
@@ -138,35 +139,47 @@ public class RegistrationActivity extends AppCompatActivity {
         text.setSpan( new ForegroundColorSpan( Color.RED ), 11, 29, 17 );
         text.setSpan( new ForegroundColorSpan( Color.RED ), 34, text.length(), 18 );
 
-        btnSignUp.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSignUp.setOnClickListener( v ->{
                 if (!nameTv.getText().toString().isEmpty() && !emailTv.getText().toString().isEmpty() &&
                         !mobileTv.getText().toString().isEmpty() && !organizationTv.getText().toString().isEmpty() &&
                         !designationTv.getText().toString().isEmpty() && !password.getText().toString().isEmpty() &&
                         !cnfPassword.getText().toString().isEmpty()) {
                     if (!CommonUtils.isEmailValid( emailTv.getText().toString() )) {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 "Enter valid email id" );
                     } else if (mobileTv.getText().length() < 10) {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 "Enter valid mobile no" );
                     } else if (!password.getText().toString().equals( cnfPassword.getText().toString() )) {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 "Password not matched" );
                     } else if (!checkbox.isChecked()) {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 "Please accept agreement" );
                     } else {
+                        if(filePath==null || filePath.isEmpty() ) {
+                            Profile profile = new Profile();
+                            profile.setEventID((long) LocalStorage.getEventID(RegistrationActivity.this));
+                            profile.setFirstName(nameTv.getText().toString());
+                            profile.setLastName("");
+                            profile.setEmailID(emailTv.getText().toString());
+                            profile.setMobile(mobileTv.getText().toString());
+                            profile.setDesignation(designationTv.getText().toString());
+                            profile.setOrganization(organizationTv.getText().toString());
+                            profile.setPassword(cnfPassword.getText().toString());
+                            profile.setImage("");
+                            profile.setCityID("999");
+                            userRegistration(profile);
+                        }else {
 
-                        profileImageUpload( profileImagePath );
+                            profileImageUpload(profileImagePath);
+                        }
                         Progress.showProgress( RegistrationActivity.this );
                     }
 
                 } else {
-                    CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, "Please fill all details" );
+                    showInvalidPopUp( RegistrationActivity.this, ERROR, "Please fill all details" );
                 }
-            }
         } );
     }
 
@@ -310,17 +323,17 @@ public class RegistrationActivity extends AppCompatActivity {
                         showValidPopUp( RegistrationActivity.this, CONSTANTS.SUCCESS,
                                 jsonObject.get( "Message" ).toString().replace( "\"", "" ) );
                     } else {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 jsonObject.get( "Message" ).toString().replace( "\"", "" ) );
                     }
                 } else {
-                    CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, response.message() );
+                    showInvalidPopUp( RegistrationActivity.this, ERROR, response.message() );
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, t.getMessage() );
+                showInvalidPopUp( RegistrationActivity.this, ERROR, t.getMessage() );
                 Progress.closeProgress();
             }
 
@@ -356,17 +369,17 @@ public class RegistrationActivity extends AppCompatActivity {
                             tv.setText( text, TextView.BufferType.SPANNABLE );
                         }
                     } else {
-                        CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR,
+                        showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 jsonObject.get( "Message" ).toString() );
                     }
                 } else {
-                    CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, response.message() );
+                    showInvalidPopUp( RegistrationActivity.this, ERROR, response.message() );
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, t.getMessage() );
+                showInvalidPopUp( RegistrationActivity.this, ERROR, t.getMessage() );
                 Progress.closeProgress();
             }
         } );
@@ -382,12 +395,9 @@ public class RegistrationActivity extends AppCompatActivity {
         bodyTv.setText( body );
         TextView yesTv = dialog.findViewById( R.id.yes );
         yesTv.setText( "Ok" );
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        yesTv.setOnClickListener( view -> {
                 dialog.dismiss();
                 finish();
-            }
         } );
 
 
@@ -427,7 +437,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostImageResponse> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( RegistrationActivity.this, CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                showInvalidPopUp( RegistrationActivity.this, ERROR, CONSTANTS.CONNECTIONERROR );
                 Progress.closeProgress();
             }
         } );

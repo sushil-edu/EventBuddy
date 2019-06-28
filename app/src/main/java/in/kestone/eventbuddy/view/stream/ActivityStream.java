@@ -52,7 +52,7 @@ public class ActivityStream extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.fragment_activity_stream, container, false );
-
+        setRetainInstance( true );
 
         recyclerView = view.findViewById( R.id.recyclerView );
         LinearLayoutManager layoutManager = new LinearLayoutManager( getContext() ) {

@@ -37,29 +37,37 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.SelectEventActivity">
+        <activity android:name=".view.SelectEventActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.registration.RegistrationActivity" />
-        <activity android:name=".view.login.Forgot_Password" />
-        <activity android:name=".view.splash.ActivitySplash">
+        <activity android:name=".view.registration.RegistrationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.login.Forgot_Password"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.splash.ActivitySplash"
+            android:screenOrientation="portrait">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
 
             <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
-        <activity android:name=".view.verify.ActivityVerify" />
-        <activity android:name=".view.login.ActivityLogin" />
-        <activity android:name=".view.main.MainActivity" />
+        <activity android:name=".view.verify.ActivityVerify"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.login.ActivityLogin"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.main.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
 
         <service android:name=".Service.MyIntentService" />
 
-        <activity android:name=".view.speaker.ActivitySpeakerDetails" />
+        <activity android:name=".view.speaker.ActivitySpeakerDetails"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -68,11 +76,16 @@
         <activity
             android:name=".view.venue.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".view.agenda.AddSpeaker" />
-        <activity android:name=".view.profile.ProfileActivity" />
-        <activity android:name=".view.stream.AddActivity" />
-        <activity android:name=".view.partners.PartnerDetails" />
-        <activity android:name=".view.WebviewActivity" />
+        <activity android:name=".view.agenda.AddSpeaker"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.profile.ProfileActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.stream.AddActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.partners.PartnerDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.WebviewActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -88,7 +101,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".common.ImagePickerActivity" />
+        <activity android:name=".common.ImagePickerActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

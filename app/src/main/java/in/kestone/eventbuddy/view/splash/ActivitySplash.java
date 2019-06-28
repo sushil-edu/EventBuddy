@@ -45,7 +45,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
     CustomTextView tv_error;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @BindView( R.id.imageSplashBackground )
+    @BindView(R.id.imageSplashBackground)
     ImageView splashBackground;
     SplashPresenter mSplashPresenter;
 
@@ -74,14 +74,14 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 //                        AppConf appConf = new Gson().fromJson( config, AppConf.class );
 //                        setAppConf( appConf );
 
-        Log.e( "Event ID ", ""+LocalStorage.getEventID( ActivitySplash.this ) );
-        if (LocalStorage.getEventID( ActivitySplash.this ) !=0) {
+        Log.e( "Event ID ", "" + LocalStorage.getEventID( ActivitySplash.this ) );
+        if (LocalStorage.getEventID( ActivitySplash.this ) != 0) {
 
             getConfig( LocalStorage.getEventID( ActivitySplash.this ) );
             Progress.showProgress( this );
             tv_eventName.setVisibility( View.GONE );
             Picasso.with( this )
-                    .load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getSplashBackground( this ) ))
+                    .load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getSplashBackground( this ) ) )
                     .into( splashBackground );
         } else {
             startActivity( new Intent( ActivitySplash.this, SelectEventActivity.class ) );
@@ -97,11 +97,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
         tv_eventName.setVisibility( View.VISIBLE );
         tv_eventName.setText( acf.getEvent().getEventName() );
 
-        new Handler().postDelayed( new Runnable() {
-            public void run() {
-                mSplashPresenter.decideNextActivity();
-            }
-        }, 2000 );
+        new Handler().postDelayed(() -> mSplashPresenter.decideNextActivity(), 2000 );
 
     }
 
@@ -129,7 +125,7 @@ public class ActivitySplash extends Activity implements SplashMvpView {
 
     public void getConfig(int eventID) {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<AppConf> call = apiInterface.getAppConfiguration(eventID );
+        Call<AppConf> call = apiInterface.getAppConfiguration( eventID );
         call.enqueue( new Callback<AppConf>() {
             @Override
             public void onResponse(Call<AppConf> call, Response<AppConf> response) {

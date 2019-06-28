@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:layout_marginTop="@dimen/dimen_30dp"
-                android:background="@drawable/btn_design_solid"
+                android:background="@drawable/solid_button_effect"
                 android:elevation="4dp"
                 android:text="CheckIn"
                 android:textAllCaps="false"
@@ -88,7 +88,8 @@
                 android:paddingBottom="@dimen/dimen_5dp"
                 android:text="Skip"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:background="@drawable/textview_click_effect"/>
 
         </LinearLayout>
     </RelativeLayout>

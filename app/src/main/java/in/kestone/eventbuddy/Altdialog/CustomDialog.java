@@ -46,12 +46,7 @@ public class CustomDialog {
         LinearLayout root = dialog.findViewById( R.id.layout_root );
         TextView yesTv = dialog.findViewById( R.id.yes );
         yesTv.setText( "Ok" );
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        } );
+        yesTv.setOnClickListener(view -> dialog.dismiss());
 
 
         dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
@@ -80,12 +75,7 @@ public class CustomDialog {
         LinearLayout root = dialog.findViewById( R.id.layout_root );
         TextView yesTv = dialog.findViewById( R.id.yes );
         yesTv.setText( "Ok" );
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        } );
+        yesTv.setOnClickListener(view -> dialog.dismiss());
 
 
         dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
@@ -106,12 +96,7 @@ public class CustomDialog {
         bodyTv.setText( body );
         TextView yesTv = dialog.findViewById( R.id.yes );
         yesTv.setText( "Ok" );
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        } );
+        yesTv.setOnClickListener(view -> dialog.dismiss());
 
 
         dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,
@@ -132,12 +117,7 @@ public class CustomDialog {
                 .load( url )
                 .placeholder( R.drawable.gallery_grey )
                 .into( imagePreviewIV );
-        closeIV.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        } );
+        closeIV.setOnClickListener(view -> dialog.dismiss());
 //        imagePreviewIV.setOnTouchImageViewListener( new TouchImageViewNew.OnTouchImageViewListener() {
 //            @Override
 //            public void onMove() {
@@ -166,14 +146,11 @@ public class CustomDialog {
         LinearLayout root = dialog.findViewById( R.id.layout_root );
         TextView yesTv = dialog.findViewById( R.id.yes );
         yesTv.setText( "Retry" );
-        yesTv.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                activity.finish();
-                flag = 1;
-            }
-        } );
+        yesTv.setOnClickListener(view -> {
+            dialog.dismiss();
+            activity.finish();
+            flag = 1;
+        });
 
 
         dialog.getWindow().setLayout( WindowManager.LayoutParams.MATCH_PARENT,

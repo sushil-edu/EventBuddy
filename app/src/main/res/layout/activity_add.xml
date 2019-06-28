@@ -184,7 +184,7 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/solid_button_effect"
                 android:elevation="0dp"
                 android:text="Post This"
                 android:textAllCaps="false"

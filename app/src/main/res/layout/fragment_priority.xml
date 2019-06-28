@@ -27,6 +27,7 @@
         android:textAlignment="center"
         android:textSize="@dimen/dimen_22sp"
         android:textColor="@color/white"
+        android:background="@drawable/textview_click_effect"
         android:layout_centerInParent="true" />
 
 
@@ -46,7 +47,8 @@
             android:layout_height="wrap_content"
             android:text="Continue"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:background="@drawable/textview_click_effect"/>
     </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

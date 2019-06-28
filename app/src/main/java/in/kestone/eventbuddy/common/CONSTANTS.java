@@ -43,4 +43,5 @@ public class CONSTANTS {
     public static final String RESPONSE = "Response";
     public static final String MYAGENDA = "My Agenda";
     public static final String FORGOTPASSWOTD = "Forgot Password";
+    public static final String REQUESTSENT = "Request Sent";
 }

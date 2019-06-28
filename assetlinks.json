@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "kestone.com.pocketevents",
+    "sha256_cert_fingerprints":
+    ["9D:22:41:47:76:45:1A:DF:46:59:38:53:1E:ED:A6:5D:C1:0A:A2:95:4F:27:08:C7:17:3A:CF:D0:BE:00:D8:83"]
+  }
+}]

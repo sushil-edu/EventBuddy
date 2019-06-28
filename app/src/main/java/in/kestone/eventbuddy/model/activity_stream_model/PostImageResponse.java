@@ -1,0 +1,39 @@
+
+package in.kestone.eventbuddy.model.activity_stream_model;
+
+import com.google.gson.annotations.SerializedName;
+
+public class PostImageResponse {
+
+    @SerializedName("Data")
+    private String mData;
+    @SerializedName("Message")
+    private String mMessage;
+    @SerializedName("StatusCode")
+    private Long mStatusCode;
+
+    public String getData() {
+        return mData;
+    }
+
+    public void setData(String data) {
+        mData = data;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
+    }
+
+    public Long getStatusCode() {
+        return mStatusCode;
+    }
+
+    public void setStatusCode(Long statusCode) {
+        mStatusCode = statusCode;
+    }
+
+}

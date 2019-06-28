@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "971104584886",
+    "firebase_url": "https://pocketevents-a4b24.firebaseio.com",
+    "project_id": "pocketevents-a4b24",
+    "storage_bucket": "pocketevents-a4b24.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971104584886:android:358285e9b16e88f9",
+        "android_client_info": {
+          "package_name": "in.kestone.eventbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971104584886-eom23gcaa152bre2assb752pikknh5j5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.kestone.eventbuddy",
+            "certificate_hash": "980be35d59e1f7da1eec272d44c57ba175ab5b9d"
+          }
+        },
+        {
+          "client_id": "971104584886-64p5c5gltc9n0pnlrj37vsajqhl7n95c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbinAsFMh2k81DsEHOHB7zG2vWpmfu7gY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971104584886-64p5c5gltc9n0pnlrj37vsajqhl7n95c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -174,8 +174,8 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         for (int i = 0; i < menuList.size(); i++) {
             if (CONSTANTS.NETWORKING.equalsIgnoreCase( menuList.get( i ).getMenutitle() ))
                 return true;
-            else
-                return false;
+//            else
+//                return false;
         }
         return false;
     }

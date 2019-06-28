@@ -1,5 +1,8 @@
 package in.kestone.eventbuddy.http;
 
+import android.app.Application;
+import android.content.Context;
+
 import com.androidnetworking.interceptors.HttpLoggingInterceptor;
 
 import java.util.concurrent.TimeUnit;
@@ -11,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIClient {
     private static Retrofit retrofit = null;
     private static String BASEURL="http://eventsbuddy.in/MobileApp/api/";
+    private static APIClient apiClientInstance;
 
     public static Retrofit getClient() {
 

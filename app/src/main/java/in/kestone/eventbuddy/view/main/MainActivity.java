@@ -58,6 +58,7 @@ import in.kestone.eventbuddy.fragment.WebViewFragment;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.app_config_model.Menu;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
+import in.kestone.eventbuddy.fragment.NotificationFragment;
 import in.kestone.eventbuddy.view.agenda.AgendaFragment;
 import in.kestone.eventbuddy.view.knowledgeBase.KnowlegdeBaseFragment;
 import in.kestone.eventbuddy.view.networking.Networking;
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
-
 
 
         initialiseView();

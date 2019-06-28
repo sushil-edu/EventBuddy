@@ -5,6 +5,7 @@
     android:layout_height="@dimen/dimen_40dp"
     android:layout_gravity="center_horizontal"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center"
     android:orientation="vertical"
     android:background="@android:color/transparent">
@@ -20,7 +21,6 @@
         android:layout_height="@dimen/dimen_40dp"
         android:gravity="center"
         android:text="Track Name"
-
         />
 
 

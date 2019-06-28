@@ -227,7 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_margin="20dp"
-                android:background="@color/colorPrimary"
+                android:background="@drawable/solid_button_effect"
                 android:text="Sign Up"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />

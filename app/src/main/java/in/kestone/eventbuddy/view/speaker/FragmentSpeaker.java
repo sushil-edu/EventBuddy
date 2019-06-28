@@ -65,6 +65,7 @@ public class FragmentSpeaker extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.fragment_speaker, container, false );
+        setRetainInstance( true );
 
         if (getArguments() != null) {
             module = getArguments().getString( "module" );

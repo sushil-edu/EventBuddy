@@ -130,7 +130,7 @@ public class AgendaAdapterWithoutTrack extends RecyclerView.Adapter<AgendaAdapte
             holder.layout_rating.setVisibility( View.GONE );
         }
 
-        if (!agendaData.getIsMyagenda().equalsIgnoreCase( "0" )) {
+        if (agendaData.getMyAgendaVisibility().equalsIgnoreCase("True")) {
             holder.addIv.setVisibility( View.VISIBLE );
         } else {
             holder.addIv.setVisibility( View.GONE );
