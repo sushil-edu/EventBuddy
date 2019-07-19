@@ -99,12 +99,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             holder.nestedReyclerView.setVisibility( View.GONE );
         }
         //session breaf
-        holder.layout_agenda_detail.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomDialog.showDetail( context, agendaData.getShortTitle(), agendaData.getLongTitle(), agendaData.getSessionBrief() );
-            }
-        } );
+        holder.layout_agenda_detail.setOnClickListener(view -> CustomDialog.showDetail( context, agendaData.getShortTitle(), agendaData.getLongTitle(), agendaData.getSessionBrief() ));
 
         //rating
         if (agendaData.getRating().equalsIgnoreCase( "True" )) {
@@ -113,14 +108,11 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             holder.rateTv.setText( agendaData.getRatingLabel() );
             if (agendaData.getRateValue().equals( "" )) {
                 holder.avgRatingBar.setRating( 0 );
-                holder.layout_rating.setOnClickListener( new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialogRating( context, agendaData.getRatingLabel(), trackID,
-                                String.valueOf( agendaData.getId() ), agendaData.getRatingPlaceholder(), holder.avgRatingBar );
-                        holder.avgRatingBar.setRating( rate );
-                    }
-                } );
+                holder.layout_rating.setOnClickListener(view -> {
+                    dialogRating( context, agendaData.getRatingLabel(), trackID,
+                            String.valueOf( agendaData.getId() ), agendaData.getRatingPlaceholder(), holder.avgRatingBar );
+                    holder.avgRatingBar.setRating( rate );
+                });
             } else {
                 holder.avgRatingBar.setRating( Float.parseFloat( agendaData.getRateValue() ) );
                 holder.layout_rating.setOnClickListener( null );
@@ -130,7 +122,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             holder.layout_rating.setVisibility( View.GONE );
         }
 
-        if (!agendaData.getIsMyagenda().equalsIgnoreCase( "0" )) {
+        if (!agendaData.getIsMyagenda().equalsIgnoreCase( "1" )) {
             holder.addIv.setVisibility( View.VISIBLE );
         } else {
             holder.addIv.setVisibility( View.GONE );
@@ -142,7 +134,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
                 holder.addIv.setTextColor( context.getResources().getColor( R.color.textColorRed ) );
                 holder.addIv.setOnClickListener( view -> {
                     HashMap<String, Long> request = new HashMap<>();
-                    request.put( "Event_ID", Long.valueOf( LocalStorage.getEventID( context ) ) );
+                    request.put( "Event_ID", (long)( LocalStorage.getEventID( context ) ) );
                     request.put( "Delegate_ID", (long) new SharedPrefsHelper( context ).getUserId() );
                     request.put( "Session_ID", (long) agendaData.getId() );
                     deleteMyAgenda( request, position );
@@ -153,7 +145,7 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
                 holder.addIv.setText( "+ ".concat( CONSTANTS.MYAGENDA ) );
                 holder.addIv.setOnClickListener( view -> {
                     HashMap<String, Long> request = new HashMap<>();
-                    request.put( "Event_ID", Long.valueOf( LocalStorage.getEventID( context ) ) );
+                    request.put( "Event_ID", (long)( LocalStorage.getEventID( context ) ) );
                     request.put( "Delegate_ID", (long) new SharedPrefsHelper( context ).getUserId() );
                     request.put( "Session_ID", (long) agendaData.getId() );
                     addMyAgenda( request );
@@ -265,11 +257,8 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
             rate.dismiss();
         } );
 
-        ratingBar.setOnRatingBarChangeListener( new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            }
-        } );
+        ratingBar.setOnRatingBarChangeListener((ratingBar1, v, b) -> {
+        });
 
         rate.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         rate.show();
@@ -303,15 +292,15 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaAdapter.ViewHolder
                 } else {
                     CustomDialog.showInvalidPopUp( context, CONSTANTS.ERROR, response.message() );
                 }
-                Progress.closeProgress();
+
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 CustomDialog.showInvalidPopUp( context, CONSTANTS.ERROR, t.getMessage() );
-                Progress.closeProgress();
             }
         } );
+
     }
 
     private void removeAt(int position) {

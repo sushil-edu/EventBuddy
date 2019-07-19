@@ -1,6 +1,7 @@
 package in.kestone.eventbuddy.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -106,6 +107,7 @@ public class FeedbackFragment extends Fragment {
 
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void loadWebview(String url) {
         webView.getSettings().setJavaScriptEnabled( true );
         webView.setWebViewClient( new MyWebViewClient() );

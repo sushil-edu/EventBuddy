@@ -40,13 +40,12 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate( R.layout.my_scheduled, container, false );
-        initialiseView( view );
 
         userID = new SharedPrefsHelper( getActivity() ).getUserId();
 
         if (getArguments() != null) {
             networkingLists = (ArrayList<NetworkingList>) getArguments().getSerializable( "myMeeting" );
-            Log.e("Length ", ""+networkingLists.size());
+
             type = getArguments().getString( "type" );
             page = getArguments().getString( "page" );
             networkingListsStatus.clear();
@@ -69,18 +68,10 @@ public class MyScheduled extends Fragment implements View.OnClickListener, MyMee
 
         return view;
     }
-
-    private void initialiseView(View view) {
-//        ButterKnife.bind( this, view );
-//        btnReschedule.setOnClickListener( this );
-    }
-
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnReschedule:
-                callSchedule();
-                break;
+        if (view.getId() == R.id.btnReschedule) {
+            callSchedule();
         }
     }
 

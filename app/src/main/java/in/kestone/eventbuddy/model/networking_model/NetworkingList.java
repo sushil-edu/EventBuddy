@@ -21,6 +21,8 @@ public class NetworkingList implements Serializable {
     private String mNetworingRequestTime;
     @SerializedName("Networking_Location")
     private String mNetworkingLocation;
+    @SerializedName("Networking_Comments")
+    private String mNetworkingComments;
     @SerializedName("Networking_Request_Date")
     private String mNetworkingRequestDate;
     @SerializedName("Organization")
@@ -127,6 +129,14 @@ public class NetworkingList implements Serializable {
 
     public void setNetworkingLocation(String networkingLocation) {
         mNetworkingLocation = networkingLocation;
+    }
+
+    public String getNetworkingComments() {
+        return mNetworkingComments;
+    }
+
+    public void setNetworkingComments(String mNetworkingComments) {
+        this.mNetworkingComments = mNetworkingComments;
     }
 
     public String getNetworkingRequestDate() {

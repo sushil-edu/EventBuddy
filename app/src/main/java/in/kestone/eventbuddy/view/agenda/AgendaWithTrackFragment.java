@@ -49,9 +49,9 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            pTabPos = getArguments().getInt( "pos" );
+            pTabPos = getArguments().getInt("pos");
 
         }
 
@@ -61,8 +61,8 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_agenda_with_track, container, false );
-        super.onCreate( savedInstanceState );
+        view = inflater.inflate(R.layout.fragment_agenda_with_track, container, false);
+        super.onCreate(savedInstanceState);
 
         initializeView();
         loadAgenda();
@@ -71,32 +71,32 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
     }
 
     private void initializeView() {
-        layout_with_track = view.findViewById( R.id.layout_with_track );
-        recycler_child = view.findViewById( R.id.recycler_child_tab );
-        mLayoutManager = new LinearLayoutManager( getContext() );
-        mLayoutManager.setOrientation( LinearLayoutManager.HORIZONTAL );
-        recycler_child.setLayoutManager( mLayoutManager );
-        recycler_child.setHasFixedSize( true );
-        noSession = view.findViewById( R.id.tvNoSession );
+        layout_with_track = view.findViewById(R.id.layout_with_track);
+        recycler_child = view.findViewById(R.id.recycler_child_tab);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recycler_child.setLayoutManager(mLayoutManager);
+        recycler_child.setHasFixedSize(true);
+        noSession = view.findViewById(R.id.tvNoSession);
 
-        recycler_details = view.findViewById( R.id.recycler_details );
-        mLayoutManagerV = new LinearLayoutManager( getContext() );
-        mLayoutManagerV.setOrientation( LinearLayoutManager.VERTICAL );
-        recycler_details.setLayoutManager( mLayoutManagerV );
-        recycler_details.setHasFixedSize( true );
+        recycler_details = view.findViewById(R.id.recycler_details);
+        mLayoutManagerV = new LinearLayoutManager(getContext());
+        mLayoutManagerV.setOrientation(LinearLayoutManager.VERTICAL);
+        recycler_details.setLayoutManager(mLayoutManagerV);
+        recycler_details.setHasFixedSize(true);
 
-        recycler_details_without_track = view.findViewById( R.id.recycler_details_without_track );
-        mLayoutManagerVV = new LinearLayoutManager( getContext() );
-        mLayoutManagerVV.setOrientation( LinearLayoutManager.VERTICAL );
-        recycler_details_without_track.setLayoutManager( mLayoutManagerVV );
-        recycler_details_without_track.setHasFixedSize( true );
+        recycler_details_without_track = view.findViewById(R.id.recycler_details_without_track);
+        mLayoutManagerVV = new LinearLayoutManager(getContext());
+        mLayoutManagerVV.setOrientation(LinearLayoutManager.VERTICAL);
+        recycler_details_without_track.setLayoutManager(mLayoutManagerVV);
+        recycler_details_without_track.setHasFixedSize(true);
     }
 
     @Override
     public void onTabClick(int childPos) {
-        loadTrackDetail( childPos );
-        recycler_details_without_track.setVisibility( View.GONE );
-        recycler_details.setVisibility( View.VISIBLE );
+        loadTrackDetail(childPos);
+        recycler_details_without_track.setVisibility(View.GONE);
+        recycler_details.setVisibility(View.VISIBLE);
     }
 
     public void loadTrackDetail(int childPos) {
@@ -104,82 +104,86 @@ public class AgendaWithTrackFragment extends Fragment implements ChildTabAdapter
         try {
             if (modelAgenda.getTrack().size() > 0) {
 
-                trackDetailListWithTrack.addAll( modelAgenda.getTrack().get( childPos ).getDetails() );
-                agendaAdapter = new AgendaAdapter( getActivity(), trackDetailListWithTrack, modelAgenda.getDisplayLabel(),
-                        modelAgenda.getID() );
-                recycler_details.setAdapter( agendaAdapter );
+                trackDetailListWithTrack.addAll(modelAgenda.getTrack().get(childPos).getDetails());
+                agendaAdapter =
+                        new AgendaAdapter(getActivity(), trackDetailListWithTrack, modelAgenda.getDisplayLabel(),
+                                modelAgenda.getID());
+                recycler_details.setAdapter(agendaAdapter);
                 agendaAdapter.notifyDataSetChanged();
 
             }
         } catch (Exception er) {
-            Log.e( "Exception ", er.getMessage() );
+            Log.e("Exception ", er.getMessage());
         }
 
     }
 
     private void loadAgenda() {
-        trackDetailList.clear();
-        trackArrayList.clear();
+        trackDetailList.clear();//agenda with session only
+        trackArrayList.clear();//agenda with track
         try {
+//            Log.e("Status ", String.valueOf(modelAgenda.getTrack().size()));
             //only for common agenda
             if (modelAgenda.getID() == -1) {//.getCommonAgendaModel().size() > 0 && modelAgenda.getTrack() == null) {
-                layout_with_track.setVisibility( View.GONE );
-                recycler_details.setVisibility( View.GONE );
-                trackDetailList.addAll( modelAgenda.getCommonAgendaModel() );
-                agendaAdapterWithoutTrack = new AgendaAdapterWithoutTrack( getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
-                        modelAgenda.getID() );
+                layout_with_track.setVisibility(View.GONE);
+                recycler_details.setVisibility(View.GONE);
+                trackDetailList.addAll(modelAgenda.getCommonAgendaModel());
+                agendaAdapterWithoutTrack =
+                        new AgendaAdapterWithoutTrack(getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
+                                modelAgenda.getID());
 
-                recycler_details_without_track.setAdapter( agendaAdapterWithoutTrack );
+                recycler_details_without_track.setAdapter(agendaAdapterWithoutTrack);
                 agendaAdapterWithoutTrack.notifyDataSetChanged();
 
-            } else if (modelAgenda.getTrack().size() > 0 && modelAgenda.getCommonAgendaModel().size() > 0) {
+            } else if (modelAgenda.getTrack()!=null && modelAgenda.getCommonAgendaModel()!=null) {
                 //only for track and without track agenda
-                layout_with_track.setVisibility( View.VISIBLE );
-                recycler_details.setVisibility( View.GONE );
+                layout_with_track.setVisibility(View.VISIBLE);
+                recycler_details.setVisibility(View.VISIBLE);
+
                 //session with out track
+                trackDetailList.addAll(modelAgenda.getCommonAgendaModel());
+                agendaAdapterWithoutTrack =
+                        new AgendaAdapterWithoutTrack(getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
+                                modelAgenda.getID());
 
-                trackDetailList.addAll( modelAgenda.getCommonAgendaModel() );
-                agendaAdapterWithoutTrack = new AgendaAdapterWithoutTrack( getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
-                        modelAgenda.getID() );
-
-                recycler_details_without_track.setAdapter( agendaAdapterWithoutTrack );
+                recycler_details_without_track.setAdapter(agendaAdapterWithoutTrack);
                 agendaAdapterWithoutTrack.notifyDataSetChanged();
+
                 //session with track
-                trackArrayList.addAll( modelAgenda.getTrack() );
-                childTabAdapter = new ChildTabAdapter( getActivity(), trackArrayList, this, false );
+                trackArrayList.addAll(modelAgenda.getTrack());
+                childTabAdapter = new ChildTabAdapter(getActivity(), trackArrayList, this, false);
 
-                recycler_child.setAdapter( childTabAdapter );
+                recycler_child.setAdapter(childTabAdapter);
                 childTabAdapter.notifyDataSetChanged();
 
-            } else if (modelAgenda.getTrack().size() > 0 && modelAgenda.getCommonAgendaModel().size() == 0 ) {
+            } else if (modelAgenda.getTrack()!=null && modelAgenda.getCommonAgendaModel()==null) {
                 //only for track wise agenda
-                recycler_details_without_track.setVisibility( View.GONE );
-                layout_with_track.setVisibility( View.VISIBLE );
-                recycler_details.setVisibility( View.VISIBLE );
-
-                trackArrayList.addAll( modelAgenda.getTrack() );
-                childTabAdapter = new ChildTabAdapter( getActivity(), trackArrayList, this, true );
-                recycler_child.setAdapter( childTabAdapter );
+                recycler_details_without_track.setVisibility(View.GONE);
+                layout_with_track.setVisibility(View.VISIBLE);
+                recycler_details.setVisibility(View.VISIBLE);
+                trackArrayList.addAll(modelAgenda.getTrack());
+                childTabAdapter = new ChildTabAdapter(getActivity(), trackArrayList, this, true);
+                recycler_child.setAdapter(childTabAdapter);
                 childTabAdapter.notifyDataSetChanged();
 
-                loadTrackDetail( 0 );
-            }else if (modelAgenda.getTrack().size() == 0 && modelAgenda.getCommonAgendaModel().size()> 0 ||
-                        ! modelAgenda.getCommonAgendaModel().equals(null)) {
+                loadTrackDetail(0);
+            } else if (modelAgenda.getTrack()==null && modelAgenda.getCommonAgendaModel()!=null) {
                 //only for track wise agenda
-                layout_with_track.setVisibility( View.GONE );
-                recycler_details.setVisibility( View.GONE );
-                trackDetailList.addAll( modelAgenda.getCommonAgendaModel() );
-                agendaAdapterWithoutTrack = new AgendaAdapterWithoutTrack( getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
-                        modelAgenda.getID() );
+                layout_with_track.setVisibility(View.GONE);
+                recycler_details.setVisibility(View.GONE);
+                trackDetailList.addAll(modelAgenda.getCommonAgendaModel());
+                agendaAdapterWithoutTrack =
+                        new AgendaAdapterWithoutTrack(getActivity(), trackDetailList, modelAgenda.getDisplayLabel(),
+                                modelAgenda.getID());
 
-                recycler_details_without_track.setAdapter( agendaAdapterWithoutTrack );
+                recycler_details_without_track.setAdapter(agendaAdapterWithoutTrack);
                 agendaAdapterWithoutTrack.notifyDataSetChanged();
             } else {
                 //if no track and no session available
-                recycler_details_without_track.setVisibility( View.GONE );
-                layout_with_track.setVisibility( View.GONE );
-                recycler_details.setVisibility( View.GONE );
-                noSession.setVisibility( View.VISIBLE );
+                recycler_details_without_track.setVisibility(View.GONE);
+                layout_with_track.setVisibility(View.GONE);
+                recycler_details.setVisibility(View.GONE);
+                noSession.setVisibility(View.VISIBLE);
             }
 
 

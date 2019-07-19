@@ -3,6 +3,7 @@ package in.kestone.eventbuddy.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,7 @@ public class Priority extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate( R.layout.fragment_priority, container, false );
@@ -59,15 +60,12 @@ public class Priority extends Fragment {
         }
         welcome_text.setText( ListEvent.getAppConf().getEvent().getPriority().getWelcomeText() );
         tvBtnLabel.setText( ListEvent.getAppConf().getEvent().getPriority().getLabel() );
-        layout_continue.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        layout_continue.setOnClickListener(view -> {
 
-                startActivity( new Intent( getActivity(), MainActivity.class ) );
-                getActivity().finish();
+            startActivity( new Intent( getActivity(), MainActivity.class ) );
+            getActivity().finish();
 
-            }
-        } );
+        });
     }
 
 }

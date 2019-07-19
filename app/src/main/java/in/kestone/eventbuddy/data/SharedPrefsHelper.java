@@ -17,7 +17,7 @@ public class SharedPrefsHelper {
     private static final String MOBILE = "MOBILE";
     private static final String PASSWORD = "PASSWORD";
 
-    SharedPreferences mSharedPreferences;
+    private SharedPreferences mSharedPreferences;
 
     public SharedPrefsHelper(Context context) {
         mSharedPreferences = context.getSharedPreferences( MY_PREFS, MODE_PRIVATE );
@@ -27,7 +27,7 @@ public class SharedPrefsHelper {
         mSharedPreferences.edit().clear().apply();
     }
 
-    public void putEmail(String email) {
+    void putEmail(String email) {
         mSharedPreferences.edit().putString( EMAIL, email ).apply();
     }
 
@@ -39,11 +39,11 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getInt( USERID, 0 );
     }
 
-    public void putUserId(int uID) {
+    void putUserId(int uID) {
         mSharedPreferences.edit().putInt( USERID, uID ).apply();
     }
 
-    public void putName(String name) {
+    void putName(String name) {
         mSharedPreferences.edit().putString( NAME, name ).apply();
     }
 
@@ -51,7 +51,7 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getString( NAME, null );
     }
 
-    public void putImage(String path) {
+    void putImage(String path) {
         mSharedPreferences.edit().putString( IMAGE, path ).apply();
     }
 
@@ -59,7 +59,7 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getString( IMAGE, null );
     }
 
-    public void putDesignation(String path) {
+    void putDesignation(String path) {
         mSharedPreferences.edit().putString( DESIGNATION, path ).apply();
     }
 
@@ -67,7 +67,7 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getString( DESIGNATION, null );
     }
 
-    public void putOrganization(String organization) {
+    void putOrganization(String organization) {
         mSharedPreferences.edit().putString( ORGANIZATION, organization ).apply();
     }
 
@@ -75,23 +75,23 @@ public class SharedPrefsHelper {
         return mSharedPreferences.getString( ORGANIZATION, null );
     }
 
-    public void putMobile(String mobile) {
+    void putMobile(String mobile) {
         mSharedPreferences.edit().putString( MOBILE, mobile ).apply();
     }
 
-    public String getMobile() {
+    String getMobile() {
         return mSharedPreferences.getString( MOBILE, null );
     }
 
-    public boolean getLoggedInMode() {
+    boolean getLoggedInMode() {
         return mSharedPreferences.getBoolean( "IS_LOGGED_IN", false );
     }
 
-    public void setLoggedInMode(boolean loggedIn) {
+    void setLoggedInMode(boolean loggedIn) {
         mSharedPreferences.edit().putBoolean( "IS_LOGGED_IN", loggedIn ).apply();
     }
 
-    public void putPassword(String password) {
+    void putPassword(String password) {
         mSharedPreferences.edit().putString( PASSWORD, password ).apply();
     }
 

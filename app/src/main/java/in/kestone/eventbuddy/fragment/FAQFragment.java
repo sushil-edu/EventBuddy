@@ -2,6 +2,7 @@ package in.kestone.eventbuddy.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,40 +47,40 @@ public class FAQFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_faq, container, false );
-        ButterKnife.bind( this, view );
+        view = inflater.inflate(R.layout.fragment_faq, container, false);
+        ButterKnife.bind(this, view);
         getFAQ();
-        Progress.showProgress( getContext() );
+        Progress.showProgress(getContext());
         return view;
     }
 
     public void getFAQ() {
-        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MFAQ> call = apiInterface.getFAQ( LocalStorage.getEventID( getActivity() ) );
-        call.enqueue( new Callback<MFAQ>() {
+        APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
+        Call<MFAQ> call = apiInterface.getFAQ(LocalStorage.getEventID(getActivity()));
+        call.enqueue(new Callback<MFAQ>() {
             @Override
             public void onResponse(Call<MFAQ> call, Response<MFAQ> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getFQAList().size() > 0) {
 
-                        faqList.addAll( response.body().getFQAList() );
-                        faqAdapter = new FAQAdapter( getActivity(), faqList );
-                        LinearLayoutManager mLayoutManager = new LinearLayoutManager( getContext() );
-                        mLayoutManager.setOrientation( LinearLayoutManager.VERTICAL );
-                        faqRV.setLayoutManager( mLayoutManager );
+                        faqList.addAll(response.body().getFQAList());
+                        faqAdapter = new FAQAdapter(getActivity(), faqList);
+                        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        faqRV.setLayoutManager(mLayoutManager);
 //                        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
-                        faqRV.setHasFixedSize( true );
-                        faqRV.setAdapter( faqAdapter );
+                        faqRV.setHasFixedSize(true);
+                        faqRV.setAdapter(faqAdapter);
                         faqAdapter.notifyDataSetChanged();
 
                     } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                        CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.body().getMessage());
                     }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
 
 
@@ -88,10 +89,10 @@ public class FAQFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MFAQ> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
                 Progress.closeProgress();
             }
 
-        } );
+        });
     }
 }

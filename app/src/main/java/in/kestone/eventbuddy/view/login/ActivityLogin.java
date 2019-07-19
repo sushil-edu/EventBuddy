@@ -242,7 +242,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
         if (ListEvent.getAppConf().getEvent().getOTP().getVisibility().equalsIgnoreCase("true")) {
             intent = ActivityVerify.getStartIntent(this);
             intent.putExtra("type", "otp");
-            intent.putExtra("EMAIL", et_mail.getText().toString());
+            intent.putExtra("EMAIL", et_mail.getText().toString().trim());
 
         } else if (ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase("true")) {
             intent = ActivityVerify.getStartIntent(this);
@@ -259,8 +259,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 
     @Override
     public void onLoginButtonClick() {
-        String email = et_mail.getText().toString();
-        String password = et_password.getText().toString();
+        String email = et_mail.getText().toString().trim();
+        String password = et_password.getText().toString().trim();
 
         if (layout_email.getVisibility() == View.VISIBLE && layout_password.getVisibility() == View.VISIBLE) {
             if (email.isEmpty() && password.isEmpty()) {

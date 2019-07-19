@@ -501,14 +501,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
                     list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
             this.doubleBackToExitPressedOnce = true;
 
-            new Handler().postDelayed( new Runnable() {
-
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-
-                }
-            }, 3000 );
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 3000 );
 
         }
     }
@@ -567,20 +560,14 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         message.setText( CONSTANTS.LOGOUTSTRING );
         TextView no = clearAll.findViewById( R.id.no );
         TextView yes = clearAll.findViewById( R.id.yes );
-        yes.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearAll.dismiss();
-                finish();
-            }
-        } );
-        no.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clearAll.dismiss();
+        yes.setOnClickListener(v -> {
+            clearAll.dismiss();
+            finish();
+        });
+        no.setOnClickListener(view -> {
+            clearAll.dismiss();
 //
-            }
-        } );
+        });
         clearAll.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         clearAll.show();
 

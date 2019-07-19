@@ -143,12 +143,17 @@ public class FragmentCheckIn extends Fragment {
 
         dialog = new CustomDialog();
         onVerifiedListener = (OnVerifiedListener) getActivity();
+        //for speaker
+        String [] dFrom;
+        String [] dTo;
 
-        activationDateFrom = geoTag.getActivationDateFrom();
-        activationTimeFrom = geoTag.getActivationTimeFrom();
+        dFrom = geoTag.getActivationDateFrom().split("T");
+        dTo = geoTag.getActivationDateTo().split("T");
+        activationDateFrom = dFrom[0];
+        activationTimeFrom = dFrom[1];
 
-        activationDateTo = geoTag.getActivationDateTo();
-        activationTimeTo = geoTag.getActivationTimeTo();
+        activationDateTo = dTo[0];
+        activationTimeTo = dTo[1];
 
         //fetch location
         init();
@@ -162,7 +167,8 @@ public class FragmentCheckIn extends Fragment {
         }
 
 
-        if (CompareDateTime.funCompareDateTime( activationDateFrom, activationDateTo, activationTimeFrom, activationTimeTo )) {//dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
+//        if (CompareDateTime.funCompareDateTime( activationDateFrom, activationDateTo, activationTimeFrom, activationTimeTo )) {//dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
+        if (CompareDateTime.compareDateTime( activationDateFrom, activationDateTo, activationTimeFrom, activationTimeTo )) {//dtDate.compareTo( dateFormat.parse( activationDateFrom ) )>=0 && dtDate.compareTo( dateFormat.parse( activationDateTo ) )<=0) {
             tv_checkIn.setEnabled( true );
         } else {
             tv_checkIn.setEnabled( false );
@@ -174,29 +180,26 @@ public class FragmentCheckIn extends Fragment {
         tv_checkIn.setText( geoTag.getLabel() );
         err_msg = geoTag.getErrorMessage();
         err_header = geoTag.getErrorHeader();
-        tv_checkIn.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        tv_checkIn.setOnClickListener(view -> {
 //                startLocation();
 
-                if (mCurrentLocation != null) {
+            if (mCurrentLocation != null) {
 
 //                    updateLocationUI();
-                    latB = mCurrentLocation.getLatitude();
-                    logB = mCurrentLocation.getLongitude();
+                latB = mCurrentLocation.getLatitude();
+                logB = mCurrentLocation.getLongitude();
 
-                    Log.d( "Get Difference ", "" + getDifference( latB, logB ) + " error " + err_msg );
-                    if (getDifference( latB, logB ) <= radius) {
+                Log.d( "Get Difference ", "" + getDifference( latB, logB ) + " error " + err_msg );
+                if (getDifference( latB, logB ) <= radius) {
 
-                        onVerifiedListener.onVerified( "check-in", "" );
-                    } else {
-                        dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
-                    }
+                    onVerifiedListener.onVerified( "check-in", "" );
                 } else {
-                    dialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please try again." );
+                    dialog.showInvalidPopUp( getActivity(), err_header, err_msg );
                 }
+            } else {
+                dialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Please try again." );
             }
-        } );
+        });
 
         //skip
         tv_skip.setOnClickListener( new View.OnClickListener() {

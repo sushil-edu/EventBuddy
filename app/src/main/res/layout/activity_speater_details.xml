@@ -29,11 +29,12 @@
 
                 <com.pkmmte.view.CircularImageView
                     android:id="@+id/profileIv"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="@dimen/dimen_20dp"
-                    android:src="@drawable/default_user_grey" />
+                    android:src="@drawable/default_user_grey"
+                    android:scaleType="fitXY"/>
 
 
             <in.kestone.eventbuddy.widgets.CustomTextView
@@ -74,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="50dp"/>
+                />
 
 
             <in.kestone.eventbuddy.widgets.CustomTextView

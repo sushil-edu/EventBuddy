@@ -2,6 +2,7 @@ package in.kestone.eventbuddy.fragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -79,56 +78,46 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
     LinearLayout layoutFeedback;
     String dateFrom, dateTo, timeFrom, timeTo;
 
-    int flag = 0;
-
     public AskQuestionFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_ask_question, container, false );
-        initialiseView( view );
-        apiInterface = APIClient.getClient().create( APIInterface.class );
-        speakerTv.setText( "Select Session" );
+        view = inflater.inflate(R.layout.fragment_ask_question, container, false);
+        initialiseView(view);
+        apiInterface = APIClient.getClient().create(APIInterface.class);
+        speakerTv.setText("Select Session");
         getAskQuestion();
-        Progress.showProgress( getContext() );
+        Progress.showProgress(getContext());
 
         return view;
     }
 
     private void initialiseView(View view) {
-        ButterKnife.bind( this, view );
+        ButterKnife.bind(this, view);
         postRequest = new PostRequest();
-        layoutTrack.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listQA.size() > 0) {
-                    populateQandATrack( listQA );
-                }
+        layoutTrack.setOnClickListener(view1 -> {
+            if (listQA.size() > 0) {
+                populateQandATrack(listQA);
             }
-        } );
-        layoutSpeaker.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listSession.clear();
-                listQASession.clear();
-                if (listQA.size() > 0) {
-                    for (int i = 0; i < listQA.size(); i++) {
-                        if (listQA.get( i ).getSession().size() > 0 &&
-                                trackTv.getText().equals( listQA.get( i ).getTrackName() )) {
-                            listQASession.addAll( listQA.get( i ).getSession() );
-                        }
+        });
+        layoutSpeaker.setOnClickListener(view12 -> {
+            listSession.clear();
+            listQASession.clear();
+            if (listQA.size() > 0) {
+                for (int i = 0; i < listQA.size(); i++) {
+                    if (listQA.get(i).getSession().size() > 0 &&
+                            trackTv.getText().equals(listQA.get(i).getTrackName())) {
+                        listQASession.addAll(listQA.get(i).getSession());
                     }
-                    populateQandASession( listQASession );
                 }
+                populateQandASession(listQASession);
             }
-        } );
-        btnSubmit.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        });
+        btnSubmit.setOnClickListener(view13 -> {
 //
 //                if (type.equalsIgnoreCase( CONSTANTS.POLLING ) && txtFeedback.getText().length() > 0) {
 //                    postRequest.setEventID( CONSTANTS.EVENTID );
@@ -140,66 +129,64 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
 //                if (type.equalsIgnoreCase( CONSTANTS.ASKAQUESTION )) {
 //                    {"Event_ID":1,"User_ID":1,"Comment":"test","ImageURL":"trest","Inserted_On":"12-12-12"}
 
-                if (CompareDateTime.compareDate( dateFrom, dateTo )) {
-                    if (CompareDateTime.compareTime( timeFrom, timeTo )) {
-                        postRequest.setEventID( Long.valueOf( LocalStorage.getEventID( getActivity() ) ) );
-                        postRequest.setDelegateID( (long) new SharedPrefsHelper( getContext() ).getUserId() );
-                        postRequest.setResponse( txtFeedback.getText().toString() );
-                        postQA( postRequest );
-                        Progress.showProgress( getContext() );
-                    } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Q & A disable" );
-                    }
+            if (CompareDateTime.compareDate(dateFrom, dateTo)) {
+                if (CompareDateTime.compareTime(timeFrom, timeTo)) {
+                    postRequest.setEventID((long)(LocalStorage.getEventID(getActivity())));
+                    postRequest.setDelegateID((long) new SharedPrefsHelper(getContext()).getUserId());
+                    postRequest.setResponse(txtFeedback.getText().toString());
+                    postQA(postRequest);
+                    Progress.showProgress(getContext());
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, "Q & A disable" );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, "Q & A disable");
                 }
+            } else {
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, "Q & A disable");
+            }
 
 //                }
-            }
-        } );
+        });
     }
 
 
     private void populateQandASession(ArrayList<in.kestone.eventbuddy.model.qanda_model.Session> listQASession) {
-        if (listQASession.size()>0) {
-            Dialog dialog = new Dialog( getContext() );
-            dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
-            dialog.setContentView( layout.alert_user_type );
-            TextView headTv = dialog.findViewById( id.headTv );
-            headTv.setText( "Select Session" );
-            RecyclerView recyclerView = dialog.findViewById( id.recyclerView );
-            recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
-            recyclerView.setAdapter( new QASessionAdapter( this, listQASession, dialog, type ) );
+        if (listQASession.size() > 0) {
+            Dialog dialog = new Dialog(getContext());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(layout.alert_user_type);
+            TextView headTv = dialog.findViewById(id.headTv);
+            headTv.setText("Select Session");
+            RecyclerView recyclerView = dialog.findViewById(id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            recyclerView.setAdapter(new QASessionAdapter(this, listQASession, dialog, type));
             dialog.show();
-        }else {
-            CustomDialog.showInvalidPopUp( getContext(),"","Session not available in this track" );
+        } else {
+            CustomDialog.showInvalidPopUp(getContext(), "", "Session not available in this track");
         }
     }
 
     public void getAskQuestion() {
-        Call<QandA> call = apiInterface.getQandA( LocalStorage.getEventID( getActivity() ) );
-        call.enqueue( new Callback<QandA>() {
+        Call<QandA> call = apiInterface.getQandA(LocalStorage.getEventID(getActivity()));
+        call.enqueue(new Callback<QandA>() {
             @Override
             public void onResponse(Call<QandA> call, Response<QandA> response) {
-                if(response.code()==200) {
+                if (response.code() == 200) {
                     if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0 && response.code() == 200) {
-                        listQA.addAll( response.body().getData() );
+                        listQA.addAll(response.body().getData());
 
-                        if (response.body().getFeedback().size()>0) {
-                            FeedbackModel model = response.body().getFeedback().get( 0 );
+                        if (response.body().getFeedback().size() > 0) {
+                            FeedbackModel model = response.body().getFeedback().get(0);
                             dateFrom = model.getStartDate();
                             dateTo = model.getEndDate();
                             timeFrom = model.getStartTime();
                             timeTo = model.getEndTime();
 
 
-
                         }
                     } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                        CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.body().getMessage());
                     }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
                 Progress.closeProgress();
             }
@@ -207,26 +194,26 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
             @Override
             public void onFailure(Call<QandA> call, Throwable t) {
                 Progress.closeProgress();
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
             }
-        } );
+        });
 
     }
 
 
-
     private void postQA(PostRequest postRequest) {
-        Call<JSONObject> call = apiInterface.postQandA(LocalStorage.getEventID( getActivity() ), postRequest );
-        call.enqueue( new Callback<JSONObject>() {
+        Call<JSONObject> call =
+                apiInterface.postQandA(LocalStorage.getEventID(getActivity()), postRequest);
+        call.enqueue(new Callback<JSONObject>() {
             @Override
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 if (response.code() == 201) {
-                    CustomDialog.showValidPopUp( getContext(), CONSTANTS.SUCCESS, "Request send" );
+                    CustomDialog.showValidPopUp(getContext(), CONSTANTS.SUCCESS, "Request send");
                     txtFeedback.getText().clear();
-                    trackTv.setText( "Select Track" );
-                    speakerTv.setText( "Select Session" );
+                    trackTv.setText("Select Track");
+                    speakerTv.setText("Select Session");
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
                 Progress.closeProgress();
             }
@@ -234,21 +221,21 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
             @Override
             public void onFailure(Call<JSONObject> call, Throwable t) {
                 Progress.closeProgress();
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
             }
-        } );
+        });
     }
 
 
     public void populateQandATrack(ArrayList<Track> details) {
-        Dialog dialog = new Dialog( getContext() );
-        dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
-        dialog.setContentView( layout.alert_user_type );
-        TextView headTv = dialog.findViewById( id.headTv );
-        headTv.setText( "Select Track" );
-        RecyclerView recyclerView = dialog.findViewById( id.recyclerView );
-        recyclerView.setLayoutManager( new LinearLayoutManager( getContext() ) );
-        recyclerView.setAdapter( new PollingAdapter( this, details, dialog, CONSTANTS.ASKAQUESTION ) );
+        Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(layout.alert_user_type);
+        TextView headTv = dialog.findViewById(id.headTv);
+        headTv.setText("Select Track");
+        RecyclerView recyclerView = dialog.findViewById(id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new PollingAdapter(this, details, dialog, CONSTANTS.ASKAQUESTION));
         dialog.show();
     }
 
@@ -256,12 +243,12 @@ public class AskQuestionFragment extends Fragment implements KnowledgeAdapter.Se
     @Override
     public void onSelect(String trackName, long id, String title) {
 
-        if (title.equalsIgnoreCase( "track" )) {
-            trackTv.setText( trackName );
-            postRequest.setTrackID( id );
+        if (title.equalsIgnoreCase("track")) {
+            trackTv.setText(trackName);
+            postRequest.setTrackID(id);
         } else {
-            speakerTv.setText( trackName );
-            postRequest.setSessionID( id );
+            speakerTv.setText(trackName);
+            postRequest.setSessionID(id);
         }
     }
 

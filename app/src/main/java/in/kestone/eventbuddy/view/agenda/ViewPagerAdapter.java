@@ -13,8 +13,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private static List<Agenda> mAgenda;
 
 
-    public ViewPagerAdapter(FragmentManager fragmentManager, List<Agenda> mAgenda) {
-        super( fragmentManager );
+    ViewPagerAdapter(FragmentManager fragmentManager, List<Agenda> mAgenda) {
+        super(fragmentManager);
         ViewPagerAdapter.mAgenda = mAgenda;
 
     }
@@ -22,7 +22,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new AgendaWithTrackFragment( position, mAgenda.get( position ) );
+        return new AgendaWithTrackFragment(position, mAgenda.get(position));
 
     }
 
@@ -33,6 +33,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mAgenda.get( position ).getDisplayLabel();
+        return mAgenda.get(position).getDisplayLabel();
     }
 }

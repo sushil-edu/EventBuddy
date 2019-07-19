@@ -144,7 +144,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         !mobileTv.getText().toString().isEmpty() && !organizationTv.getText().toString().isEmpty() &&
                         !designationTv.getText().toString().isEmpty() && !password.getText().toString().isEmpty() &&
                         !cnfPassword.getText().toString().isEmpty()) {
-                    if (!CommonUtils.isEmailValid( emailTv.getText().toString() )) {
+                    if (!CommonUtils.isEmailValid( emailTv.getText().toString().trim() )) {
                         showInvalidPopUp( RegistrationActivity.this, ERROR,
                                 "Enter valid email id" );
                     } else if (mobileTv.getText().length() < 10) {
@@ -160,13 +160,13 @@ public class RegistrationActivity extends AppCompatActivity {
                         if(filePath==null || filePath.isEmpty() ) {
                             Profile profile = new Profile();
                             profile.setEventID((long) LocalStorage.getEventID(RegistrationActivity.this));
-                            profile.setFirstName(nameTv.getText().toString());
+                            profile.setFirstName(nameTv.getText().toString().trim());
                             profile.setLastName("");
-                            profile.setEmailID(emailTv.getText().toString());
-                            profile.setMobile(mobileTv.getText().toString());
-                            profile.setDesignation(designationTv.getText().toString());
-                            profile.setOrganization(organizationTv.getText().toString());
-                            profile.setPassword(cnfPassword.getText().toString());
+                            profile.setEmailID(emailTv.getText().toString().trim());
+                            profile.setMobile(mobileTv.getText().toString().trim());
+                            profile.setDesignation(designationTv.getText().toString().trim());
+                            profile.setOrganization(organizationTv.getText().toString().trim());
+                            profile.setPassword(cnfPassword.getText().toString().trim());
                             profile.setImage("");
                             profile.setCityID("999");
                             userRegistration(profile);
@@ -421,13 +421,13 @@ public class RegistrationActivity extends AppCompatActivity {
                         filePath = response.body().getData();
                         Profile profile = new Profile();
                         profile.setEventID( (long) LocalStorage.getEventID( RegistrationActivity.this ) );
-                        profile.setFirstName( nameTv.getText().toString() );
+                        profile.setFirstName( nameTv.getText().toString().trim() );
                         profile.setLastName( "" );
-                        profile.setEmailID( emailTv.getText().toString() );
-                        profile.setMobile( mobileTv.getText().toString() );
-                        profile.setDesignation( designationTv.getText().toString() );
-                        profile.setOrganization( organizationTv.getText().toString() );
-                        profile.setPassword( cnfPassword.getText().toString() );
+                        profile.setEmailID( emailTv.getText().toString().trim() );
+                        profile.setMobile( mobileTv.getText().toString().trim() );
+                        profile.setDesignation( designationTv.getText().toString().trim() );
+                        profile.setOrganization( organizationTv.getText().toString().trim() );
+                        profile.setPassword( cnfPassword.getText().toString().trim() );
                         profile.setImage(filePath );
                         profile.setCityID( "999" );
                         userRegistration( profile );

@@ -16,7 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import java.util.Objects;
 
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
@@ -47,10 +48,10 @@ public class AgendaFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            String message = intent.getStringExtra( "message" );
-            Log.d( "receiver", "Got message: " + message );
+            String message = intent.getStringExtra("message");
+            Log.d("receiver", "Got message: " + message);
             getAgenda();
-            Progress.showProgress( getActivity() );
+
 //            new Handler().postDelayed(
 //                    new Runnable() {
 //                        @Override
@@ -68,35 +69,34 @@ public class AgendaFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setRetainInstance( true );
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_agenda, container, false );
-        super.onCreate( savedInstanceState );
+        view = inflater.inflate(R.layout.fragment_agenda, container, false);
+        super.onCreate(savedInstanceState);
         getAgenda();
-        Progress.showProgress( getActivity() );
+        Progress.showProgress(getActivity());
+        tabLayout = view.findViewById(R.id.tabs);
+        viewPager = view.findViewById(R.id.viewpager);
+        tabLayout.setVisibility(View.GONE);
 
-        tabLayout = view.findViewById( R.id.tabs );
-        viewPager = view.findViewById( R.id.viewpager );
-        tabLayout.setVisibility( View.GONE );
 
-
-        LocalBroadcastManager.getInstance( getActivity() ).registerReceiver( mMessageReceiver,
-                new IntentFilter( "event-buddy" ) );
-        viewPager.addOnPageChangeListener( new TabLayout.TabLayoutOnPageChangeListener( tabLayout ) );
-        tabLayout.addOnTabSelectedListener( new TabLayout.OnTabSelectedListener() {
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+                new IntentFilter("event-buddy"));
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem( tab.getPosition() );
+                viewPager.setCurrentItem(tab.getPosition());
                 Bundle bundle = new Bundle();
-                bundle.putInt( "pos", tab.getPosition() );
+                bundle.putInt("pos", tab.getPosition());
                 agendaWithTrackFragment = new AgendaWithTrackFragment();
-                agendaWithTrackFragment.setArguments( bundle );
+                agendaWithTrackFragment.setArguments(bundle);
                 parentTabPos = tab.getPosition();
 //                adapter.notifyDataSetChanged();
 
@@ -109,42 +109,34 @@ public class AgendaFragment extends Fragment {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
-        } );
+        });
 
 
         return view;
     }
 
-     void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
+    void setupViewPager(ViewPager viewPager, ModelAgenda modelAgenda) {
 
-        adapter = new ViewPagerAdapter( getFragmentManager(), modelAgenda.getAgenda() );
-        viewPager.setAdapter( adapter );
+        adapter = new ViewPagerAdapter(getFragmentManager(), modelAgenda.getAgenda());
+        viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
 
     public void setAgenda(ModelAgenda modelAgenda) {
-        new Handler().postDelayed( new Runnable() {
-            @Override
-            public void run() {
-                getActivity().runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        setupViewPager( viewPager, modelAgenda );
-                        tabLayout.setupWithViewPager( viewPager );
-                        tabLayout.setVisibility( View.VISIBLE );
-                    }
-                } );
-            }
-        }, 500 );
+        new Handler().postDelayed(() -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            setupViewPager(viewPager, modelAgenda);
+            tabLayout.setupWithViewPager(viewPager);
+            tabLayout.setVisibility(View.VISIBLE);
+        }), 500);
 
         tabCount = modelAgenda.getAgenda().size();
         if (tabCount < 4) {
-            tabLayout.setTabMode( TabLayout.MODE_FIXED );
-            tabLayout.setTabGravity( TabLayout.GRAVITY_CENTER );
-        }else {
-            tabLayout.setTabMode( TabLayout.MODE_SCROLLABLE );
-            tabLayout.setTabGravity( TabLayout.GRAVITY_CENTER );
+            tabLayout.setTabMode(TabLayout.MODE_FIXED);
+            tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
+        } else {
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         }
 
     }
@@ -152,33 +144,34 @@ public class AgendaFragment extends Fragment {
     @Override
     public void onDestroy() {
         // Unregister since the activity is about to be closed.
-        LocalBroadcastManager.getInstance( getActivity() ).unregisterReceiver( mMessageReceiver );
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
         super.onDestroy();
     }
 
     public void getAgenda() {
 
-        apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<ModelAgenda> call = apiInterface.getAgenda( LocalStorage.getEventID( getActivity() ), new SharedPrefsHelper( getActivity() ).getUserId() );
-        CallUtils.enqueueWithRetry( call, 3, new Callback<ModelAgenda>() {
+        apiInterface = APIClient.getClient().create(APIInterface.class);
+        Call<ModelAgenda> call =
+                apiInterface.getAgenda(LocalStorage.getEventID(getActivity()), new SharedPrefsHelper(getActivity()).getUserId());
+        CallUtils.enqueueWithRetry(call, 3, new Callback<ModelAgenda>() {
             @Override
             public void onResponse(Call<ModelAgenda> call, Response<ModelAgenda> response) {
                 if (response.code() == 200) {
-                    AgendaList.setAgenda( response.body() );
-                    setAgenda( response.body() );
+                    AgendaList.setAgenda(response.body());
+                    setAgenda(response.body());
 //                    MasterAgenda.setModelAgenda( response.body() );
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
                 Progress.closeProgress();
-
             }
 
             @Override
             public void onFailure(Call<ModelAgenda> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
                 Progress.closeProgress();
             }
-        } );
+        });
+
     }
 }

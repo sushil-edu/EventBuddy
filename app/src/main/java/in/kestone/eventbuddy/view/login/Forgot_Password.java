@@ -106,9 +106,9 @@ public class Forgot_Password extends AppCompatActivity {
     public void onClick() {
         //to send otp
         if (layout_reset_password.getVisibility() != View.VISIBLE) {
-            if (CommonUtils.isEmailValid( email.getText().toString() )) {
+            if (CommonUtils.isEmailValid( email.getText().toString().trim() )) {
                 //call send otp API
-                userSet.put( "EmailID", email.getText().toString() );
+                userSet.put( "EmailID", email.getText().toString().trim() );
                 userSet.put( "Event_ID", String.valueOf( LocalStorage.getEventID( Forgot_Password.this ) ) );
                 sendOTP( userSet );
                 Progress.showProgress( Forgot_Password.this );
@@ -120,10 +120,10 @@ public class Forgot_Password extends AppCompatActivity {
             //to reset password
             if (!et_otp.getText().toString().isEmpty()) {
                 if (!et_password.getText().toString().isEmpty() && !et_confirm_password.getText().toString().isEmpty()) {
-                    if (OTP == Long.parseLong( et_otp.getText().toString() )) {
+                    if (OTP == Long.parseLong( et_otp.getText().toString().trim() )) {
                         if (et_password.getText().toString().equals( et_confirm_password.getText().toString() )) {
                             //call reset password API
-                            userSet.put( "EmailID", email.getText().toString() );
+                            userSet.put( "EmailID", email.getText().toString().trim() );
                             userSet.put( "Event_ID", String.valueOf( LocalStorage.getEventID( Forgot_Password.this )) );
                             userSet.put( "Password", et_password.getText().toString() );
                             updatePassword( userSet );

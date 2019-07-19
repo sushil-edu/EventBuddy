@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ import in.kestone.eventbuddy.model.agenda_model.Track;
 
 public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHolder> {
 
-    TabClick tabClick;
+    private TabClick tabClick;
     private Context context;
-    private Activity activity;
+    Activity activity;
     private ArrayList<Track> trackList;
     private int  selectedPos=-1;
 
@@ -46,7 +47,7 @@ public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.title.setText( trackList.get( position ).getTrackName() );
 
         if(selectedPos==position){
@@ -60,14 +61,11 @@ public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHo
             holder.viewIndicator.setVisibility( View.GONE );
         }
 
-        holder.root.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tabClick.onTabClick( position);
-                selectedPos = position;
-                notifyDataSetChanged();
-            }
-        } );
+        holder.root.setOnClickListener(view -> {
+            tabClick.onTabClick( position);
+            selectedPos = position;
+            notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -82,7 +80,7 @@ public class ChildTabAdapter extends RecyclerView.Adapter<ChildTabAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private LinearLayout root;
+        private RelativeLayout root;
         private View viewIndicator;
 
         private ViewHolder(View itemView) {

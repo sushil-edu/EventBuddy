@@ -83,18 +83,15 @@ public class OtpFragment extends Fragment {
         customDialog = new CustomDialog();
 
 
-        tv_verify.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!otp1.getText().toString().isEmpty() && otp1.getText().length() == 6) {
-                    onVerifiedListener.onVerified( "verified", otp1.getText().toString() );
-                } else {
-                    customDialog.showInvalidPopUp( getActivity(), err_header, err_msg );
-                    otp1.getText().clear();
-                    otp1.requestFocus();
-                }
+        tv_verify.setOnClickListener(view -> {
+            if (!otp1.getText().toString().isEmpty() && otp1.getText().length() == 6) {
+                onVerifiedListener.onVerified( "verified", otp1.getText().toString() );
+            } else {
+                customDialog.showInvalidPopUp( getActivity(), err_header, err_msg );
+                otp1.getText().clear();
+                otp1.requestFocus();
             }
-        } );
+        });
 
     }
 

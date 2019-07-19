@@ -22,6 +22,8 @@ import in.kestone.eventbuddy.fragment.Priority;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.http.CallUtils;
+import in.kestone.eventbuddy.model.app_config_model.Event;
+import in.kestone.eventbuddy.model.app_config_model.GeoTag;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.model.user_model.Profile;
 import in.kestone.eventbuddy.model.user_model.User;
@@ -40,6 +42,7 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
     DataManager dataManager;
     String EMAIL;
     SharedPreferences.Editor editor;
+    Event event;
 
     public static Intent getStartIntent(Context context) {
         Intent intent = new Intent( context, ActivityVerify.class );
@@ -58,6 +61,8 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
         dataManager = ((MvpApp) getApplication()).getDataManager();
         mainPresenter = new MainPresenter( dataManager );
         mainPresenter.onAttach( this );
+
+        event =ListEvent.getAppConf().getEvent();
 
         editor = getSharedPreferences( CONSTANTS.CHECKIN, MODE_PRIVATE ).edit();
         editor.putBoolean( "status", false );
@@ -83,21 +88,21 @@ public class ActivityVerify extends AppCompatActivity implements OnVerifiedListe
     public void onVerified(String status, String otp) {
         
         if (status.equalsIgnoreCase( "verified" ) &&
-                ListEvent.getAppConf().getEvent().getGeoTag().getVisibility().equalsIgnoreCase( "true" )) {
+               event.getGeoTag().getVisibility().equalsIgnoreCase( "true" )) {
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.container, new FragmentCheckIn() )
                     .commit();
             editor.putBoolean( "status", true );
             editor.apply();
         } else if (status.equalsIgnoreCase( "check-in" ) &&
-                ListEvent.getAppConf().getEvent().getPriority().getVisibility().equalsIgnoreCase( "true" )) {
+               event.getPriority().getVisibility().equalsIgnoreCase( "true" )) {
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.container, new Priority() )
                     .commit();
             editor.putBoolean( "status", true );
             editor.apply();
         } else if (status.equalsIgnoreCase( "check-in" ) &&
-                ListEvent.getAppConf().getEvent().getPriority().getVisibility().equalsIgnoreCase( "false" )) {
+               event.getPriority().getVisibility().equalsIgnoreCase( "false" )) {
             Intent intent = MainActivity.getStartIntent( ActivityVerify.this );
             startActivity( intent );
             finish();

@@ -9,7 +9,7 @@ public class ReadJson {
     public static String loadJSONFromAsset(Activity activity, String fileName) {
         String json=null;
         try {
-            InputStream is = activity.getAssets().open( fileName);
+            InputStream is = activity.getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read( buffer );

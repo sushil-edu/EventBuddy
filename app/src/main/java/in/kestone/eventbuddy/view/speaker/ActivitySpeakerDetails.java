@@ -91,6 +91,7 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         organizationTv.setText( speakerDetail.getOrganization() );
         designationTv.setText( speakerDetail.getDesignation() );
         nameTv.setText( speakerDetail.getFirstName().concat( " " ).concat( speakerDetail.getLastName() ) );
+        detailsTv.setText(speakerDetail.getProfileDescription());
         tag = speakerDetail.getUserType();
 
         if (speakerDetail.getImage().contains( LocalStorage.getImagePath( ActivitySpeakerDetails.this ) )) {
@@ -162,7 +163,12 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
                     break;
             }
         } else {
-            CustomDialog.showInvalidPopUp( ActivitySpeakerDetails.this, "", "You should not send meeting request yourself" );
+
+            if(view.getId()== R.id.tvCancel){
+                onBackPressed();
+            }else {
+                CustomDialog.showInvalidPopUp( ActivitySpeakerDetails.this, "", "You should not send meeting request yourself" );
+            }
         }
 
 //        finish();
@@ -174,8 +180,6 @@ public class ActivitySpeakerDetails extends AppCompatActivity implements View.On
         for (int i = 0; i < menuList.size(); i++) {
             if (CONSTANTS.NETWORKING.equalsIgnoreCase( menuList.get( i ).getMenutitle() ))
                 return true;
-//            else
-//                return false;
         }
         return false;
     }

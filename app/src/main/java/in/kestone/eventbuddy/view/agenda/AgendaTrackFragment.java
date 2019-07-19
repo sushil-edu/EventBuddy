@@ -28,18 +28,11 @@ import in.kestone.eventbuddy.model.agenda_model.Track;
 public class AgendaTrackFragment extends Fragment {
 
     View view;
-    int pos;
     List<Track> trackArrayList = new ArrayList<>();
     TabLayout tabTrack;
     ViewPager pagerTrack;
     Agenda modelAgenda;
-    int pTabPos;
 
-
-    public AgendaTrackFragment(int pos, Agenda modelAgenda) {
-        this.pos = pos;
-        this.modelAgenda = modelAgenda;
-    }
 
     public AgendaTrackFragment() {
 
@@ -48,32 +41,32 @@ public class AgendaTrackFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_agenda_track, container, false );
-        super.onCreate( savedInstanceState );
+        view = inflater.inflate(R.layout.fragment_agenda_track, container, false);
+        super.onCreate(savedInstanceState);
 //        ButterKnife.bind( this, view );
-        tabTrack = view.findViewById( R.id.tabTrack );
-        pagerTrack = view.findViewById( R.id.viewpagerTrack );
+        tabTrack = view.findViewById(R.id.tabTrack);
+        pagerTrack = view.findViewById(R.id.viewpagerTrack);
         trackArrayList.clear();
         if (modelAgenda.getTrack().size() > 0) {
             trackArrayList = (modelAgenda.getTrack());
 
-            setupViewPager( pagerTrack );
-            tabTrack.setupWithViewPager( pagerTrack );
+            setupViewPager(pagerTrack);
+            tabTrack.setupWithViewPager(pagerTrack);
         } else {
-            tabTrack.setVisibility( View.GONE );
+            tabTrack.setVisibility(View.GONE);
         }
-        tabTrack.addOnTabSelectedListener( new TabLayout.OnTabSelectedListener() {
+        tabTrack.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                pagerTrack.setCurrentItem( tab.getPosition() );
-                Log.e( "Child Tab", "" + tab.getPosition() );
+                pagerTrack.setCurrentItem(tab.getPosition());
+                Log.e("Child Tab", "" + tab.getPosition());
 //                new AgendaListFragment( pTabPos, tab.getPosition() );
             }
 
@@ -85,9 +78,9 @@ public class AgendaTrackFragment extends Fragment {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
-        } );
+        });
 
-        pagerTrack.addOnPageChangeListener( new TabLayout.TabLayoutOnPageChangeListener( tabTrack ) );
+        pagerTrack.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabTrack));
 
 
 //        pagerTrack.addOnPageChangeListener( new ViewPager.OnPageChangeListener() {
@@ -110,8 +103,9 @@ public class AgendaTrackFragment extends Fragment {
 
 
     private void setupViewPager(ViewPager viewPager) {
-        ChildViewPagerAdapter adapter = new ChildViewPagerAdapter( getChildFragmentManager(), modelAgenda.getTrack() );
-        viewPager.setAdapter( adapter );
+        ChildViewPagerAdapter adapter =
+                new ChildViewPagerAdapter(getChildFragmentManager(), modelAgenda.getTrack());
+        viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
     }
@@ -121,15 +115,15 @@ public class AgendaTrackFragment extends Fragment {
 
         List<Track> tracks;
 
-        public ChildViewPagerAdapter(FragmentManager fragmentManager, List<Track> track) {
-            super( fragmentManager );
+        ChildViewPagerAdapter(FragmentManager fragmentManager, List<Track> track) {
+            super(fragmentManager);
             this.tracks = track;
         }
 
 
         @Override
         public Fragment getItem(int position) {
-            return new AgendaListFragment( position, tracks.get( position ) );
+            return new AgendaListFragment(position, tracks.get(position));
         }
 
         @Override
@@ -139,7 +133,7 @@ public class AgendaTrackFragment extends Fragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return tracks.get( position ).getTrackName();
+            return tracks.get(position).getTrackName();
         }
     }
 }

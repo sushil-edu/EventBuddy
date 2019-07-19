@@ -20,10 +20,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
-import in.kestone.eventbuddy.Eventlistener.PartnerDetailsCallback;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.CommonUtils;
 import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
@@ -49,67 +47,63 @@ public class HelpDeskFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate( R.layout.fragment_help_desk, container, false );
-        ButterKnife.bind( this, view );
+        view = inflater.inflate(R.layout.fragment_help_desk, container, false);
+        ButterKnife.bind(this, view);
 
         getHelpDesk();
-        Progress.showProgress( getActivity() );
-        recyclerViewHelpDesk.setLayoutManager( new GridLayoutManager( getContext(), 1 ) );
+        Progress.showProgress(getActivity());
+        recyclerViewHelpDesk.setLayoutManager(new GridLayoutManager(getContext(), 1));
 //        recyclerView.addItemDecoration(new SpacesItemDecoration(2,20, true));
-        recyclerViewHelpDesk.setHasFixedSize( true );
+        recyclerViewHelpDesk.setHasFixedSize(true);
 
-        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                    getHelpDesk();
-                    Progress.showProgress( getActivity() );
-                swipeRefreshLayout.setRefreshing( false );
-            }
-        } );
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            getHelpDesk();
+            Progress.showProgress(getActivity());
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         return view;
     }
 
     public void getHelpDesk() {
-        APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
-        Call<MHelpDesk> call = apiInterface.helpDesk( LocalStorage.getEventID( getActivity() ));
-        call.enqueue( new Callback<MHelpDesk>() {
+        APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
+        Call<MHelpDesk> call = apiInterface.helpDesk(LocalStorage.getEventID(getActivity()));
+        call.enqueue(new Callback<MHelpDesk>() {
             @Override
             public void onResponse(Call<MHelpDesk> call, Response<MHelpDesk> response) {
                 if (response.code() == 200) {
                     listHelpDesk.clear();
                     if (response.body().getStatusCode() == 200 && response.body().getData().size() > 0) {
-                        listHelpDesk.addAll( response.body().getData() );
-                        helpDeskAdapter = new HelpDeskAdapter( getActivity(), listHelpDesk );
-                        recyclerViewHelpDesk.setAdapter( helpDeskAdapter );
+                        listHelpDesk.addAll(response.body().getData());
+                        helpDeskAdapter = new HelpDeskAdapter(getActivity(), listHelpDesk);
+                        recyclerViewHelpDesk.setAdapter(helpDeskAdapter);
                         helpDeskAdapter.notifyDataSetChanged();
                     } else {
-                        CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.body().getMessage() );
+                        CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.body().getMessage());
                     }
                 } else {
-                    CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, response.message() );
+                    CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
                 Progress.closeProgress();
             }
 
             @Override
             public void onFailure(Call<MHelpDesk> call, Throwable t) {
-                CustomDialog.showInvalidPopUp( getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR );
+                CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, CONSTANTS.CONNECTIONERROR);
                 Progress.closeProgress();
             }
-        } );
+        });
     }
 
     private class HelpDeskAdapter extends RecyclerView.Adapter<HelpDeskAdapter.ViewHolder> {
 
         Activity activity;
         ArrayList<Datum> detailArrayList;
-        PartnerDetailsCallback detailsCallback;
 
-        public HelpDeskAdapter(FragmentActivity activity, ArrayList<Datum> detailArrayList) {
+        HelpDeskAdapter(FragmentActivity activity, ArrayList<Datum> detailArrayList) {
             this.activity = activity;
             this.detailArrayList = detailArrayList;
 //            this.detailsCallback = detailsCallback;
@@ -119,19 +113,20 @@ public class HelpDeskFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            View view = LayoutInflater.from( parent.getContext() ).inflate( R.layout.helpdesk_cell, parent, false );
+            View view =
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.helpdesk_cell, parent, false);
 
-            return new ViewHolder( view );
+            return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-            Datum helpDesk = listHelpDesk.get( position );
-            holder.title.setText( helpDesk.getCategory() );
-            holder.name.setText( helpDesk.getName() );
-            holder.email.setText( helpDesk.getEmailID() );
-            holder.phone.setText( helpDesk.getPhoneno() );
+            Datum helpDesk = listHelpDesk.get(position);
+            holder.title.setText(helpDesk.getCategory());
+            holder.name.setText(helpDesk.getName());
+            holder.email.setText(helpDesk.getEmailID());
+            holder.phone.setText(helpDesk.getPhoneno());
         }
 
         @Override
@@ -139,18 +134,18 @@ public class HelpDeskFragment extends Fragment {
             return detailArrayList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
 
             TextView title, email, phone, name, designation;
 
-            public ViewHolder(View view) {
-                super( view );
+            ViewHolder(View view) {
+                super(view);
 
-                title = view.findViewById( R.id.titleTv );
-                email = view.findViewById( R.id.emailTv );
-                phone = view.findViewById( R.id.contactTv );
-                name = view.findViewById( R.id.nameTv );
-                designation = view.findViewById( R.id.designationTv );
+                title = view.findViewById(R.id.titleTv);
+                email = view.findViewById(R.id.emailTv);
+                phone = view.findViewById(R.id.contactTv);
+                name = view.findViewById(R.id.nameTv);
+                designation = view.findViewById(R.id.designationTv);
             }
         }
     }

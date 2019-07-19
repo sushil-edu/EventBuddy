@@ -21,9 +21,9 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
 
 
     Activity mActivity;
-    ArrayList<FAQList> faqLists;
+    private ArrayList<FAQList> faqLists;
 
-    public FAQAdapter(FragmentActivity activity, ArrayList<FAQList> faqList) {
+     FAQAdapter(FragmentActivity activity, ArrayList<FAQList> faqList) {
         this.mActivity = activity;
         this.faqLists = faqList;
 
@@ -39,16 +39,13 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.card.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (holder.expandedLl.isExpanded()) {
-                    holder.expandedLl.close();
-                } else {
-                    holder.expandedLl.expand();
-                }
+        holder.card.setOnClickListener(v -> {
+            if (holder.expandedLl.isExpanded()) {
+                holder.expandedLl.close();
+            } else {
+                holder.expandedLl.expand();
             }
-        } );
+        });
 
         holder.contact_us_Text.setText( faqLists.get( position ).getQuestionText());
         holder.et_invoice.setText( faqLists.get( position ).getAnswerText() );
@@ -64,9 +61,9 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
         ExpandableLayout expandedLl;
         TextView contact_us_Text, et_invoice;
 
-        public ViewHolder(@NonNull View itemView) {
+         ViewHolder(@NonNull View itemView) {
             super( itemView );
-            card = (LinearLayout) itemView.findViewById( R.id.faq_card );
+            card =  itemView.findViewById( R.id.faq_card );
             expandedLl = itemView.findViewById( R.id.expandedLl );
             contact_us_Text = itemView.findViewById( R.id.contact_us_Text );
             et_invoice = itemView.findViewById( R.id.et_invoice );

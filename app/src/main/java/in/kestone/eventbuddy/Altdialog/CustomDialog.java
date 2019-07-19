@@ -20,7 +20,6 @@ import in.kestone.eventbuddy.widgets.TouchImageView;
 
 public class CustomDialog {
     public static int flag = 0;
-    static boolean result = false;
 
 
     public static void showInvalidPopUp(final Context context, String title, String body) {
@@ -28,18 +27,19 @@ public class CustomDialog {
         final Dialog dialog = new Dialog( context );
         dialog.requestWindowFeature( Window.FEATURE_NO_TITLE );
         dialog.setContentView( R.layout.dialog_incorrect_credentials );
-        TextView titleTv = dialog.findViewById( R.id.titleTv );
-        try {
-            if (title.length() == 0) {
-                titleTv.setVisibility( View.GONE );
-            } else {
-                titleTv.setVisibility( View.VISIBLE );
-                titleTv.setText( title );
-            }
-        } catch (NullPointerException ex) {
-            ex.printStackTrace();
-        }
+        dialog.findViewById( R.id.titleTv ).setVisibility(View.GONE);
 
+//        try {
+//            if (title.length() == 0) {
+//                titleTv.setVisibility( View.GONE );
+//            } else {
+//                titleTv.setVisibility( View.VISIBLE );
+//                titleTv.setText( title );
+//            }
+//        } catch (NullPointerException ex) {
+//            ex.printStackTrace();
+//        }
+//
 
         TextView bodyTv = dialog.findViewById( R.id.bodyTv );
         bodyTv.setText( body );
