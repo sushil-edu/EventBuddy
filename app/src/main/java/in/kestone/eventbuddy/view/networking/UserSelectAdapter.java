@@ -1,7 +1,7 @@
 package in.kestone.eventbuddy.view.networking;
 
 import android.app.Dialog;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import in.kestone.eventbuddy.R;
-import in.kestone.eventbuddy.model.agenda_model.Speaker;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
 
 public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.MyHolder> {

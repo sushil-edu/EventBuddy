@@ -6,30 +6,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.badoualy.datepicker.DatePickerTimeline;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.DateFormat;
-import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +42,7 @@ import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
+import in.kestone.eventbuddy.common.CalculateTimeSlot;
 import in.kestone.eventbuddy.common.CompareDateTime;
 import in.kestone.eventbuddy.common.GenerateDates;
 import in.kestone.eventbuddy.common.LocalStorage;
@@ -65,21 +64,11 @@ import retrofit2.Response;
 
 public class NetworkScheduleFragment extends Fragment implements View.OnClickListener, SelectedSpeaker, DatePickerAdapter.DateSelection {
 
-    String[] time = {"10:00-10:30", "10:30-11:00",
-            "11:00-11:30", "11:30-12:00",
-            "12:00-12:30", "12:30-13:00",
-            "13:00-13:30", "13:30-14:00",
-            "14:00-14:30", "14:30-15:00",
-            "15:00-15:30", "15:30-16:00",
-            "16:00-16:30", "16:30-17:00",
-            "17:00-17:30", "17:30-18:00"};
-    String selectedDateTime = null;
-    int selectedPos = 0;
     @BindView(R.id.typeTv)
     TextView typeTv;
     @BindView(R.id.nameTv)
     TextView nameTv;
-//    @BindView(R.id.dayTv)
+    //    @BindView(R.id.dayTv)
 //    TextView dayTv;
 //    @BindView(R.id.monthTv)
 //    TextView monthTv;
@@ -105,35 +94,38 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
     TextView tvSelectDate;
     @BindView(R.id.tvSelectTimeSlot)
     TextView tvSelectTimeSlot;
-
     String dayStr = "", monthStr = "", hoursStr = "", minutesStr = "", name = "";
-    String speakerId = "";
-    boolean flag = true;// true for schedule and false for reschedule
-    Long emb_id;
-    SpeakerDetail speakerDetail;
-    ArrayList<Location> listLocation = new ArrayList<>();
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss aa");
-    String insertedDate = String.valueOf(dateFormat.format(Calendar.getInstance().getTime()));
+
+    private String selectedDateTime = null;
+    private int selectedPos = 0;
+    private String speakerId = "";
+    private boolean flag = true;// true for schedule and false for reschedule
+    private Long emb_id;
+    private SpeakerDetail speakerDetail;
+    private ArrayList<Location> listLocation = new ArrayList<>();
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss aa");
+    private String insertedDate =
+            String.valueOf(dateFormat.format(Calendar.getInstance().getTime()));
     //for delegate
-    String activationDateForDelegateFrom;
-    String activationDateForDelegateTo;
-    String activationTimeForDelegateFrom;
-    String activationTimeForDelegateTo;
+    private String activationDateForDelegateFrom;
+    private String activationDateForDelegateTo;
+    private String activationTimeForDelegateFrom;
+    private String activationTimeForDelegateTo;
     //for speaker
-    String activationDateForSpeakerFrom;
-    String activationDateForSpeakerTo;
-    String activationTimeForSpeakerFrom;
-    String activationTimeForSpeakerTo;
+    private String activationDateForSpeakerFrom;
+    private String activationDateForSpeakerTo;
+    private String activationTimeForSpeakerFrom;
+    private String activationTimeForSpeakerTo;
     //current date and time
-    SimpleDateFormat dateFormatC = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat dateFormatC = new SimpleDateFormat("yyyy-MM-dd");
     //    SimpleDateFormat timeFormat = new SimpleDateFormat( "h:mm a" );
-    SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
-    String strCurrentDate = dateFormatC.format(Calendar.getInstance().getTime());
-    String strCurrentTime = timeFormat.format(new Date()), selectedDate;
-    String delegateErrorMsg, speakerErrorMsg;
-    int slot;
-    String uType = null;
-    Date currentDate, currentTime;
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("kk:mm");
+    private String strCurrentDate = dateFormatC.format(Calendar.getInstance().getTime());
+    private String strCurrentTime = timeFormat.format(new Date()), selectedDate;
+    private String delegateErrorMsg, speakerErrorMsg;
+    private int slot;
+    private String uType = null;
+    private Date currentDate, currentTime;
     private ArrayList<SpeakerDetail> speakerList = new ArrayList<>();
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -235,30 +227,34 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
         //for delegates
         String[] ddFrom, dtFrom;
         String[] ddTo, dtTo;
-        ddFrom = networkingList.getDelegateNetworkingDateFrom().split("T");
-        ddTo = networkingList.getDelegateNetworkingDateTo().split("T");
-        activationDateForDelegateFrom = ddFrom[0];
-        activationDateForDelegateTo = ddTo[0];
+        try {
+            ddFrom = networkingList.getDelegateNetworkingDateFrom().split("T");
+            ddTo = networkingList.getDelegateNetworkingDateTo().split("T");
+            activationDateForDelegateFrom = ddFrom[0];
+            activationDateForDelegateTo = ddTo[0];
 
-        dtFrom = networkingList.getDelegateNetworkingTimeFrom().split("T");
-        dtTo = networkingList.getDelegateNetworkingTimeTo().split("T");
-        activationTimeForDelegateFrom = dtFrom[1];
-        activationTimeForDelegateTo = dtTo[1];
+            dtFrom = networkingList.getDelegateNetworkingTimeFrom().split("T");
+            dtTo = networkingList.getDelegateNetworkingTimeTo().split("T");
+            activationTimeForDelegateFrom = dtFrom[1];
+            activationTimeForDelegateTo = dtTo[1];
 //        delegateErrorHeader = networkingList.getNetworkingAlertMsgHeaderWithinDelegates();
-        delegateErrorMsg = networkingList.getNetworkingAlertMsgWithinDelegates();
+            delegateErrorMsg = networkingList.getNetworkingAlertMsgWithinDelegates();
 
-        //for speaker
-        String[] sdFrom, stFrom;
-        String[] sdTo, stTo;
-        sdFrom = networkingList.getSpeakerNetworkingDateFrom().split("T");
-        sdTo = networkingList.getSpeakerNetworkingDateTo().split("T");
-        activationDateForSpeakerFrom = sdFrom[0];
-        activationDateForSpeakerTo = sdTo[0];
+            //for speaker
+            String[] sdFrom, stFrom;
+            String[] sdTo, stTo;
+            sdFrom = networkingList.getSpeakerNetworkingDateFrom().split("T");
+            sdTo = networkingList.getSpeakerNetworkingDateTo().split("T");
+            activationDateForSpeakerFrom = sdFrom[0];
+            activationDateForSpeakerTo = sdTo[0];
 
-        stFrom = networkingList.getSpeakerNetworkingTimeFrom().split("T");
-        stTo = networkingList.getSpeakerNetworkingTimeTo().split("T");
-        activationTimeForSpeakerFrom = stFrom[1];
-        activationTimeForSpeakerTo = stTo[1];
+            stFrom = networkingList.getSpeakerNetworkingTimeFrom().split("T");
+            stTo = networkingList.getSpeakerNetworkingTimeTo().split("T");
+            activationTimeForSpeakerFrom = stFrom[1];
+            activationTimeForSpeakerTo = stTo[1];
+        }catch (Exception e){
+            CustomDialog.showInvalidPopUp(getActivity(), "", "Date and time format not correct");
+        }
 
 
 //        speakerErrorHeader = networkingList.getNetworkingAlertMsgHeaderWithinSpeaker();
@@ -437,13 +433,17 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.tvSelectTimeSlot:
 
-                List<DateParser> dateParsers = new ArrayList<>();
-                for (String sTime : time) {
-                    DateParser dp = new DateParser();
-                    dp.setTime(sTime);
-                    dateParsers.add(dp);
+                if (typeTv.getText().toString().equalsIgnoreCase("Speaker") ||
+                        typeTv.getText().toString().equalsIgnoreCase("Delegate")) {
+                    List<DateParser> dateParsers = new ArrayList<>();
+                    for (String sTime : CalculateTimeSlot.timeSlot(9, 21)) {
+                        DateParser dp = new DateParser();
+                        dp.setTime(sTime);
+                        dateParsers.add(dp);
+                    }
+
+                    showBottomSheet(getActivity(), dateParsers, "time");
                 }
-                showBottomSheet(getActivity(), dateParsers, "time");
                 break;
 
             case R.id.LocationRLl:
@@ -477,23 +477,26 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                         if (!tvLocation.getText().toString().trim().isEmpty()) {
 //                            if (!dayTv.getText().toString().contains("Day") && !monthTv.getText().toString().contains("Month")
 //                                    && !hourTv.getText().toString().contains("Hrs") && !minuteTv.getText().toString().contains("Min")) {
-                            if(!tvSelectTimeSlot.getText().toString().equalsIgnoreCase("Select time slot") &&
-                            !tvSelectDate.getText().toString().equalsIgnoreCase("Select Date")){
-                                String requestTime = tvSelectTimeSlot.getText().toString();
+                            if (!tvSelectTimeSlot.getText().toString().equalsIgnoreCase("Select time slot") &&
+                                    !tvSelectDate.getText().toString().equalsIgnoreCase("Select Date")) {
+                                String requestTime = tvSelectTimeSlot.getText().toString().trim();
 //                                        hourTv.getText().toString().concat(":").concat(minuteTv.getText().toString());
-                                String requestDate = tvSelectDate.getText().toString();
+                                String requestDate = tvSelectDate.getText().toString().trim();
+                                Log.e("Selected date ", requestDate.concat(" ").concat(requestTime));
 //                                        dayTv.getText().toString().concat(" ").concat(monthTv.getText().toString());
                                 //compare date time for delegate/speaker
                                 if (typeTv.getText().toString().equalsIgnoreCase("Delegate")) {
                                     try {
 
-                                        if (CompareDateTime.compareDateTime(activationDateForDelegateFrom, activationDateForDelegateTo, activationTimeForDelegateFrom, activationTimeForDelegateTo)) {
+                                        if (CompareDateTime.compareDateTimeForNetworking(activationDateForDelegateFrom,
+                                                activationDateForDelegateTo, activationTimeForDelegateFrom, activationTimeForDelegateTo,
+                                                requestDate + " " + requestTime)) {
 
                                             Progress.showProgress(getActivity());
                                             NetworkingList mNetworking = new NetworkingList();
                                             mNetworking.setEventID((long) LocalStorage.getEventID(getActivity()));
-                                            mNetworking.setNetworkingRequestDate(requestDate.trim());
-                                            mNetworking.setNetworingRequestTime(requestTime.trim());
+                                            mNetworking.setNetworkingRequestDate(requestDate);
+                                            mNetworking.setNetworingRequestTime(requestTime);
                                             mNetworking.setNetworkingLocation(tvLocation.getText().toString());
                                             mNetworking.setLocation(tvLocation.getText().toString());
                                             mNetworking.setNetworkingComments(networkingCommentEv.getText().toString());
@@ -522,12 +525,14 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                                     }
                                 } else if (typeTv.getText().toString().equalsIgnoreCase("Speaker")) {
                                     try {
-                                        if (CompareDateTime.compareDateTime(activationDateForSpeakerFrom, activationDateForSpeakerTo, activationTimeForSpeakerFrom, activationTimeForSpeakerTo)) {
+                                        if (CompareDateTime.compareDateTimeForNetworking(activationDateForSpeakerFrom,
+                                                activationDateForSpeakerTo, activationTimeForSpeakerFrom,
+                                                activationTimeForSpeakerTo, requestDate + " " + requestTime)) {
 //                                        Progress.showProgress( getActivity() );
                                             NetworkingList mNetworking = new NetworkingList();
                                             mNetworking.setEventID((long) LocalStorage.getEventID(getActivity()));
-                                            mNetworking.setNetworkingRequestDate(requestDate.trim());
-                                            mNetworking.setNetworingRequestTime(requestTime.trim());
+                                            mNetworking.setNetworkingRequestDate(requestDate);
+                                            mNetworking.setNetworingRequestTime(requestTime);
                                             mNetworking.setNetworkingLocation(tvLocation.getText().toString());
                                             mNetworking.setLocation(tvLocation.getText().toString());
                                             mNetworking.setNetworkingComments(networkingCommentEv.getText().toString());
@@ -642,6 +647,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                     CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
 
+                tvSelectTimeSlot.setHint(R.string.select_time_slot);
+                tvSelectDate.setHint(R.string.select_date);
+                networkingCommentEv.getText().clear();
 
             }
 
@@ -668,6 +676,9 @@ public class NetworkScheduleFragment extends Fragment implements View.OnClickLis
                     CustomDialog.showInvalidPopUp(getActivity(), CONSTANTS.ERROR, response.message());
                 }
 
+                tvSelectTimeSlot.setHint(R.string.select_time_slot);
+                tvSelectDate.setHint(R.string.select_date);
+                networkingCommentEv.getText().clear();
 
             }
 

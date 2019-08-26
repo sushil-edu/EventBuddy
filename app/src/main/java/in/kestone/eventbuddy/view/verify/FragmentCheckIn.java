@@ -13,15 +13,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -87,11 +89,11 @@ public class FragmentCheckIn extends Fragment {
     String err_msg = "", err_header = "";
     View view;
     @BindView(R.id.tv_checkin_title)
-    CustomTextView checkIn_title;
+    TextView checkIn_title;
     @BindView(R.id.tv_checkin)
-    CustomButton tv_checkIn;
+    Button tv_checkIn;
     @BindView(R.id.tv_skip)
-    CustomTextView tv_skip;
+    TextView tv_skip;
     @BindView( R.id.image_background )
     ImageView imageBackGround;
     CustomDialog dialog;
@@ -137,7 +139,7 @@ public class FragmentCheckIn extends Fragment {
         radius = geoTag.getRadius();
 
         if(LocalStorage.getEventID( getActivity() )!=0){
-            Picasso.with( getActivity() ).load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( getActivity() ) ))
+            Picasso.get().load(  CONSTANTS.betaimagepath.concat( LocalStorage.getBackground( getActivity() ) ))
                     .into( imageBackGround );
         }
 

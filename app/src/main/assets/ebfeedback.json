@@ -1,0 +1,166 @@
+{
+  "StatusCode": 200,
+  "Data": [
+    {
+      "qId": "1",
+      "qType": "radio",
+      "question": "Have you ever ordered [PRODUCT] from [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Yes"
+        },
+        {
+          "optionId": "02",
+          "option": "No"
+        }
+      ]
+    },
+    {
+      "qId": "2",
+      "qType": "radio",
+      "question": "Overall, how would you rate [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Excellent"
+        },
+        {
+          "optionId": "02",
+          "option": "Good"
+        },
+        {
+          "optionId": "03",
+          "option": "Average"
+        },
+        {
+          "optionId": "04",
+          "option": "Poor"
+        },
+        {
+          "optionId": "05",
+          "option": "Terrible"
+        }
+      ]
+    },
+    {
+      "qId": "3",
+      "qType": "checkbox",
+      "question": "Which of the following modes did you use to place the LAST order for [PRODUCT]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Mail Order"
+        },
+        {
+          "optionId": "02",
+          "option": "Internet"
+        },
+        {
+          "optionId": "03",
+          "option": "Over the phone call"
+        },
+        {
+          "optionId": "04",
+          "option": "fax"
+        },
+        {
+          "optionId": "05",
+          "option": "Other"
+        }
+      ]
+    },
+    {
+      "qId": "4",
+      "qType": "textbox",
+      "question": "What are the THREE main reasons you didn't purchase [PRODUCT] from [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Write your comment"
+        }
+      ]
+    },
+    {
+      "qId": "5",
+      "qType": "radio",
+      "question": "Have you ever ordered [PRODUCT] from [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Yes"
+        },
+        {
+          "optionId": "02",
+          "option": "No"
+        }
+      ]
+    },
+    {
+      "qId": "6",
+      "qType": "radio",
+      "question": "Overall, how would you rate [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Excellent"
+        },
+        {
+          "optionId": "02",
+          "option": "Good"
+        },
+        {
+          "optionId": "03",
+          "option": "Average"
+        },
+        {
+          "optionId": "04",
+          "option": "Poor"
+        },
+        {
+          "optionId": "05",
+          "option": "Terrible"
+        }
+      ]
+    },
+    {
+      "qId": "7",
+      "qType": "checkbox",
+      "question": "Which of the following modes did you use to place the LAST order for [PRODUCT]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Mail Order"
+        },
+        {
+          "optionId": "02",
+          "option": "Internet"
+        },
+        {
+          "optionId": "03",
+          "option": "Over the phone call"
+        },
+        {
+          "optionId": "04",
+          "option": "fax"
+        },
+        {
+          "optionId": "05",
+          "option": "Other"
+        }
+      ]
+    },
+    {
+      "qId": "8",
+      "qType": "textbox",
+      "question": "What are the THREE main reasons you didn't purchase [PRODUCT] from [COMPANY]?",
+      "options": [
+        {
+          "optionId": "01",
+          "option": "Write your comment"
+        }
+      ]
+    }
+  ],
+  "Message": "Ok"
+}

@@ -3,18 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:focusableInTouchMode="true"
     android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include layout="@layout/toolbar" />
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,8 +23,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="100dp"
@@ -36,19 +35,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
+                    android:src="@drawable/default_user_grey"
                     app:civ_border_overlay="true"
-                    app:civ_border_width=".5dp"
-                    android:src="@drawable/default_user_grey" />
+                    app:civ_border_width=".5dp" />
 
                 <ImageView
                     android:id="@+id/mPassIv"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
+                    android:contentDescription="Btn edit"
+                    android:padding="5dp"
                     android:src="@drawable/camera_grey"
-                    android:visibility="visible"
-                    android:padding="5dp"/>
+                    android:visibility="visible" />
 
             </RelativeLayout>
 
@@ -57,11 +57,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="@dimen/dimen_30dp"
                 android:layout_marginRight="20dp"
                 android:gravity="center"
-                android:text="abcd@gmail.com"
-                android:textSize="15sp"
-                android:layout_marginTop="@dimen/dimen_30dp"/>
+                android:text="@string/userEmail"
+                android:textSize="15sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -75,8 +75,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
                 android:gravity="center"
                 android:text="Unique Id"
                 android:textColor="@color/black"
@@ -98,12 +98,12 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Name"
-                android:singleLine="true"
+                android:hint="@string/username"
+                android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
+                android:singleLine="true"
                 android:textColor="@color/black"
-                android:inputType="text"
                 android:textColorHint="@color/black"
                 android:textSize="15sp" />
 
@@ -122,11 +122,11 @@
                 android:background="@null"
                 android:gravity="center"
                 android:hint="Mobile No."
-                android:singleLine="true"
+                android:inputType="phone"
+                android:maxLength="10"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:maxLength="10"
-                android:inputType="phone"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textSize="15sp" />
@@ -145,11 +145,11 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Organization"
-                android:singleLine="true"
+                android:hint="@string/organization"
+                android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:inputType="text"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textSize="15sp" />
@@ -168,11 +168,11 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Designation"
-                android:singleLine="true"
+                android:hint="@string/userDesignation"
+                android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:inputType="text"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textSize="15sp" />
@@ -203,7 +203,7 @@
                     android:id="@+id/checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:theme="@style/MyCheckBox" />
 
                 <in.kestone.eventbuddy.widgets.CustomTextView

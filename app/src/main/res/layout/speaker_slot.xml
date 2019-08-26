@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutSpeakerSlot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_sheet"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_10dp"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="20dp"
+    app:layout_anchorGravity="top|end"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:layout_constraintCircleRadius="@dimen/padding_5">
+
+    <View
+        android:id="@+id/viewIndicator"
+        android:layout_width="50dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/circle" />
+
+    <in.kestone.eventbuddy.widgets.CustomBoldTextView
+        android:id="@+id/tvTimeSlotTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="@dimen/padding_5"
+        android:text="Available Time Slot"
+        android:textAlignment="center"
+         />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTimeSlot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

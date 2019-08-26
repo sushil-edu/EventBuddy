@@ -6,14 +6,12 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.ImageView;
 
 
-public class TouchImageView extends android.support.v7.widget.AppCompatImageView{
+public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView{
     Matrix matrix;
 
     // We can be in one of these 3 states

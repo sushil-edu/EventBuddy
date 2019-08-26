@@ -10,7 +10,7 @@ public class AppConf implements Serializable {
     @SerializedName("AppVersion")
     private float mAppVersion;
     @SerializedName("Data")
-    Event mEvent;
+    public Event mEvent;
     @SerializedName("StatusCode")
     private int mStatusCode;
 

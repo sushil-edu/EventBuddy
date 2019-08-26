@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-public class ToolbarNormalTextView extends android.support.v7.widget.AppCompatTextView {
+public class ToolbarNormalTextView extends androidx.appcompat.widget.AppCompatTextView {
 
 
     public ToolbarNormalTextView(Context context) {

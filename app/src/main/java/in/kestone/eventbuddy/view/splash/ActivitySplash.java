@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -40,9 +41,9 @@ import retrofit2.Response;
 public class ActivitySplash extends Activity implements SplashMvpView {
 
     @BindView(R.id.tv_eventName)
-    CustomTextView tv_eventName;
+    TextView tv_eventName;
     @BindView(R.id.tv_error)
-    CustomTextView tv_error;
+    TextView tv_error;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
     @BindView(R.id.imageSplashBackground)
@@ -80,8 +81,8 @@ public class ActivitySplash extends Activity implements SplashMvpView {
             getConfig( LocalStorage.getEventID( ActivitySplash.this ) );
             Progress.showProgress( this );
             tv_eventName.setVisibility( View.GONE );
-            Picasso.with( this )
-                    .load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getSplashBackground( this ) ) )
+            Picasso.get()
+                    .load( CONSTANTS.betaimagepath.concat( LocalStorage.getSplashBackground( this ) ) )
                     .into( splashBackground );
         } else {
             startActivity( new Intent( ActivitySplash.this, SelectEventActivity.class ) );

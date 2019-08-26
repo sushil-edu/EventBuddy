@@ -27,6 +27,13 @@
     <string name="icon_heart">&#xf004;</string>
     <string name="icon_eye">&#xf06e;</string>
     <string name="icon_eye_slash">&#xf070;</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_time_slot">Select Time Slot</string>
+    <string name="username">User Name</string>
+    <string name="userEmail">example@email.com</string>
+    <string name="userDesignation">Android Developer</string>
+    <string name="organization">Organization</string>
+    <string name="forgot_screen_message">It happens. Enter your registered Email ID and check your mailbox for further instructions.</string>
 
 
 </resources>

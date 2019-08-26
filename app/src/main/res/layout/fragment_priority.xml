@@ -19,11 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <in.kestone.eventbuddy.widgets.CustomTextView
+    <in.kestone.eventbuddy.widgets.CustomBoldTextView
         android:id="@+id/tv_welcome_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue"
+        android:text="Event Name"
         android:textAlignment="center"
         android:textSize="@dimen/dimen_22sp"
         android:textColor="@color/white"

@@ -4,6 +4,8 @@ public class CONSTANTS {
 
 
     public static final long EVENTID = 1;
+    public static final String betaimagepath = "http://eventsbuddy.in/beta/";
+
     //Menu Title
     public static final String ACTIVITYSTREAM = "Activity Stream";
     public static final String ACTIVITYSTREAM2 = "ActivityStream";

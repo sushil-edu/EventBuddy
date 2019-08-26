@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,12 +59,11 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
 
 
         holder.layout_profile.setOnClickListener( new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent( mContext, ActivitySpeakerDetails.class );
                 SpeakerDetail speakerDetail = new SpeakerDetail();
-                speakerDetail.setUserID( Math.toIntExact( streamData.getUserID() ) );
+                speakerDetail.setUserID(  streamData.getUserID() );
                 speakerDetail.setFirstName( streamData.getFirstName() );
                 speakerDetail.setLastName( streamData.getLastName() );
                 speakerDetail.setDesignation( streamData.getDesignation() );
@@ -104,7 +103,7 @@ class ActivityStreamAdapter extends RecyclerView.Adapter<ActivityStreamAdapter.M
             holder.mActivityIv.setVisibility( View.GONE );
         }
 
-        Picasso.with( mContext )
+        Picasso.get()
                 .load( LocalStorage.getImagePath( mContext ).concat( streamData.getImage() ) )
                 .placeholder( R.drawable.default_user_grey )
                 .into( holder.userIv );

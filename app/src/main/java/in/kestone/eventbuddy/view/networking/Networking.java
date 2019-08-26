@@ -1,46 +1,31 @@
 package in.kestone.eventbuddy.view.networking;
 
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
-import in.kestone.eventbuddy.common.ReadJson;
-import in.kestone.eventbuddy.data.SharedPrefsHelper;
-import in.kestone.eventbuddy.http.APIClient;
-import in.kestone.eventbuddy.http.APIInterface;
-import in.kestone.eventbuddy.model.agenda_model.AgendaList;
 import in.kestone.eventbuddy.model.agenda_model.ModelAgenda;
-import in.kestone.eventbuddy.model.app_config_model.ListEvent;
-import in.kestone.eventbuddy.model.app_config_model.Location;
 import in.kestone.eventbuddy.model.networking_model.MNetworking;
-import in.kestone.eventbuddy.model.networking_model.NetworkingList;
 import in.kestone.eventbuddy.model.speaker_model.SpeakerDetail;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.

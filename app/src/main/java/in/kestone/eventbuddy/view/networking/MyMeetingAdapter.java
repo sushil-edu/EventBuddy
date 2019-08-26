@@ -3,8 +3,7 @@ package in.kestone.eventbuddy.view.networking;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.RecyclerView;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.pkmmte.view.CircularImageView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view =
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.my_meeting_cell, parent, false);
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.my_meeting_cell_new, parent, false);
         return new MyHolder(view);
     }
 
@@ -57,10 +57,18 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.designationTv.setText(networkingList.getDesignation());
             holder.organizationTv.setText(networkingList.getOrganization());
             holder.dateTv.setText(networkingList.getNetworkingRequestDate());
+            holder.tvDate.setText(networkingList.getNetworkingRequestDate().substring(4, 6));
+            holder.tvDay.setText(networkingList.getNetworkingRequestDate().substring(0, 3));
             holder.timeTv.setText(networkingList.getNetworingRequestTime());
             holder.locationTv.setText(networkingList.getNetworkingLocation());
-            holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
-            holder.btnReschedule.setText(CONSTANTS.APPROVE);
+            if (networkingList.getNetworkingComments().length() > 0) {
+                holder.networkingCommentTv.setVisibility(View.VISIBLE);
+                holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+            } else {
+                holder.networkingCommentTv.setVisibility(View.GONE);
+                holder.networkingCommentTv.setVisibility(View.GONE);
+            }
+            holder.btnReschedule.setEnabled(false);//.setText(CONSTANTS.APPROVE);
 
         } else if (page.equalsIgnoreCase(CONSTANTS.PENDING)) {
             //for pending page
@@ -68,9 +76,17 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             holder.designationTv.setText(networkingList.getToDes());
             holder.organizationTv.setText(networkingList.getToORG());
             holder.dateTv.setText(networkingList.getNetworkingRequestDate());
+            holder.tvDate.setText(networkingList.getNetworkingRequestDate().substring(4, 6));
+            holder.tvDay.setText(networkingList.getNetworkingRequestDate().substring(0, 3));
             holder.timeTv.setText(networkingList.getNetworingRequestTime());
             holder.locationTv.setText(networkingList.getNetworkingLocation());
-            holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+            if (networkingList.getNetworkingComments().length() > 0) {
+                holder.networkingCommentTv.setVisibility(View.VISIBLE);
+                holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+            } else {
+                holder.networkingCommentTv.setVisibility(View.GONE);
+                holder.networkingCommentTv.setVisibility(View.GONE);
+            }
 
         } else if (page.equalsIgnoreCase(CONSTANTS.SCHEDULE)) {
             if (userID == Integer.parseInt(networkingList.getRequestFromID())) {
@@ -78,19 +94,37 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
                 holder.designationTv.setText(networkingList.getToDes());
                 holder.organizationTv.setText(networkingList.getToORG());
                 holder.dateTv.setText(networkingList.getNetworkingRequestDate());
+                holder.tvDate.setText(networkingList.getNetworkingRequestDate().substring(4, 6));
+                holder.tvDay.setText(networkingList.getNetworkingRequestDate().substring(0, 3));
                 holder.timeTv.setText(networkingList.getNetworingRequestTime());
                 holder.locationTv.setText(networkingList.getNetworkingLocation());
-                holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+                if (networkingList.getNetworkingComments().length() > 0) {
+                    holder.networkingCommentTv.setVisibility(View.VISIBLE);
+                    holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+                } else {
+                    holder.networkingCommentTv.setVisibility(View.GONE);
+                    holder.networkingCommentTv.setVisibility(View.GONE);
+                }
             } else if (userID == Integer.parseInt(networkingList.getRequestToID())) {
                 holder.nameTv.setText(String.format("%s %s", networkingList.getFirstName(), networkingList.getLastName()));
                 holder.designationTv.setText(networkingList.getDesignation());
                 holder.organizationTv.setText(networkingList.getOrganization());
                 holder.dateTv.setText(networkingList.getNetworkingRequestDate());
+                holder.tvDate.setText(networkingList.getNetworkingRequestDate().substring(4, 6));
+                holder.tvDay.setText(networkingList.getNetworkingRequestDate().substring(0, 3));
                 holder.timeTv.setText(networkingList.getNetworingRequestTime());
                 holder.locationTv.setText(networkingList.getNetworkingLocation());
-                holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+                if (networkingList.getNetworkingComments().length() > 0) {
+                    holder.networkingCommentTv.setVisibility(View.VISIBLE);
+                    holder.networkingCommentTv.setText(networkingList.getNetworkingComments());
+                } else {
+                    holder.networkingCommentTv.setVisibility(View.GONE);
+                    holder.networkingCommentTv.setVisibility(View.GONE);
+                }
+
             }
         }
+
 
         holder.btnReschedule.setOnClickListener(view -> {
             Log.e("ID ", "" + networkingList.getEBMRID());
@@ -160,8 +194,9 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
     }
 
     class MyHolder extends RecyclerView.ViewHolder {
-        TextView nameTv, organizationTv, designationTv, dateTv, timeTv, btnCancel, btnReschedule,
-                locationTv, networkingCommentTv;
+        TextView nameTv, organizationTv, designationTv, dateTv, timeTv,
+                locationTv, networkingCommentTv, tvDate, tvDay;
+        TextView btnCancel, btnReschedule;
 //        CircularImageView profileIv;
 
         private MyHolder(View itemView) {
@@ -172,11 +207,14 @@ public class MyMeetingAdapter extends RecyclerView.Adapter<MyMeetingAdapter.MyHo
             designationTv = itemView.findViewById(R.id.desigTv);
 //            profileIv = itemView.findViewById(R.id.profileIv);
             dateTv = itemView.findViewById(R.id.dateTv);
+            dateTv.setVisibility(View.GONE);
             timeTv = itemView.findViewById(R.id.timeTv);
             btnCancel = itemView.findViewById(R.id.btnCancel);
             btnReschedule = itemView.findViewById(R.id.btnReschedule);
             locationTv = itemView.findViewById(R.id.locationTv);
             networkingCommentTv = itemView.findViewById(R.id.networkingCommentTv);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvDay = itemView.findViewById(R.id.tvDay);
         }
     }
 }

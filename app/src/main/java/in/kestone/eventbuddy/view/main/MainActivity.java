@@ -10,16 +10,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 //                ft.commit();
 //                break;
             default:
-                CustomDialog.showInvalidPopUp( MainActivity.this, CONSTANTS.ERROR, "Module not found" );
+                CustomDialog.showInvalidPopUp( MainActivity.this, CONSTANTS.ERROR, "Sorry...\nSomething went wrong" );
                 break;
 
         }
@@ -466,18 +466,21 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         tvEmail.setText( dataManager.getEmailId() );
         tvDesignation.setText( dataManager.getDesignation() );
         if (LocalStorage.getEventID( MainActivity.this ) != 0) {
-            Picasso.with( MainActivity.this ).load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getMasterHead( MainActivity.this ) ) )
+            Picasso.get()
+                    .load( CONSTANTS.betaimagepath.concat( LocalStorage.getMasterHead( MainActivity.this ) ) )
                     .fit().into( imageBackGround );
         }
 
         if (dataManager.getImage().contains( LocalStorage.getImagePath( MainActivity.this ) )) {
 
-            Picasso.with( MainActivity.this ).load( (dataManager.getImage()) )
+            Picasso.get()
+                    .load( (dataManager.getImage()) )
                     .resize( 80, 80 )
                     .placeholder( R.drawable.default_user_grey )
                     .into( profileImage );
         } else {
-            Picasso.with( MainActivity.this ).load( LocalStorage.getImagePath( MainActivity.this ).concat( dataManager.getImage() ) )
+            Picasso.get()
+                    .load( LocalStorage.getImagePath( MainActivity.this ).concat( dataManager.getImage() ) )
                     .resize( 80, 80 )
                     .placeholder( R.drawable.default_user_grey )
                     .into( profileImage );
@@ -515,21 +518,13 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
         LinearLayout root = clearAll.findViewById( R.id.layout_root );
         TextView no = clearAll.findViewById( R.id.no );
         TextView yes = clearAll.findViewById( R.id.yes );
-        yes.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearAll.dismiss();
+        yes.setOnClickListener(v -> {
+            clearAll.dismiss();
 //                LocalStorage.clearData( MainActivity.this );
-                mainPresenter.setUserLoggedOut();
+            mainPresenter.setUserLoggedOut();
 
-            }
-        } );
-        no.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clearAll.dismiss();
-            }
-        } );
+        });
+        no.setOnClickListener(view -> clearAll.dismiss());
 
         clearAll.getWindow().setLayout( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
         clearAll.show();
@@ -580,7 +575,8 @@ public class MainActivity extends AppCompatActivity implements ViewClickListener
 
     @Override
     public void onError(boolean status) {
-        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(), list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
+        openFragment( list.get( 0 ).getDisplayTitle(), list.get( 0 ).getMenutitle(),
+                list.get( 0 ).getHeader(), list.get( 0 ).getSubheader() );
     }
 
 

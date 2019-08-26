@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,8 +15,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="1dp"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="0dp">
+        app:cardCornerRadius="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +36,7 @@
                     android:padding="20dp">
 
 
-                    <in.kestone.eventbuddy.widgets.CustomTextView
+                    <in.kestone.eventbuddy.widgets.CustomBoldTextView
                         android:id="@+id/timeTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -58,7 +57,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginEnd="15dp"
                         android:text="Bussiness Management"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
@@ -80,7 +79,7 @@
                     android:src="@drawable/ic_arrow_right"/>
             </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/nestedReyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +114,6 @@
                         style="@style/Base.Widget.AppCompat.RatingBar.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/rateTv"
                         android:layout_gravity="start"
                         android:progressTint="@color/colorPrimary"
                         android:rating="5" />
@@ -129,7 +127,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
                     android:text="+ My Agenda"
                     android:textColor="@color/colorPrimary"
@@ -140,7 +137,7 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

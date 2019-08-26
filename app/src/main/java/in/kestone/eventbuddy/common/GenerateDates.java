@@ -57,7 +57,7 @@ public class GenerateDates {
             dp.setYear(dt[2]);
             dp.setMonth(dtM[2]);
             dp.setDate(dtM[1]);
-            dp.setFullDate(dt[1] + " " + dt[2]);
+            dp.setFullDate(dp.getDay().concat(dt[1]).concat(dt[2]));
             dateParsers.add(dp);
 
         }

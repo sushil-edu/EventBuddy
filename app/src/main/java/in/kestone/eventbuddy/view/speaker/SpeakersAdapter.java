@@ -3,7 +3,7 @@ package in.kestone.eventbuddy.view.speaker;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,11 +58,12 @@ public class SpeakersAdapter extends RecyclerView.Adapter<SpeakersAdapter.MyHold
             }
         } );
         if (speakerData.getImage().contains( LocalStorage.getImagePath( context ) )) {
-            Picasso.with( context ).load( speakerData.getImage() )
+            Picasso.get()
+                    .load( speakerData.getImage() )
                     .placeholder( R.drawable.default_user_grey )
                     .into( holder.profileIv );
         } else {
-            Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( speakerData.getImage() ) )
+            Picasso.get().load( LocalStorage.getImagePath( context ).concat( speakerData.getImage() ) )
                     .placeholder( R.drawable.default_user_grey )
                     .into( holder.profileIv );
         }

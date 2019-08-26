@@ -2,16 +2,17 @@ package in.kestone.eventbuddy.view.networking;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 
@@ -36,15 +37,16 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.My
         this.selectedDate = selectedDate;
     }
 
+
     @NonNull
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (type.equalsIgnoreCase("date")) {
             View view = LayoutInflater.from(context).inflate(R.layout.date_item, null);
-            return new MyHolder(view);
+            return new MyHolder(view, type);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.time_item, null);
-            return new MyHolder(view);
+            return new MyHolder(view, type);
         }
     }
 
@@ -55,7 +57,6 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.My
             holder.tvDate.setText(dp.getFullDate());
         } else {
             holder.tvDate.setText(dp.getTime());
-            holder.tvDate.setTextSize(12);
         }
         holder.itemView.setOnClickListener(view -> {
             selectedPos = position;
@@ -92,7 +93,6 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.My
 
         }
 
-        Log.e("Selected date ", selectedDate);
     }
 
 
@@ -109,12 +109,13 @@ public class DatePickerAdapter extends RecyclerView.Adapter<DatePickerAdapter.My
         TextView tvDate;
         LinearLayout layoutDate;
 
-        public MyHolder(@NonNull View view) {
+        public MyHolder(@NonNull View view, String type) {
             super(view);
 
-            tvDate = view.findViewById(R.id.tvDate);
             layoutDate = view.findViewById(R.id.layoutDate);
-
+            tvDate = view.findViewById(R.id.tvDate);
+            if (!type.equalsIgnoreCase("date"))
+                tvDate.setTextSize(12);
 
         }
     }

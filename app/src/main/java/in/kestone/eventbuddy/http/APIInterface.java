@@ -1,13 +1,11 @@
 package in.kestone.eventbuddy.http;
 
-
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.model.ActiveEventModel;
 import in.kestone.eventbuddy.model.ScheduleStatusResponse;
 import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
@@ -31,19 +29,16 @@ import in.kestone.eventbuddy.model.user_model.Profile;
 import in.kestone.eventbuddy.model.user_model.User;
 import in.kestone.eventbuddy.model.venue_model.MVenue;
 import okhttp3.MultipartBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface APIInterface {
-
 
 
     @GET("appconfig/{id}")
@@ -77,10 +72,10 @@ public interface APIInterface {
     Call<JsonObject> deleteMyAgenda(@Body HashMap<String, Long> request);
 
     @GET("UserModule/Getusers/speaker/{EventID}")
-    Call<Speaker> getAllSpeaker(@Path( "EventID" ) int eventID);
+    Call<Speaker> getAllSpeaker(@Path("EventID") int eventID);
 
     @GET("UserModule/Getusers/delegate/{EventID}")
-    Call<Speaker> getAllDelegates(@Path( "EventID" ) int eventID);
+    Call<Speaker> getAllDelegates(@Path("EventID") int eventID);
 
     @GET("PartnerInventory/{id}")
     Call<PartnerDetail> getPartners(@Path("id") long id);

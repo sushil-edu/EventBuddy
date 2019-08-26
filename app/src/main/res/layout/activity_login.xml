@@ -11,13 +11,15 @@
         android:id="@+id/image_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background" />
+        android:background="@drawable/background"
+        android:contentDescription="Background image"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="#8F000000" />
+        android:background="#8F000000"
+        android:contentDescription="backgound layer"/>
 
     <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->
@@ -30,7 +32,7 @@
         android:paddingTop="@dimen/dimen_50dp"
         android:weightSum="10">
 
-        <in.kestone.eventbuddy.widgets.CustomTextView
+        <in.kestone.eventbuddy.widgets.CustomBoldTextView
             android:id="@+id/tv_event_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -57,8 +59,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="@dimen/card_margin_left"
-            android:layout_marginRight="@dimen/card_margin_right"
+            android:layout_marginStart="@dimen/card_margin_left"
+            android:layout_marginEnd="@dimen/card_margin_right"
             android:layout_weight="5"
             android:orientation="vertical">
 
@@ -120,7 +122,7 @@
                         android:id="@+id/image_show_password"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:text="@string/icon_eye_slash"
                         android:textColor="@color/bg_grey"
@@ -191,7 +193,7 @@
         android:id="@+id/tv_select_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/dimen_10dp"
         android:gravity="center"

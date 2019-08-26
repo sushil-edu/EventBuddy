@@ -11,9 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -47,7 +47,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Altdialog.Progress;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.CONSTANTS;
@@ -60,7 +59,6 @@ import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.http.CallUtils;
 import in.kestone.eventbuddy.model.activity_stream_model.PostImageResponse;
 import in.kestone.eventbuddy.model.user_model.Profile;
-import in.kestone.eventbuddy.view.login.Forgot_Password;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -121,8 +119,8 @@ public class RegistrationActivity extends AppCompatActivity {
         ButterKnife.bind( RegistrationActivity.this );
 
         if (LocalStorage.getEventID( RegistrationActivity.this ) !=0) {
-            Picasso.with( this )
-                    .load( "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( this ) ) )
+            Picasso.get()
+                    .load( CONSTANTS.betaimagepath.concat( LocalStorage.getBackground( this ) ) )
                     .into( imageBackgound );
         }
         apiInterface = APIClient.getClient().create( APIInterface.class );

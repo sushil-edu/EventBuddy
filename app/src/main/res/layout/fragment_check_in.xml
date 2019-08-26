@@ -23,7 +23,7 @@
         android:layout_height="match_parent">
 
 
-        <in.kestone.eventbuddy.widgets.CustomTextView
+        <in.kestone.eventbuddy.widgets.CustomBoldTextView
             android:id="@+id/tv_checkin_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,8 +52,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginLeft="@dimen/card_margin_left"
-            android:layout_marginRight="@dimen/card_margin_right"
+            android:layout_marginStart="@dimen/card_margin_left"
+            android:layout_marginEnd="@dimen/card_margin_right"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingTop="@dimen/dimen_50dp"
@@ -63,7 +63,7 @@
                 android:layout_width="@dimen/dimen_100dp"
                 android:layout_height="@dimen/dimen_100dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_pin_drop"
+                android:src="@drawable/venue_grey"
                 android:tint="@color/bg_grey" />
 
 

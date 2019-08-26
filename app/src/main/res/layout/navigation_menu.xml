@@ -39,8 +39,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/dimen_10dp"
-                android:layout_toRightOf="@id/profile_imageview"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_toEndOf="@id/profile_imageview"
                 android:orientation="vertical"
                 android:padding="10dp">
 
@@ -48,7 +48,7 @@
                     android:id="@+id/tvName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sushil Kumar"
+                    android:text="@string/username"
                     android:textColor="@color/white"
                     android:textColorHint="@color/grey"
                     android:textSize="16sp" />
@@ -57,7 +57,7 @@
                     android:id="@+id/tvEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="sushil.k@kestone.in"
+                    android:text="@string/userEmail"
                     android:textColor="@color/white"
                     android:textColorHint="@color/grey"
                     android:textSize="14sp" />
@@ -66,7 +66,7 @@
                     android:id="@+id/tvDesignation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Android Developer"
+                    android:text="@string/userDesignation"
                     android:textColor="@color/white"
                     android:textColorHint="@color/grey"
                     android:textSize="14sp" />
@@ -76,7 +76,7 @@
                 android:id="@+id/imageEdit"
                 android:layout_width="@dimen/dimen_25dp"
                 android:layout_height="@dimen/dimen_25dp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:src="@drawable/edit_grey"
                 android:tint="@color/white" />
         </RelativeLayout>
@@ -86,9 +86,9 @@
         android:id="@+id/tv_version_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_imageview"
         android:layout_gravity="end"
-        android:paddingRight="@dimen/dimen_4dp"
+        android:paddingStart="@dimen/dimen_4dp"
+        android:paddingEnd="@dimen/dimen_4dp"
         android:paddingBottom="1dp"
         android:text="Version "
         android:textSize="10sp"
@@ -99,7 +99,7 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray" />
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView
         android:id="@+id/menu_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -89,81 +89,6 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/LocationRLl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="15dp">
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/LocationTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Select Location"
-                    android:textSize="15sp" />
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/locationNameTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_arrow_right" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/MeetingNoteRLl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="15dp">
-
-                <in.kestone.eventbuddy.widgets.CustomTextView
-                    android:id="@+id/meetingNoteTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Networking Note"
-                    android:textSize="15sp" />
-
-                <in.kestone.eventbuddy.widgets.CustomEditText
-                    android:id="@+id/networkingCommentEv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@null"
-                    android:inputType="textImeMultiLine"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp">
@@ -194,7 +119,7 @@
                         android:layout_margin="@dimen/padding_5"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:hint="Select Date"
+                        android:hint="@string/select_date"
                         android:padding="@dimen/dimen_10dp"
                         android:textColor="@color/black"
                         android:textSize="15sp"
@@ -207,7 +132,7 @@
                         android:layout_margin="@dimen/padding_5"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:hint="Select Time Slot"
+                        android:hint="@string/select_time_slot"
                         android:padding="@dimen/dimen_10dp"
                         android:textColor="@color/black"
                         android:textSize="15sp"
@@ -323,6 +248,83 @@
                 android:src="@drawable/ic_arrow_right" />
 
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/LocationRLl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/LocationTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Location"
+                    android:textSize="15sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/locationNameTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_margin="10dp"
+                android:src="@drawable/ic_arrow_right" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/MeetingNoteRLl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <in.kestone.eventbuddy.widgets.CustomTextView
+                    android:id="@+id/meetingNoteTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Networking Note"
+                    android:textSize="15sp" />
+
+                <in.kestone.eventbuddy.widgets.CustomEditText
+                    android:id="@+id/networkingCommentEv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@null"
+                    android:inputType="textImeMultiLine"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
 
         <in.kestone.eventbuddy.widgets.CustomButton
             android:id="@+id/meetingRequestBtn"

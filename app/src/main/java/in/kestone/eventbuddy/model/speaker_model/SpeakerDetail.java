@@ -36,7 +36,7 @@ public class SpeakerDetail implements Serializable {
     @SerializedName("Rating")
     private String mRating;
     @SerializedName("User_ID")
-    private int mUserID;
+    private long mUserID;
     @SerializedName("UserType")
     private String mUserType;
 
@@ -152,11 +152,11 @@ public class SpeakerDetail implements Serializable {
         mRating = rating;
     }
 
-    public int getUserID() {
+    public long getUserID() {
         return mUserID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(Long userID) {
         mUserID = userID;
     }
 

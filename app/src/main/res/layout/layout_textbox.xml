@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutTextBox"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_5">
+
+
+    <in.kestone.eventbuddy.widgets.CustomBoldTextView
+        android:id="@+id/tvTextBoxQue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Q. What are the THREE main reasons you didn't purchase [PRODUCT] from [COMPANY]?"
+        android:textColor="@color/colorPrimary" />
+
+    <in.kestone.eventbuddy.widgets.CustomEditText
+        android:id="@+id/etComment"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/padding_5"
+        android:background="@drawable/outline"
+        android:gravity="start|top"
+        android:padding="@dimen/padding_5"
+        android:textColor="@color/colorPrimary"
+        android:textSize="15sp" />
+
+</LinearLayout>

@@ -3,9 +3,8 @@ package in.kestone.eventbuddy.widgets;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class ToolbarTextView extends android.support.v7.widget.AppCompatTextView {
+public class ToolbarTextView extends androidx.appcompat.widget.AppCompatTextView {
 
 
     public ToolbarTextView(Context context) {

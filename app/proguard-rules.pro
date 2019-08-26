@@ -22,7 +22,16 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn okhttp3.internal.platform.*
 -dontwarn okio.**
--dontwarn retrofit2.Platform$Java8
+
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
 
 #-keep public class * implements com.bumptech.glide.module.GlideModule
 #-keep public class * extends com.bumptech.glide.module.AppGlideModule

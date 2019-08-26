@@ -115,8 +115,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
 //        image_show_password.setTypeface( font );
 
         if (LocalStorage.getEventID(ActivityLogin.this) != 0) {
-            Picasso.with(this)
-                    .load("http://eventsbuddy.in/beta/".concat(LocalStorage.getBackground(this)))
+            Picasso.get()
+                    .load(CONSTANTS.betaimagepath.concat(LocalStorage.getBackground(this)))
                     .into(imageBackgound);
         }
 
@@ -249,8 +249,8 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
             intent.putExtra("type", "checkIn");
         } else {
             intent = MainActivity.getStartIntent(this);
-            editor = getSharedPreferences( CONSTANTS.CHECKIN, MODE_PRIVATE ).edit();
-            editor.putBoolean( "status", true );
+            editor = getSharedPreferences(CONSTANTS.CHECKIN, MODE_PRIVATE).edit();
+            editor.putBoolean("status", true);
             editor.apply();
         }
         startActivity(intent);
@@ -275,11 +275,6 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                     CustomDialog.showInvalidPopUp(ActivityLogin.this, er_password_header, er_password_message);
                     et_password.requestFocus();
                 } else {
-//                    Profile profile = new Profile();
-//                    profile.setEmailID( email );
-//                    profile.setPassword( password );
-//                    profile.setEventID( CONSTANTS.EVENTID );
-//                    {"EmailID":"sushil.k@kestone.in","Password":"7210094970", "EventID":14}
                     HashMap<String, String> profile = new HashMap<>();
                     profile.put("EmailID", email);
                     profile.put("Password", password);
@@ -372,7 +367,7 @@ public class ActivityLogin extends Activity implements View.OnClickListener, Log
                             profileDetails.addAll(response.body().getData());
                             LocalStorage.saveImagePath(response.body().getImagePath(), ActivityLogin.this);
                             sendOTPDialog(profileDetails.get(0), "OTP send to your mail id");
-                            //                        CustomDialog.showValidPopUp( ActivityLogin.this, CONSTANTS.SUCCESS, "OTP send to your mail id");
+                            //CustomDialog.showValidPopUp( ActivityLogin.this, CONSTANTS.SUCCESS, "OTP send to your mail id");
                         } else {
                             CustomDialog.showInvalidPopUp(ActivityLogin.this, ERROR, response.body().getMessage());
                             et_mail.getText().clear();

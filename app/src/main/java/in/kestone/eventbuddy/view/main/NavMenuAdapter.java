@@ -91,108 +91,108 @@ public class NavMenuAdapter<T> implements ListAdapter {
         final Menu item = getItem( i );
         vh.textViewName.setText( item.getDisplayTitle() );
         if (item.getMenutitle().equalsIgnoreCase( "Log Out" )) {
-            Picasso.with( context ).load( "test" ).placeholder( R.drawable.logout_grey ).error( R.drawable.logout_grey ).into( vh.imageView );
+            Picasso.get().load( "test" ).placeholder( R.drawable.logout_grey ).error( R.drawable.logout_grey ).into( vh.imageView );
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.ACTIVITYSTREAM ) || item.getMenutitle().equalsIgnoreCase( CONSTANTS.ACTIVITYSTREAM2 )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.activity_stream_grey ).error( R.drawable.activity_stream_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.activity_stream_grey ).error( R.drawable.activity_stream_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.activity_stream_grey ).error( R.drawable.activity_stream_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.activity_stream_grey ).error( R.drawable.activity_stream_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.AGENDA )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.agenda_grey ).error( R.drawable.agenda_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.agenda_grey ).error( R.drawable.agenda_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.agenda_grey ).error( R.drawable.agenda_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.agenda_grey ).error( R.drawable.agenda_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.SPEAKER )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.speakers_grey ).error( R.drawable.speakers_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.speakers_grey ).error( R.drawable.speakers_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.speakers_grey ).error( R.drawable.speakers_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.speakers_grey ).error( R.drawable.speakers_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.DELEGATES )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.delegates_grey ).error( R.drawable.delegates_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.delegates_grey ).error( R.drawable.delegates_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.delegates_grey ).error( R.drawable.delegates_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.delegates_grey ).error( R.drawable.delegates_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.NETWORKING )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.networking_grey ).error( R.drawable.networking_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.networking_grey ).error( R.drawable.networking_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.networking_grey ).error( R.drawable.networking_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.networking_grey ).error( R.drawable.networking_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.POLLING )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.polls_grey ).error( R.drawable.polls_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.polls_grey ).error( R.drawable.polls_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.polls_grey ).error( R.drawable.polls_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.polls_grey ).error( R.drawable.polls_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.ASKAQUESTION )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.question_grey ).error( R.drawable.question_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.question_grey ).error( R.drawable.question_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.question_grey ).error( R.drawable.question_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.question_grey ).error( R.drawable.question_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.SOCIAL )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.social_grey ).error( R.drawable.social_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.social_grey ).error( R.drawable.social_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.social_grey ).error( R.drawable.social_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.social_grey ).error( R.drawable.social_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.VENUE )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.venue_grey ).error( R.drawable.venue_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.venue_grey ).error( R.drawable.venue_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.venue_grey ).error( R.drawable.venue_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.venue_grey ).error( R.drawable.venue_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.FEEDBACK )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.feedback_grey ).error( R.drawable.feedback_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.feedback_grey ).error( R.drawable.feedback_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.feedback_grey ).error( R.drawable.feedback_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.feedback_grey ).error( R.drawable.feedback_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.HELPDESK )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.help_desk_grey ).error( R.drawable.help_desk_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.help_desk_grey ).error( R.drawable.help_desk_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.help_desk_grey ).error( R.drawable.help_desk_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.help_desk_grey ).error( R.drawable.help_desk_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.PARTNERS )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.SPONSORS )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.default_user_grey ).error( R.drawable.default_user_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.KNOWLEDGEBASE )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.knowledge_bank ).error( R.drawable.knowledge_bank ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.knowledge_bank ).error( R.drawable.knowledge_bank ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.knowledge_bank ).error( R.drawable.knowledge_bank ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.knowledge_bank ).error( R.drawable.knowledge_bank ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.FAQS )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.faq_grey ).error( R.drawable.faq_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.faq_grey ).error( R.drawable.faq_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.faq_grey ).error( R.drawable.faq_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.faq_grey ).error( R.drawable.faq_grey ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.TANDC )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.ask_question ).error( R.drawable.ask_question ).into( vh.imageView );
             }
         } else if (item.getMenutitle().equalsIgnoreCase( CONSTANTS.NOTIFICATION )) {
             if (Patterns.WEB_URL.matcher( item.getMenuicon() ).matches()) {
-                Picasso.with( context ).load( item.getMenuicon() ).placeholder( R.drawable.notification_grey ).error( R.drawable.notification_grey ).into( vh.imageView );
+                Picasso.get().load( item.getMenuicon() ).placeholder( R.drawable.notification_grey ).error( R.drawable.notification_grey ).into( vh.imageView );
             } else {
-                Picasso.with( context ).load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.notification_grey ).into( vh.imageView );
+                Picasso.get().load( LocalStorage.getImagePath( context ).concat( item.getMenuicon() ) ).placeholder( R.drawable.notification_grey ).into( vh.imageView );
             }
 
         }

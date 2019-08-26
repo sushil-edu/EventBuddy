@@ -3,14 +3,17 @@ package in.kestone.eventbuddy.view.verify;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -19,6 +22,7 @@ import butterknife.ButterKnife;
 import in.kestone.eventbuddy.Altdialog.CustomDialog;
 import in.kestone.eventbuddy.Eventlistener.OnVerifiedListener;
 import in.kestone.eventbuddy.R;
+import in.kestone.eventbuddy.common.CONSTANTS;
 import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
 import in.kestone.eventbuddy.widgets.CustomButton;
@@ -32,13 +36,13 @@ public class OtpFragment extends Fragment {
 
     View v;
     @BindView(R.id.tv_otp_title)
-    CustomTextView otp_title;
+    TextView otp_title;
 
     @BindView(R.id.et_otp1)
     CustomEditText otp1;
 
     @BindView(R.id.tv_verify)
-    CustomButton tv_verify;
+    Button tv_verify;
 
     @BindView( R.id.image_background )
     ImageView imageBackGround;
@@ -65,7 +69,7 @@ public class OtpFragment extends Fragment {
         initialiseView();
 
         if(LocalStorage.getEventID( getActivity() )!=0){
-            Picasso.with( getActivity() ).load(  "http://eventsbuddy.in/beta/".concat( LocalStorage.getBackground( getActivity() ) ))
+            Picasso.get().load(  CONSTANTS.betaimagepath.concat( LocalStorage.getBackground( getActivity() ) ))
                     .into( imageBackGround );
         }
         return v;

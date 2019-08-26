@@ -3,12 +3,12 @@ package in.kestone.eventbuddy.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,7 +147,7 @@ public class SelectEventActivity extends AppCompatActivity {
             holder.tv_event_name.setText( eventName.getEventName() );
             if (eventName.getAppBannerImage() != null) {
                 Glide.with( activity )
-                        .load( "http://eventsbuddy.in/beta/".concat( eventName.getAppBannerImage() ) )
+                        .load( CONSTANTS.betaimagepath.concat( eventName.getAppBannerImage() ) )
                         .placeholder( R.drawable.gallery_grey )
                         .centerCrop()
                         .error( R.drawable.gallery_grey )

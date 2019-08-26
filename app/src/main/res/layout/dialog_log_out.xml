@@ -23,7 +23,6 @@
             />
     </FrameLayout>
     <in.kestone.eventbuddy.widgets.CustomTextView
-        fontPath="fonts/medium.ttf"
         tools:ignore="MissingPrefix"
         android:id="@+id/tv_title"
         android:layout_marginTop="@dimen/dimen_25dp"

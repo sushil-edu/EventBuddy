@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -23,9 +23,7 @@ import in.kestone.eventbuddy.http.APIClient;
 import in.kestone.eventbuddy.http.APIInterface;
 import in.kestone.eventbuddy.http.CallUtils;
 import in.kestone.eventbuddy.model.app_config_model.Event;
-import in.kestone.eventbuddy.model.app_config_model.GeoTag;
 import in.kestone.eventbuddy.model.app_config_model.ListEvent;
-import in.kestone.eventbuddy.model.user_model.Profile;
 import in.kestone.eventbuddy.model.user_model.User;
 import in.kestone.eventbuddy.view.login.ActivityLogin;
 import in.kestone.eventbuddy.view.main.MainActivity;

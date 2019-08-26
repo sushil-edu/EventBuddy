@@ -26,7 +26,6 @@
                 android:id="@+id/selectTv"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:text="Select Track"
                 android:textColor="@color/colorPrimary"
@@ -38,7 +37,6 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_margin="20dp"
-                android:layout_weight="2"
                 android:visibility="gone" />
 
             <in.kestone.eventbuddy.widgets.CustomTextView
@@ -52,9 +50,8 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/ic_down" />
 
             <View
@@ -77,7 +74,6 @@
                 android:id="@+id/selectTv2"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:text="Select Speaker"
                 android:textColor="@color/colorPrimary"
@@ -89,7 +85,6 @@
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_margin="20dp"
-                android:layout_weight="2"
                 android:visibility="gone" />
 
             <in.kestone.eventbuddy.widgets.CustomTextView
@@ -103,9 +98,8 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/ic_down" />
 
             <View
@@ -117,7 +111,7 @@
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/knowledgeBaseRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

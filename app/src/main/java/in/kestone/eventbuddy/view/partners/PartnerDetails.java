@@ -3,12 +3,12 @@ package in.kestone.eventbuddy.view.partners;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -23,7 +23,6 @@ import com.bumptech.glide.Glide;
 import in.kestone.eventbuddy.R;
 import in.kestone.eventbuddy.common.LocalStorage;
 import in.kestone.eventbuddy.model.partners_model.Detail;
-import in.kestone.eventbuddy.model.partners_model.PartnerDetail;
 
 
 /**

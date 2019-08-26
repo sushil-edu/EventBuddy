@@ -8,7 +8,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="@dimen/padding_5">
-    <in.kestone.eventbuddy.widgets.CustomTextView
+    <in.kestone.eventbuddy.widgets.CustomBoldTextView
         android:id="@+id/titleTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

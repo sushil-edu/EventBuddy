@@ -13,13 +13,15 @@
         android:id="@+id/image_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background" />
+        android:background="@drawable/background"
+        android:contentDescription="background image"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="#8F000000" />
+        android:background="#8F000000"
+        android:contentDescription="background layer"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -51,7 +53,7 @@
                     android:id="@+id/mPassIv"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:padding="5dp"
                     android:src="@drawable/camera_grey"
@@ -68,7 +70,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Name"
+                android:hint="@string/username"
                 android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -93,7 +95,7 @@
                 android:layout_marginRight="20dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Email"
+                android:hint="@string/userEmail"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/white"
                 android:textColorHint="@color/grey"
@@ -137,7 +139,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Organization"
+                android:hint="@string/organization"
                 android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -160,7 +162,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 android:gravity="center"
-                android:hint="Designation"
+                android:hint="@string/userDesignation"
                 android:inputType="text"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -241,7 +243,7 @@
                     android:id="@+id/checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:theme="@style/MyCheckBox" />
 
                 <in.kestone.eventbuddy.widgets.CustomTextView

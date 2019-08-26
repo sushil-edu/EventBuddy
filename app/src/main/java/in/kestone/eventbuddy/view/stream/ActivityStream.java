@@ -4,13 +4,13 @@ package in.kestone.eventbuddy.view.stream;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,10 +36,10 @@ import retrofit2.Response;
 
 
 public class ActivityStream extends Fragment {
-    FloatingActionButton fab;
-    ArrayList<StreamDatum> streamDataList;
-    ActivityStreamAdapter activityStreamAdapter;
-    RecyclerView recyclerView;
+    private FloatingActionButton fab;
+    private ArrayList<StreamDatum> streamDataList;
+    private ActivityStreamAdapter activityStreamAdapter;
+    private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public ActivityStream() {
@@ -97,7 +97,7 @@ public class ActivityStream extends Fragment {
         return view;
     }
 
-    public void getStream() {
+    private void getStream() {
         APIInterface apiInterface = APIClient.getClient().create( APIInterface.class );
         Call<Stream> call = apiInterface.activityStream( LocalStorage.getEventID( getActivity() ) );
 
